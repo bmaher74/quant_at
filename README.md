@@ -38,7 +38,8 @@ to access them plus I can view the contents of CSV files easily,
 manipulate them with Unix based tools if necessary, etc. For
 converting any of mat files into csv, this is the method I followed:
 1) Find the Matlab script from Dr. Chan's book that reads and prepares
-the data, i.e. `TU_mom.m` 2) find the point the data is all ready,
+the data, i.e. `TU_mom.m` 2) find the point where the data is all
+ready, i.e.
 
 ```
 clear;
@@ -50,9 +51,9 @@ cl=cl(:, idx);
 ..
 ```
 
-3) At this point you have `tday,cl`, all ready, with the same
-dimensions. We can create a data matrix out of these and write them to
-disk. 4) Insert the following in the script,
+3) After the last line above the `tday,cl`, are all prepared, with the
+same dimensions, etc. We can create a data matrix out of these and
+write them to disk. 4) Insert the following in the script,
 
 ```
 A = [tday cl];
