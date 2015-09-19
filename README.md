@@ -36,9 +36,9 @@ The code will assume these files are under `[HOME]/Dropbox/Public/data` folder.
 I prefer to work with CSV files, the Pandas library makes it a breeze
 to access them plus I can view the contents of CSV files easily,
 manipulate them with Unix based tools if necessary, etc. For
-converting any of mat files into csv, this is what I did. Find the
-Matlab script from Dr. Chan's book that reads and prepares the data,
-i.e. `TU_mom.m`, then find the point the data is all ready,
+converting any of mat files into csv, this is the method I followed:
+1) Find the Matlab script from Dr. Chan's book that reads and prepares
+the data, i.e. `TU_mom.m` 2) find the point the data is all ready,
 
 ```
 clear;
@@ -50,9 +50,9 @@ cl=cl(:, idx);
 ..
 ```
 
-Now at this point you have `tday,cl`, all prepared, with the same
+3) At this point you have `tday,cl`, all ready, with the same
 dimensions. We can create a data matrix out of these and write them to
-disk, insert these in the script,
+disk. 4) Insert the following in the script,
 
 ```
 A = [tday cl];
@@ -60,7 +60,7 @@ save('/tmp/out','A');
 exit;
 ```
 
-and run it. Now from a seperate Python script,
+and run it. 5) Now from a seperate Python script,
 
 ```
 from scipy import io as spio
