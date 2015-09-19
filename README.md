@@ -84,4 +84,4 @@ This gives you a CSV file.
 
 ## LICENSE
 
-Thhe code is licensed under GPL v3. See COPYING for details.
+The code is licensed under GPL v3. See COPYING for details.
