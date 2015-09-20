@@ -1,7 +1,7 @@
 # Python Code for Algorithmic Trading
 
 This project is a collection of Python codes that aim to replicate the
-Matlab codes for Dr. Ernest Chan's book *Algorithmic Trading*.
+Matlab ones for Dr. Ernest Chan's book *Algorithmic Trading*.
 
 The file names for scripts reflect Dr. Chan's Matlab script names, for
 example the code for `Ratio.m` is in `Ratio.py`.
@@ -10,7 +10,10 @@ All feedback, comments, pull requests are welcome.
 
 ## Requirements
 
-Run `pip install` on
+Python can be installed through the [Anaconda](http://continuum.io/downloads) distribution. 
+This is the easiest way to do it, and on Windows, probably the only way.
+
+Then run `conda install` or `pip install` for
 
 ```
 numpy
@@ -35,11 +38,10 @@ The code will assume these files are under `[HOME]/Dropbox/Public/data` folder.
 
 I prefer to work with CSV files, the Pandas library makes it a breeze
 to access them plus I can view the contents of CSV files easily,
-manipulate them with Unix based tools if necessary, etc. For
-converting any of mat files into csv, this is the method I followed:
-1) Find the Matlab script from Dr. Chan's book that reads and prepares
-the data, i.e. `TU_mom.m` 2) find the point where the data is all
-ready, i.e.
+manipulate them with Unix based tools if necessary. For converting any
+of mat files into csv, this is the method I followed: 1) Find the
+Matlab script from Dr. Chan's book that reads and prepares the data,
+i.e. `TU_mom.m` 2) find the point where the data is all ready, i.e.
 
 ```
 clear;
@@ -51,9 +53,10 @@ cl=cl(:, idx);
 ..
 ```
 
-3) After the last line above, the `tday,cl` variables are all ready,
-with the same dimensions, etc. We can create a data matrix out of
-these and write them to disk. 4) Insert the following in the script,
+3) After the last line above, the `tday,cl` variables are ready, with
+having the same dimensions, lined up with eachother, with the right
+data, etc. We can create a data matrix out of these and write them to
+disk. Insert the following in the script,
 
 ```
 A = [tday cl];
@@ -61,7 +64,7 @@ save('/tmp/out','A');
 exit;
 ```
 
-and run it. 5) Now from a seperate Python script,
+and run it. 4) Now from a seperate Python script,
 
 ```
 from scipy import io as spio
