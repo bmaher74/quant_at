@@ -86,7 +86,7 @@ This gives you a CSV file.
 
 [My Blog] (http://sayilarvekuramlar.blogspot.com)
 
-Dr. Chan announcing this project on [his blog](http://epchan.blogspot.de/2015/09/interview-with-euan-sinclair.html), see the bototm of the post.
+Dr. Chan announcing this project on [his blog](http://epchan.blogspot.de/2015/09/interview-with-euan-sinclair.html), see the bottom of the post.
 
 ## LICENSE
 
