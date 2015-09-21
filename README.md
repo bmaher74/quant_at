@@ -82,7 +82,7 @@ This gives you a CSV file.
 
 [Ernie Chan's Blog](http://epchan.blogspot.com)
 
-[Algorithmic Trading] (http://amzn.to/1F4RTtT) (Book)
+The [Algorithmic Trading] (http://amzn.to/1F4RTtT) Book
 
 [My Blog] (http://sayilarvekuramlar.blogspot.com)
 
