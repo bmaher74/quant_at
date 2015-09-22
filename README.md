@@ -1,10 +1,10 @@
 # Python Code for Algorithmic Trading
 
 This project is a collection of Python codes that aim to replicate the
-Matlab ones for Dr. Ernest Chan's book *Algorithmic Trading*.
+Matlab ones for Dr. Ernest Chan's *Algorithmic Trading* book.
 
-The file names for scripts reflect Dr. Chan's Matlab script names, for
-example the code for `Ratio.m` is in `Ratio.py`.
+The file names for scripts reflect AT Matlab script names, for example 
+the code for `Ratio.m` is in `Ratio.py`.
 
 All feedback, comments, pull requests are welcome. 
 
@@ -40,7 +40,7 @@ I prefer to work with CSV files, the Pandas library makes it a breeze
 to access them plus I can view the contents of CSV files easily,
 manipulate them with Unix based tools if necessary. For converting any
 of mat files into csv, this is the method I followed: 1) Find the
-Matlab script from Dr. Chan's book that reads and prepares the data,
+Matlab script from AT that reads and prepares the data,
 i.e. `TU_mom.m` 2) find the point where the data is all ready, i.e.
 
 ```
@@ -53,10 +53,10 @@ cl=cl(:, idx);
 ..
 ```
 
-3) After the last line above, the `tday,cl` variables are ready, with
-having the same dimensions, lined up with eachother, with the right
-data, etc. We can create a data matrix out of these and write them to
-disk. Insert the following in the script,
+3) After the last line above, the `tday,cl` variables are prepared, with
+the same dimensions, with the right data, etc. We can create a data 
+matrix out of these and write them to disk. Insert the following in 
+the script,
 
 ```
 A = [tday cl];
@@ -64,7 +64,7 @@ save('/tmp/out','A');
 exit;
 ```
 
-and run it. 4) Now from a seperate Python script,
+then run it. 4) Now from a seperate Python script,
 
 ```
 from scipy import io as spio
