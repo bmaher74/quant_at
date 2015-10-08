@@ -50,7 +50,7 @@ for t in range(len(y)):
     P=R-np.dot(np.dot(K,tmp1),R)
 
     #if t==2: 
-print beta[0, :].T
+#print beta[0, :].T
 
 plt.plot(beta[0, :].T)
 plt.savefig('/tmp/beta1.png')
@@ -66,31 +66,31 @@ plt.savefig('/tmp/Q.png')
 cols = ['ewa','ewc']
 y2 = ewdf[cols]
 
-longsEntry=e < -np.sqrt(Q)
-longsExit=e > -np.sqrt(Q)
+longsEntry=e < -1*np.sqrt(Q)
+longsExit=e > -1*np.sqrt(Q)
 
 shortsEntry=e > np.sqrt(Q)
 shortsExit=e < np.sqrt(Q)
 
 numUnitsLong = pd.Series([np.nan for i in range(len(ewdf))])
 numUnitsShort = pd.Series([np.nan for i in range(len(ewdf))])
-
 numUnitsLong[0]=0.
-numUnitsLong[longsEntry]=1
+numUnitsShort[0]=0.
+
+numUnitsLong[longsEntry]=1.
 numUnitsLong[longsExit]=0
 numUnitsLong = numUnitsLong.fillna(method='ffill')
 
-numUnitsShort[0]=0.
-numUnitsShort[shortsEntry]=-1
+numUnitsShort[shortsEntry]=-1.
 numUnitsShort[shortsExit]=0
 numUnitsShort = numUnitsShort.fillna(method='ffill')
 
 ewdf['numUnits']=numUnitsLong+numUnitsShort
 
 tmp1 = np.tile(np.matrix(ewdf.numUnits).T, len(cols))
-tmp2 = np.tile(np.matrix(-beta[0, :]).T, len(cols))
+tmp2 = np.hstack((-1*beta[0, :].T,np.ones((len(ewdf),1))))
+positions = np.array(tmp1)*np.array(tmp2)*y2
 
-positions = np.array(tmp1) * np.array(tmp2) * np.array(ewdf[cols])
 positions = pd.DataFrame(positions)
 
 tmp1 = np.array(positions.shift(1))
@@ -102,4 +102,3 @@ ret = ret.fillna(0)
 #ret = ret.dropna()
 print 'APR', ((np.prod(1.+ret))**(252./len(ret)))-1
 print 'Sharpe', np.sqrt(252.)*np.mean(ret)/np.std(ret)
-
