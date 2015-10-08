@@ -1,6 +1,3 @@
-# the only part I am bugged about is Sharpe ratio is different and I
-# had to use dropna to get this
-
 import matplotlib.pylab as plt
 import numpy as np
 import pandas as pd
