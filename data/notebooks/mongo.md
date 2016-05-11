@@ -22,17 +22,17 @@ print res
 
 ```python
 import sys; sys.path.append('..')
-import foam
-df = foam.get_multi(['SPY'])
+import simple
+df = simple.get_multi(['SPY'])
 df.SPY.plot()
 plt.savefig('mongo_01.png')
 ```
 
 
 ```python
-import foam
-df1 = foam.get("MCD")
-df2 = foam.get_multi(['MCD','CMG'])
+import simple
+df1 = simple.get("MCD")
+df2 = simple.get_multi(['MCD','CMG'])
 ```
 
 
@@ -118,8 +118,8 @@ print db.earnings.count()
 
 ```python
 import sys; sys.path.append('..')
-import foam
-res = foam.get_hft("GOOG", 20160211)
+import simple
+res = simple.get_hft("GOOG", 20160211)
 print res.head()
 ```
 

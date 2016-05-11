@@ -54,7 +54,7 @@ def do_download(items):
     """
 
     connection = MongoClient()
-    db = connection.foam
+    db = connection.findb
     tickers = db.tickers
 
     beginning_of_time=get_beginning_of_time()
@@ -144,7 +144,7 @@ def get(symbol):
     Returns all data for symbol in a pandas dataframe
     """
     connection = MongoClient()
-    db = connection.foam
+    db = connection.findb
     
     q = {"$query" :{"_id.sym": symbol},"$orderby":{"_id.dt" : 1}}
     res = list(db.tickers.find( q )); res1 = []
@@ -174,7 +174,7 @@ def get_hft(symbol, date):
     Return minute level high-frequency data for the given symbol and date
     """
     connection = MongoClient()
-    db = connection.foam
+    db = connection.findb
     q = {"$query" :{"_id.sym": symbol, "_id.dt": date} }
     res = list(db.tickers.find(q).limit(1))
     if len(res) > 0 and 'hft' in res[0].keys():

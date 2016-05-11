@@ -3,7 +3,7 @@ from pymongo import MongoClient
 
 connection = MongoClient()
 
-db = connection.foam
+db = connection.fakedb
 
 import datetime
 

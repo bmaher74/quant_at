@@ -1,7 +1,7 @@
 # coding=utf-8
 from pymongo import MongoClient
 import urllib, datetime, logging, sys
-import re, os, foam, pandas as pd
+import re, os, simple, pandas as pd
 from pandas_datareader import data, wb
 
 def web_earnings(day):
@@ -15,17 +15,17 @@ def web_earnings(day):
 def get_earnings():
     
     connection = MongoClient()
-    db = connection.foam
+    db = connection.findb
     earnings = db.earnings
 
-    curr = foam.get_beginning_of_time()
+    curr = simple.get_beginning_of_time()
 
     last_date_in_db = list(db.earnings.find().sort("_id", -1).limit(1))
     if len(last_date_in_db) > 0:
         curr = pd.to_datetime(str(last_date_in_db[0]['_id']), format='%Y%m%d')
         logging.debug('last record %s', repr(curr))
 
-    today,today_i = foam.get_today()
+    today,today_i = simple.get_today()
     logging.debug('today %s', repr(today))
 
     while True:

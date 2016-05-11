@@ -22,7 +22,7 @@ def download(symbol, days=11):
 
 def insert_hft(df, symbol):
     connection = MongoClient()
-    db = connection.foam    
+    db = connection.findb
     for dt in df.Timestamp2.unique():
         tmp = df[df.Timestamp2 == dt]
         tmp = tmp.drop(['Timestamp2','Timestamp'],axis=1)
