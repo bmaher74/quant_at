@@ -8,7 +8,7 @@ import pandas as pd
 from memo import *
 
 contract_month_codes = ['F', 'G', 'H', 'J', 'K', 'M','N', 'Q', 'U', 'V', 'W', 'Z']
-contract_month_dict = dict(zip(contract_month_codes,range(len(contract_month_codes))))
+contract_month_dict = dict(zip(contract_month_codes,range(1,len(contract_month_codes))))
 print contract_month_dict
 
 @memo                                    
@@ -34,7 +34,7 @@ def get(market, sym, month, year, dt, db):
     """
     connection = MongoClient()
     db = connection[db]
-    monthyear = "%d%d" % (year,contract_month_dict[month])
+    monthyear = "%d%02d" % (year,contract_month_dict[month])
     q = {"$query" :{"_id": {"sym": sym, "market": market, "month": month,
                             "year": year, "monthyear": monthyear, "dt": dt }} }
     res = list(db.tickers.find( q ))
@@ -46,7 +46,7 @@ def last_contract(sym, market, db):
     return list(res) 
 
 def existing_nonexpired_contracts(sym, market, db, today):
-    monthyear = "%d%d" % (today.year,today.month)
+    monthyear = "%d%02d" % (today.year,today.month)
     q = { "$query" : {"_id.sym": sym, "_id.market": market,
                       "_id.monthyear": {"$gte": monthyear } }
     }
@@ -115,11 +115,12 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
             # sometimes oi is in Prev Days Open Interest sometimes just Open Interest
             # use whichever is there
             oicol = [x for x in df.columns if 'Open Interest' in x][0]
-            monthyear = "%d%d" % (year,contract_month_dict[month])
+            monthyear = "%d%02d" % (year,contract_month_dict[month])
             for srow in df.iterrows():
                 dt = str(srow[0])[0:10]
                 dt = int(dt.replace("-",""))
-                new_row = {"_id": {"sym": sym, "market": market, "month": month, "year": year, "monthyear": monthyear, "dt": dt },
+                new_row = {"_id": {"sym": sym, "market": market, "month": month,
+                                   "year": year, "monthyear": monthyear, "dt": dt },
                            "o": srow[1].Open, "h": srow[1].High,
                            "l": srow[1].Low, "la": srow[1].Last,
                            "s": srow[1].Settle, "v": srow[1].Volume,
