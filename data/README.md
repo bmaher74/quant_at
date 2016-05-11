@@ -1,11 +1,8 @@
 # INTRODUCTION
 
-Foam will be a Python / MongoDB based database / backtester for
-financial data / trading algorithms. It will have a simple mechanism
-to download data from the open sources, and be able to update itself
-incrementally. We will share the latest dump of the database through a
-public link here (see below), so that anyone is able to download the
-data and start testing algorithms right away.
+This folder will contain a Python / MongoDB based database /
+downloader for financial data. It will do this from the open sources,
+be able to update itself incrementally.
 
 ## Requirements
 
@@ -22,35 +19,31 @@ data and start testing algorithms right away.
 Symbols are retrieved from seperate csv files under `data`
 folder. [Details](data/README.md).
 
-* fred.csv: (Selected) Macroeconomic data series from St. Louis FED
-  ([FRED][2]) database (whole list is in fred.zip)  
-* amex.csv: Companies listed in the AMEX exchange
-* nyse.csv: Companies listed in the NYSE exchange
-* etfs.csv: All ETFs (exchange traded funds)
+* simple.csv: Stock, ETF data [TBD]
 * futures.csv: Commodity Futures (from Quandl)
 * hft.dat: High-frequency data in 5-minute bars for selected symbols.
 
-Composite unique Id for ticker is comprised of the symbol `sym` and
-the date `dt`.
+Composite unique Id for stock ticker is comprised of the symbol `sym`
+and the date `dt`.
 
 Futures data is retrieved from Quandl; we use their API access, for
 which you need to create a `.quandl` file with the API access key in
-it (no newlines) under foam's main directory.
+it (no newlines) under your home directory.
 
 ## Usage
 
-Simplest usage for mass download is `python foam.py`. This will read
+Simplest usage for mass download is `python simple.py`. This will read
 all symbols from under `data` and start downloading them.
 
 For parallel execution, we provided a chunking ability,
 
 ```
-python foam.py 0 4
+python simple.py 0 4
 ```
 
 This divides the symbol list into 4 chunks, and processes the 0th one
 (it could have been 1,2,etc). For parallel execution 4 processes of
-`foam.py` would be started, each for / using a different chunk number.
+`simple.py` would be started, each for / using a different chunk number.
 These processes would ideally be run under a monitoring tool, we
 prefer [dand][1]. A sample configuration for this tool can be found in
 [dand.conf](dand.conf) which can simply be executed with `python
@@ -66,14 +59,14 @@ For research, data exploration purposes, there is a utility
 function. To see all data for symbol DIJA,
 
 ```
-import foam
-df = foam.get("DJIA")
+import simple
+df = simple.get("DJIA")
 ```
 
 For multiple symbols in one Dataframe,
 
 ```
-df = foam.get_multi(['DJIA','GOOG'])
+df = simple.get_multi(['DJIA','GOOG'])
 ```
 
 This returns a Pandas dataframe which can be processes, plotted.
@@ -81,7 +74,7 @@ This returns a Pandas dataframe which can be processes, plotted.
 A simple query from mongo shell to see all tickers
 
 ```
-use foam
+use simple
 db.tickers.count()
 ```
 
@@ -110,7 +103,7 @@ For some symbols we retrieve high-frequency data. Minute level tick
 data for a symbol and specific day can be accessed with,
 
 ```
-df = foam.get_hft("AHP", 20160213)
+df = simple.get_hft("AHP", 20160213)
 ```
 
 ## Indexing
@@ -131,7 +124,7 @@ print db.tickers.find( {"_id.sym": "DDD", "_id.dt": 20070101 } ).limit(1).explai
 Drop database
 
 ```
-use foam
+use findb
 db.dropDatabase()
 ```
 
