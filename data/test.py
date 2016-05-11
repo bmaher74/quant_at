@@ -66,6 +66,6 @@ def test_incremental():
     assert futures.last_date_in_contract("CL","CME","F", 1984, db) == 19830727
     
 if __name__ == "__main__": 
-#    test_simple()
+    test_simple()
     test_incremental()
     

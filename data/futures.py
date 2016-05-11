@@ -84,7 +84,7 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
     # since the last time we ran.
     for (sym,market) in instruments:
         last = last_contract(sym, market, connection[db])
-        for year in years:
+        for year in range(years[0],years[1]):
             for month in months:
                 if len(last)==0 or (len(last) > 0 and last[0]['_id']['yearmonth'] < "%d%s" % (year,month)):
                     # for non-existing contracts, get as much as possible
@@ -96,11 +96,11 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
         # additional days that are not there. if today is a new day, and
         # for for existing non-expired contracts we would have new price
         # data.  
-        for (existing_year,existing_month) in existing_nonexpired_contracts(sym, market, connection[db], today()):
-            last_con = last_date_in_contract(sym,market,existing_month,existing_year,connection[db])
+        for (nonexp_year,nonexp_month) in existing_nonexpired_contracts(sym, market, connection[db], today()):
+            last_con = last_date_in_contract(sym,market,nonexp_month,nonexp_year,connection[db])
             last_con = pd.to_datetime(str(last_con), format='%Y%m%d')
             #print 'nonexpired', last_con, today()
-            if today() > last_con: work_items.append([market, sym, existing_month, existing_year, last_con.strftime('%Y-%m-%d')])
+            if today() > last_con: work_items.append([market, sym, nonexp_month, nonexp_year, last_con.strftime('%Y-%m-%d')])
 
     for market, sym, month, year, work_start in work_items:
         contract = "%s/%s%s%d" % (market,sym,month,year)
