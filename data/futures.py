@@ -33,9 +33,9 @@ def get(market, sym, month, year, dt, db):
     """
     connection = MongoClient()
     db = connection[db]
-    monthyear = "%d%02d" % (year,contract_month_dict[month])
+    yearmonth = "%d%s" % (year,month)
     q = {"$query" :{"_id": {"sym": sym, "market": market, "month": month,
-                            "year": year, "monthyear": monthyear, "dt": dt }} }
+                            "year": year, "yearmonth": yearmonth, "dt": dt }} }
     res = list(db.tickers.find( q ))
     return res
 
@@ -45,9 +45,9 @@ def last_contract(sym, market, db):
     return list(res) 
 
 def existing_nonexpired_contracts(sym, market, db, today):
-    monthyear = "%d%02d" % (today.year,today.month)
+    yearmonth = "%d%s" % (today.year,contract_month_codes[today.month-1])
     q = { "$query" : {"_id.sym": sym, "_id.market": market,
-                      "_id.monthyear": {"$gte": monthyear } }
+                      "_id.yearmonth": {"$gte": yearmonth } }
     }
     res = {}
     for x in db.tickers.find(q): res[(x['_id']['year'],x['_id']['month'])]=1
@@ -86,8 +86,7 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
         last = last_contract(sym, market, connection[db])
         for year in years:
             for month in months:
-                it_monthyear = int("%d%02d" % (year,contract_month_dict[month]))
-                if len(last)==0 or (len(last) > 0 and last[0]['_id']['monthyear'] < it_monthyear):
+                if len(last)==0 or (len(last) > 0 and last[0]['_id']['yearmonth'] < "%d%s" % (year,month)):
                     # for non-existing contracts, get as much as possible
                     # from str_start (two years from the beginning of time)
                     # until the end of time
@@ -113,12 +112,12 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
             # sometimes oi is in Prev Days Open Interest sometimes just Open Interest
             # use whichever is there
             oicol = [x for x in df.columns if 'Open Interest' in x][0]
-            monthyear = "%d%02d" % (year,contract_month_dict[month])
+            yearmonth = "%d%s" % (year,month)
             for srow in df.iterrows():
                 dt = str(srow[0])[0:10]
                 dt = int(dt.replace("-",""))
                 new_row = {"_id": {"sym": sym, "market": market, "month": month,
-                                   "year": year, "monthyear": monthyear, "dt": dt },
+                                   "year": year, "yearmonth": yearmonth, "dt": dt },
                            "o": srow[1].Open, "h": srow[1].High,
                            "l": srow[1].Low, "la": srow[1].Last,
                            "s": srow[1].Settle, "v": srow[1].Volume,
