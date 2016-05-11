@@ -1,5 +1,4 @@
 from functools import wraps
-
 # store the return result of parameterless functions
 def memo(func):
     cache = {}                                  

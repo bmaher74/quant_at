@@ -10,7 +10,7 @@ from memo import *
 contract_month_codes = ['F', 'G', 'H', 'J', 'K', 'M','N', 'Q', 'U', 'V', 'W', 'Z']
 contract_month_dict = dict(zip(contract_month_codes,range(1,len(contract_month_codes)+1)))
 
-@memo                                    
+@memo # so that we dont constantly read the .quand file
 def get_quandl_auth():
     fname = '%s/.quandl' % os.environ['HOME']
     if not os.path.isfile(fname):
@@ -84,7 +84,7 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
     # since the last time we ran.
     for (sym,market) in instruments:
         last = last_contract(sym, market, connection[db])
-        for year in range(years[0],years[1]):
+        for year in range(start_year,end_year):
             for month in months:
                 if len(last)==0 or (len(last) > 0 and last[0]['_id']['yearmonth'] < "%d%s" % (year,month)):
                     # for non-existing contracts, get as much as possible

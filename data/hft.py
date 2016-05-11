@@ -1,3 +1,5 @@
+# High freq data, in 5 minute bars for a given stock, for any given
+# day yahoo only gives goes back only a few weeks.
 from urllib import urlretrieve
 from pymongo import MongoClient
 import numpy as np, pandas as pd, sys
