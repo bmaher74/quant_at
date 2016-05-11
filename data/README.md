@@ -1,5 +1,7 @@
 # INTRODUCTION
 
+[Stock and Future Data Retrival are being reworked. Please stay tuned]
+
 This folder will contain a Python / MongoDB based database /
 downloader for financial data. It will do this from the open sources,
 be able to update itself incrementally.
@@ -19,8 +21,8 @@ be able to update itself incrementally.
 Symbols are retrieved from seperate csv files under `data`
 folder. [Details](data/README.md).
 
-* simple.csv: Stock, ETF data [TBD]
-* futures.csv: Commodity Futures (from Quandl)
+* simple.csv: Stock, ETF data.
+* futures.csv: Commodity Futures
 * hft.dat: High-frequency data in 5-minute bars for selected symbols.
 
 Composite unique Id for stock ticker is comprised of the symbol `sym`
