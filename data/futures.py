@@ -63,7 +63,7 @@ def last_date_in_contract(sym, market, month, year, db):
 
 
 def download_data(chunk=1,chunk_size=1,downloader=web_download,
-                  today=systemtoday,db="foam",years=(1984,2022)):
+                  today=systemtoday,db="findb",years=(1984,2022)):
 
     # a tuple of contract years, defining the beginning
     # of time and end of time
