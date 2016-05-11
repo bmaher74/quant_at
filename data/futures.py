@@ -99,11 +99,9 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
         for (existing_year,existing_month) in existing_nonexpired_contracts(sym, market, connection[db], today()):
             last_con = last_date_in_contract(sym,market,existing_month,existing_year,connection[db])
             last_con = pd.to_datetime(str(last_con), format='%Y%m%d')
-            print 'nonexpired', last_con, today()
+            #print 'nonexpired', last_con, today()
             if today() > last_con: work_items.append([market, sym, existing_month, existing_year, last_con.strftime('%Y-%m-%d')])
 
-    print work_items            
-            
     for market, sym, month, year, work_start in work_items:
         contract = "%s/%s%s%d" % (market,sym,month,year)
         try:

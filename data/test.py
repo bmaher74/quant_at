@@ -4,22 +4,23 @@ import Quandl
 
 testdb = "fakedb"
 
-def load_data(contract,subdir):
+def load_data(contract,subdir,start,end):
     f = contract.replace("/","-")
     f = "./test/%s/%s.csv" % (subdir,f)
     if not os.path.isfile(f): raise Quandl.Quandl.DatasetNotFound()
     df = pd.read_csv(f)
     df = df.set_index("Date")
+    df = df[df.index > start]
     return df
     
 def fake_download_1(contract,start,end):
-    return load_data(contract, "data_1")
+    return load_data(contract, "data_1",start,end)
 
 def fake_download_2(contract,start,end):
-    return load_data(contract, "data_2")
+    return load_data(contract, "data_2",start,end)
 
 def fake_download_3(contract,start,end):
-    return load_data(contract, "data_3")
+    return load_data(contract, "data_3",start,end)
 
 def fake_today_1():
     return datetime.datetime(2016, 5, 1) 
@@ -58,10 +59,11 @@ def test_incremental():
     db = init()
     futures.download_data(downloader=fake_download_2,today=fake_today_726,
                           db=testdb, years=(1984,1985))
-    assert futures.last_date_in_contract("CL","CME","F", 1984, db) == 19830726
-    
+    assert futures.last_date_in_contract("CL","CME","F", 1984, db) == 19830726    
+
     futures.download_data(downloader=fake_download_3,today=fake_today_727,
                           db=testdb, years=(1984,1985))
+    assert futures.last_date_in_contract("CL","CME","F", 1984, db) == 19830727
     
 if __name__ == "__main__": 
 #    test_simple()
