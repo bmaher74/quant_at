@@ -8,7 +8,7 @@ import pandas as pd
 from memo import *
 
 contract_month_codes = ['F', 'G', 'H', 'J', 'K', 'M','N', 'Q', 'U', 'V', 'W', 'Z']
-contract_month_dict = dict(zip(contract_month_codes,range(1,len(contract_month_codes))))
+contract_month_dict = dict(zip(contract_month_codes,range(1,len(contract_month_codes)+1)))
 
 @memo                                    
 def get_quandl_auth():
@@ -84,11 +84,10 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
     # since the last time we ran.
     for (sym,market) in instruments:
         last = last_contract(sym, market, connection[db])
-        last_db_year,last_db_month = (0,'A') # init values
-        if len(last) > 0: last_year,last_month = last[0]['_id']['year'], last[0]['_id']['month']
         for year in years:
             for month in months:
-                if last_db_year < end_year or last_db_month < 'Z':
+                it_monthyear = int("%d%02d" % (year,contract_month_dict[month]))
+                if len(last)==0 or (len(last) > 0 and last[0]['_id']['monthyear'] < it_monthyear):
                     # for non-existing contracts, get as much as possible
                     # from str_start (two years from the beginning of time)
                     # until the end of time
@@ -104,7 +103,7 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
             print 'nonexpired', last_con, today()
             if today() > last_con: work_items.append([market, sym, existing_month, existing_year, last_con.strftime('%Y-%m-%d')])
 
-    #print work_items            
+    print work_items            
             
     for market, sym, month, year, work_start in work_items:
         contract = "%s/%s%s%d" % (market,sym,month,year)
