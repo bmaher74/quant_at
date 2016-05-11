@@ -24,8 +24,9 @@ Symbols are retrieved from seperate csv files under `data`
 folder. [Details](data/README.md).
 
 * simple.csv: Stock, ETF data.
-* futures.csv: Commodity Futures
-* hft.dat: High-frequency data in 5-minute bars for selected symbols.
+* futures.csv: Commodity Futures.
+* hft.csv: High-frequency data in 5-minute bars.
+* earnings.csv: List of companies announcing their earnings per day.
 
 Composite unique Id for stock ticker is comprised of the symbol `sym`
 and the date `dt`.
@@ -37,9 +38,10 @@ it (no newlines) under your home directory.
 ## Usage
 
 Simplest usage for mass download is `python simple.py`. This will read
-all symbols from under `data` and start downloading them.
+all symbols from under `data` and start downloading them. Same for
+`python futures.py`.
 
-For parallel execution, we provided a chunking ability,
+For parallel execution, we provided a chunking ability [TBD],
 
 ```
 python simple.py 0 4
@@ -135,7 +137,7 @@ db.dropDatabase()
 This should say something about BTrees, and indicate the table is not
 fully scanned. 
 
-[1]: https://github.com/burakbayramli/dand
+[1]: https://github.com/burakbayramli/kod/tree/master/dand
 
 [2]: https://www.stlouisfed.org
 
