@@ -45,14 +45,13 @@ def last_contract(sym, market, db):
     res = db.tickers.find(q).sort([("_id.month",-1), (u"_id.year",-1)]).limit(1)
     return list(res) 
 
-# DO AGGREG on contract here
 def existing_nonexpired_contracts(sym, market, db, today):
     monthyear = "%d%d" % (today.year,today.month)
     q = { "$query" : {"_id.sym": sym, "_id.market": market,
                       "_id.monthyear": {"$gte": monthyear } }
     }
     res = {}
-    for x in db.tickers.find(q): res["%s%d%s" % (x['_id']['sym'],x['_id']['year'],x['_id']['month'])]=1
+    for x in db.tickers.find(q): res[(x['_id']['year'],x['_id']['month'])]=1
     return res.keys()
 
 def last_date_in_contract(sym, market, month, year, db):
@@ -60,7 +59,6 @@ def last_date_in_contract(sym, market, month, year, db):
     res = db.tickers.find(q).sort([("_id.dt",-1)]).limit(1)
     res = list(res)
     if len(res) > 0: return res[0]['_id']['dt']
-
 
 def download_data(chunk=1,chunk_size=1,downloader=web_download,
                   today=systemtoday,db="findb",years=(1984,2022)):
@@ -101,9 +99,13 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
         # additional days that are not there. if today is a new day, and
         # for for existing non-expired contracts we would have new price
         # data.  TBD
-        for contract in existing_nonexpired_contracts(sym, market, connection[db], today()):
-            print 'existing', contract
-    
+        for (existing_year,existing_month) in existing_nonexpired_contracts(sym, market, connection[db], today()):
+            last_con = last_date_in_contract(sym,market,existing_month,existing_year,connection[db])
+            last_con = pd.to_datetime(str(last_con), format='%Y%m%d')    
+            work_items.append([market, sym, existing_month, existing_year, last_con.strftime('%Y-%m-%d')])
+
+    #print work_items            
+            
     for market, sym, month, year, work_start in work_items:
         contract = "%s/%s%s%d" % (market,sym,month,year)
         try:

@@ -1,3 +1,5 @@
+# Futures data dump, for a given list, dump them to file
+
 # F - Jan, G - Feb, H - Mar, J - Apr, K - May, M - Jun
 # N - Jul, Q - Aug, U - Sep, V - Oct, W - Nov, Z - Dec
 #
