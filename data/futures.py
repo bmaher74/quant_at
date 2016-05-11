@@ -1,5 +1,5 @@
-# F - Jan, G - Feb, H - Mar, J - Apr, K - May, M - Jun
-# N - Jul, Q - Aug, U - Sep, V - Oct, W - Nov, Z - Dec
+#
+# Downloads futures contracts for symbols in data/futures.csv
 #
 import Quandl, os, itertools, sys
 from pymongo import MongoClient
@@ -137,3 +137,8 @@ if __name__ == "__main__":
     else:
         logging.basicConfig(filename='%s/futures.log' % os.environ['TEMP'],level=logging.DEBUG, format=f)
         download_data()
+
+# F - Jan, G - Feb, H - Mar, J - Apr, K - May, M - Jun
+# N - Jul, Q - Aug, U - Sep, V - Oct, W - Nov, Z - Dec
+#
+        
