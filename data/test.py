@@ -60,8 +60,8 @@ def test_incremental():
                           db=testdb, years=(1984,1985))
     assert futures.last_date_in_contract("CL","CME","F", 1984, db) == 19830726
     
-#    futures.download_data(downloader=fake_download_3,today=fake_today_727,
-#                          db=testdb, years=(1984,1985))
+    futures.download_data(downloader=fake_download_3,today=fake_today_727,
+                          db=testdb, years=(1984,1985))
     
 if __name__ == "__main__": 
 #    test_simple()

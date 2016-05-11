@@ -9,7 +9,6 @@ from memo import *
 
 contract_month_codes = ['F', 'G', 'H', 'J', 'K', 'M','N', 'Q', 'U', 'V', 'W', 'Z']
 contract_month_dict = dict(zip(contract_month_codes,range(1,len(contract_month_codes))))
-print contract_month_dict
 
 @memo                                    
 def get_quandl_auth():
@@ -103,7 +102,7 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
             last_con = last_date_in_contract(sym,market,existing_month,existing_year,connection[db])
             last_con = pd.to_datetime(str(last_con), format='%Y%m%d')
             print 'nonexpired', last_con, today()
-            work_items.append([market, sym, existing_month, existing_year, last_con.strftime('%Y-%m-%d')])
+            if today() > last_con: work_items.append([market, sym, existing_month, existing_year, last_con.strftime('%Y-%m-%d')])
 
     #print work_items            
             
