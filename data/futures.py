@@ -98,10 +98,11 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
         # for existing contracts, add to the work queue the download of
         # additional days that are not there. if today is a new day, and
         # for for existing non-expired contracts we would have new price
-        # data.  TBD
+        # data.  
         for (existing_year,existing_month) in existing_nonexpired_contracts(sym, market, connection[db], today()):
             last_con = last_date_in_contract(sym,market,existing_month,existing_year,connection[db])
-            last_con = pd.to_datetime(str(last_con), format='%Y%m%d')    
+            last_con = pd.to_datetime(str(last_con), format='%Y%m%d')
+            print 'nonexpired', last_con, today()
             work_items.append([market, sym, existing_month, existing_year, last_con.strftime('%Y-%m-%d')])
 
     #print work_items            
