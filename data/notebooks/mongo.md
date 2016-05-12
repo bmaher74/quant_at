@@ -33,7 +33,6 @@ df1 = simple.get("AMZN")
 df2 = simple.get_multi(['AMZN','GOOGL'])
 ```
 
-
 ```python
 q = {"$query" :{"_id.sym": 'GOOGL'},"$orderby":{"_id.dt" : -1}}
 ts = db.tickers.find(q).limit(1)
@@ -57,7 +56,6 @@ print tmp
 [{u'a': 5.08333, u'c': 15.249989999999999, u'h': 15.60999, u'l': 14.67999, 
 u'o': 15.06, u'v': 231900.0, u'_id': {u'dt': 20080325, u'sym': u'DDD'}}]
 ```
-
 
 ```python
 print db.tickers.count()
@@ -114,6 +112,14 @@ print db.earnings.count()
 2635
 2635
 ```
+
+```python
+print db.tickers.count()
+#db.tickers.remove({"_id.sym": "GOOGL" })
+#print db.tickers.count()
+```
+
+
 
 ```python
 import sys; sys.path.append('..')

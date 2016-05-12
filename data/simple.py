@@ -40,11 +40,11 @@ def get_today():
     return today, today_int
 
 def get_last_date_in_db(symbol, db, today):
-    ts = db.tickers.find( {"_id.sym": symbol} )
+    ts = db.simple.find( {"_id.sym": symbol} )
     # Check if there are records.
     if ts.count() > 0:
         q = {"$query" :{"_id.sym": symbol},"$orderby":{"_id.dt" : -1}}
-        ts = list(db.tickers.find(q).limit(1))
+        ts = list(db.simple.find(q).limit(1))
         last_date_in_db = int(ts[0]['_id']['dt'])        
         return pd.to_datetime(str(last_date_in_db), format='%Y%m%d')    
     
@@ -59,7 +59,7 @@ def do_download(items):
 
     connection = MongoClient()
     db = connection.findb
-    tickers = db.tickers
+    tickers = db.simple
 
     beginning_of_time=get_beginning_of_time()
     today, today_int = get_today()
@@ -130,7 +130,6 @@ def download_data(ith_chunk=0, no_chunks=1,base_dir="."):
     for line in df.iterrows():
         res.append((line[1].Engine, line[1].Symbol, line[1].Name))
 
-
     random.seed(0)
     random.shuffle(res)
     
@@ -146,11 +145,10 @@ def get(symbol):
     db = connection.findb
     
     q = {"$query" :{"_id.sym": symbol},"$orderby":{"_id.dt" : 1}}
-    res = list(db.tickers.find( q )); res1 = []
+    res = list(db.simple.find( q )); res1 = []
     if len(res) == 0: return pd.DataFrame()
     if 'c' in res[0]: # then we have a stock ticker, this series does not have 'closed' or 'open'
-        for x in res: res1.append( { 'a': x['a'],'c': x['c'],'h':x['h'], \
-                                   'l': x['l'],'o': x['o'],'Date':x['_id']['dt']} )
+        for x in res: res1.append( { 'a': x['a'],'c': x['c'],'h':x['h'],  'l': x['l'],'o': x['o'],'Date':x['_id']['dt']} )
     else: # we have a macro timeseries, 'a' always exists in all time series
         for x in res: res1.append( { 'a': x['a'],'Date':x['_id']['dt']} )
             
@@ -175,7 +173,7 @@ def get_hft(symbol, date):
     connection = MongoClient()
     db = connection.findb
     q = {"$query" :{"_id.sym": symbol, "_id.dt": date} }
-    res = list(db.tickers.find(q).limit(1))
+    res = list(db.simple.find(q).limit(1))
     if len(res) > 0 and 'hft' in res[0].keys():
         df = pd.DataFrame(res[0]['hft'])
         return df.T
