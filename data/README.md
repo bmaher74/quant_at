@@ -24,8 +24,8 @@ folder. [Details](data/README.md).
 * hft.csv: High-frequency data in 5-minute bars.
 * earnings.csv: List of companies announcing their earnings per day.
 
-Composite unique Id for stock ticker is comprised of the symbol `sym`
-and the date `dt`.
+Composite unique Id for a simple finance record is comprised of the
+symbol `sym` and the date `dt`.
 
 Futures data is retrieved from Quandl; we use their API access, for
 which you need to create a `.quandl` file with the API access key in

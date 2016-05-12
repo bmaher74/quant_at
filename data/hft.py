@@ -32,11 +32,11 @@ def insert_hft(df, symbol):
         tmp = tmp.set_index('Time')
         tmp = tmp.to_dict(orient='index')
         q = {"$query" :{"_id.sym": symbol, "_id.dt": int(dt)} }
-        res = list(db.tickers.find(q).limit(1))
+        res = list(db.simple.find(q).limit(1))
         if len(res) > 0:
             res = res[0]
             res['hft'] = tmp
-            db.tickers.save(res)
+            db.simple.save(res)
     
 if __name__ == "__main__":
     # hft data

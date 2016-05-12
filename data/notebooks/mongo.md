@@ -10,7 +10,7 @@ db = connection.findb
 
 ```python
 q = {"$query" :{"_id.sym": "GOOGL", "_id.dt": 20160210} }
-res = list(db.tickers.find(q).limit(1))[0]
+res = list(db.simple.find(q).limit(1))[0]
 print res
 ```
 
@@ -35,7 +35,7 @@ df2 = simple.get_multi(['AMZN','GOOGL'])
 
 ```python
 q = {"$query" :{"_id.sym": 'GOOGL'},"$orderby":{"_id.dt" : -1}}
-ts = db.tickers.find(q).limit(1)
+ts = db.simple.find(q).limit(1)
 last_date_in_db = int(ts[0]['_id']['dt'])
 print last_date_in_db
 ```
@@ -47,8 +47,8 @@ print last_date_in_db
 ```python
 #q = { "$query" : {"_id.sym": "DDD" }, "$orderby": {"_id.dt" : -1} }
 q = { "$query" : {"_id.sym": "DDD" } }
-#tmp = list(db.tickers.find( q ).sort("{$natural:-1}").limit(1))
-tmp = list(db.tickers.find( q ).sort({"_id.dt":-1}).limit(1))
+#tmp = list(db.simple.find( q ).sort("{$natural:-1}").limit(1))
+tmp = list(db.simple.find( q ).sort({"_id.dt":-1}).limit(1))
 print tmp
 ```
 
@@ -58,9 +58,9 @@ u'o': 15.06, u'v': 231900.0, u'_id': {u'dt': 20080325, u'sym': u'DDD'}}]
 ```
 
 ```python
-print db.tickers.count()
-db.tickers.remove({"_id.sym": "AHP", "_id.dt": 20160205 })
-print db.tickers.count()
+print db.simple.count()
+db.simple.remove({"_id.sym": "AHP", "_id.dt": 20160205 })
+print db.simple.count()
 ```
 
 ```text
@@ -70,7 +70,7 @@ print db.tickers.count()
 
 ```python
 q = {"$query" : {"_id.sym": "CL", "_id.market": "CME", "_id.yearmonth": "2016Z" } }
-ts = db.tickers.find(q).limit(7)
+ts = db.futures.find(q).limit(7)
 for t in ts: print t
 ```
 
@@ -112,14 +112,6 @@ print db.earnings.count()
 2635
 2635
 ```
-
-```python
-print db.tickers.count()
-#db.tickers.remove({"_id.sym": "GOOGL" })
-#print db.tickers.count()
-```
-
-
 
 ```python
 import sys; sys.path.append('..')
