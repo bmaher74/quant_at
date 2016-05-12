@@ -31,8 +31,8 @@ def get(market, sym, month, year, dt, db):
     return res
 
 def last_contract(sym, market, db):
-    q = { "$query" : {"_id.sym": sym, "_id.market": market} }
-    res = db.tickers.find(q).sort([("_id.month",-1), (u"_id.year",-1)]).limit(1)
+    q = { "$query" : {"_id.sym": sym, "_id.market": market}, "$orderby":{"_id.yearmonth" : -1} }
+    res = db.tickers.find(q).limit(1)    
     return list(res) 
 
 def existing_nonexpired_contracts(sym, market, db, today):
@@ -45,8 +45,11 @@ def existing_nonexpired_contracts(sym, market, db, today):
     return res.keys()
 
 def last_date_in_contract(sym, market, month, year, db):
-    q = { "$query" : {"_id.sym": sym, "_id.market": market, "_id.month": month, "_id.year": year} }
-    res = db.tickers.find(q).sort([("_id.dt",-1)]).limit(1)
+    q = { "$query" : {"_id.sym": sym, "_id.market": market,
+                      "_id.month": month, "_id.year": year},
+          "$orderby":{"_id.dt" : -1}          
+    }
+    res = db.tickers.find(q).limit(1)
     res = list(res)
     if len(res) > 0: return res[0]['_id']['dt']
 

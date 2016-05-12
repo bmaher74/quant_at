@@ -111,16 +111,28 @@ df = simple.get_hft("AHP", 20160213)
 ## Indexing
 
 In the case of composite Ids, indexes might not be created properly in
-MongoDB. In this case, simply create them with
+MongoDB. Show indexes (on mongoshell)
+
+```
+db.tickers.getIndexes()
+```
+
+A simple index
 
 ```
 db.tickers.create_index("_id")
 ```
 
+For a number of selected columns (actually the one below is mandatory for futures.py)
+
+```
+db.tickers.createIndex( { "_id.sym": 1, "_id.market": 1, "_id.month": -1, "_id.year": -1, "_id.dt": -1 } )
+```
+
 To check indexing is working properly
 
 ```
-print db.tickers.find( {"_id.sym": "AMZN", "_id.dt": 20070101 } ).limit(1).explain()
+db.tickers.find( {"_id.sym": "AMZN", "_id.dt": 20070101 } ).limit(1).explain()
 ```
 
 Drop database
