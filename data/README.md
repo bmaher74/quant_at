@@ -1,9 +1,5 @@
 # INTRODUCTION
 
-[Stock and Future Data Retrival are being reworked. Please stay tuned]
-
-[Futures download is complete, stitching is in progress]
-
 This folder will contain a Python / MongoDB based database /
 downloader for financial data. It will do this from the open sources,
 be able to update itself incrementally.
