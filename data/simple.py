@@ -34,7 +34,8 @@ def get_beginning_of_time():
 
 def get_today():
     #today=datetime.datetime(2016, 2, 15) # hack, freeze the end time
-    today=datetime.datetime.today() - datetime.timedelta(days=1)
+    dt=datetime.datetime.today() - datetime.timedelta(days=1)
+    today = datetime.datetime(dt.year, dt.month, dt.day)    
     today_int = int(today.strftime('%Y%m%d') )
     return today, today_int
 

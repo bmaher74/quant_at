@@ -3,25 +3,16 @@
 #
 import Quandl, os, itertools, sys
 from pymongo import MongoClient
-import logging, datetime
+import logging, datetime, simple
 import pandas as pd
 from memo import *
 
 contract_month_codes = ['F', 'G', 'H', 'J', 'K', 'M','N', 'Q', 'U', 'V', 'W', 'Z']
 contract_month_dict = dict(zip(contract_month_codes,range(1,len(contract_month_codes)+1)))
 
-@memo # so that we dont constantly read the .quand file
-def get_quandl_auth():
-    fname = '%s/.quandl' % os.environ['HOME']
-    if not os.path.isfile(fname):
-        print 'Please create a %s file ' % fname
-        exit()
-    auth = open(fname).read()
-    return auth
-
 def web_download(contract,start,end):
     df = Quandl.get(contract,trim_start=start,trim_end=end,
-                    returns="pandas",authtoken=get_quandl_auth())
+                    returns="pandas",authtoken=simple.get_quandl_auth())
     return df
 
 def systemtoday():
