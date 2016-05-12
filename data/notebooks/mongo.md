@@ -5,18 +5,17 @@
 from pymongo import MongoClient
 import pandas as pd
 connection = MongoClient()
-db = connection.fakedb
+db = connection.findb
 ```
 
-
 ```python
-q = {"$query" :{"_id.sym": "GOOG", "_id.dt": 20160205} }
+q = {"$query" :{"_id.sym": "GOOGL", "_id.dt": 20160210} }
 res = list(db.tickers.find(q).limit(1))[0]
 print res
 ```
 
 ```text
-{u'a': 683.570007, u'c': 683.570007, u'h': 703.98999, u'l': 680.150024, u'o': 703.869995, u'v': 5070000.0, u'_id': {u'dt': 20160205, u'sym': u'GOOG'}}
+{u'a': 706.849976, u'c': 706.849976, u'h': 723.219971, u'l': 705.3900150000001, u'o': 711.789978, u'v': 3015700.0, u'_id': {u'dt': 20160210, u'sym': u'GOOGL'}}
 ```
 
 
@@ -28,28 +27,22 @@ df.SPY.plot()
 plt.savefig('mongo_01.png')
 ```
 
-
 ```python
 import simple
-df1 = simple.get("MCD")
-df2 = simple.get_multi(['MCD','CMG'])
+df1 = simple.get("AMZN")
+df2 = simple.get_multi(['AMZN','GOOGL'])
 ```
 
 
 ```python
-q = {"$query" :{"_id.sym": 'DDD'},"$orderby":{"_id.dt" : -1}}
+q = {"$query" :{"_id.sym": 'GOOGL'},"$orderby":{"_id.dt" : -1}}
 ts = db.tickers.find(q).limit(1)
 last_date_in_db = int(ts[0]['_id']['dt'])
 print last_date_in_db
 ```
 
 ```text
-20160125
-```
-
-```python
-q = {"$query" :{"_id.sym": 'DDD'} }
-ts = list(db.tickers.find(q).sort({"_id.dt": -1}).limit(1))
+20160511
 ```
 
 ```python
@@ -78,22 +71,28 @@ print db.tickers.count()
 ```
 
 ```python
-#ts = db.tickers.find( {"_id.sym": "DDD", "_id.dt": {"$gt" : 20070101 }} ).limit(10)
-ts = db.tickers.find( {"_id.sym": "OFDP/FUTURE_SI1", "_id.dt": {"$gt" : 20070101 }} ).limit(10)
+q = {"$query" : {"_id.sym": "CL", "_id.market": "CME", "_id.yearmonth": "2016Z" } }
+ts = db.tickers.find(q).limit(7)
 for t in ts: print t
 ```
 
 ```text
-{u'Volume': 3486.0, u'Open Interest': 60681.0, u'High': 13.285, u'Settle': 13.27, u'Low': 12.965, u'_id': {u'dt': 20070102, u'sym': u'OFDP/FUTURE_SI1'}, u'Open': 12.965}
-{u'Volume': 289.0, u'Open Interest': 331.0, u'High': 12.555, u'Settle': 12.555, u'Low': 12.555, u'_id': {u'dt': 20070103, u'sym': u'OFDP/FUTURE_SI1'}, u'Open': 12.555}
-{u'Volume': 48.0, u'Open Interest': 88.0, u'High': 12.73, u'Settle': 12.73, u'Low': 12.73, u'_id': {u'dt': 20070104, u'sym': u'OFDP/FUTURE_SI1'}, u'Open': 12.73}
-{u'Volume': 32.0, u'Open Interest': 115.0, u'High': 12.13, u'Settle': 12.13, u'Low': 12.13, u'_id': {u'dt': 20070105, u'sym': u'OFDP/FUTURE_SI1'}, u'Open': 12.13}
-{u'Volume': 116.0, u'Open Interest': 116.0, u'High': 12.26, u'Settle': 12.26, u'Low': 12.25, u'_id': {u'dt': 20070108, u'sym': u'OFDP/FUTURE_SI1'}, u'Open': 12.25}
-{u'Volume': 2.0, u'Open Interest': 3.0, u'High': 12.5, u'Settle': 12.5, u'Low': 12.2, u'_id': {u'dt': 20070109, u'sym': u'OFDP/FUTURE_SI1'}, u'Open': 12.2}
-{u'Volume': 2.0, u'Open Interest': 3.0, u'High': 12.35, u'Settle': 12.35, u'Low': 12.35, u'_id': {u'dt': 20070110, u'sym': u'OFDP/FUTURE_SI1'}, u'Open': 12.35}
-{u'Volume': 80.0, u'Open Interest': 83.0, u'High': 12.375, u'Settle': 12.375, u'Low': 12.375, u'_id': {u'dt': 20070111, u'sym': u'OFDP/FUTURE_SI1'}, u'Open': 12.375}
-{u'Volume': 15.0, u'Open Interest': 96.0, u'High': 12.8, u'Settle': 12.8, u'Low': 12.8, u'_id': {u'dt': 20070112, u'sym': u'OFDP/FUTURE_SI1'}, u'Open': 12.8}
-{u'Volume': 1369.0, u'Open Interest': 57042.0, u'High': 13.035, u'Settle': 12.98, u'Low': 12.875, u'_id': {u'dt': 20070115, u'sym': u'OFDP/FUTURE_SI1'}, u'Open': 12.905}
+{u'oi': 215671.0, u'la': 48.58, u'h': 48.97, u'l': 46.56, u'o': 47.2, u's': 48.84, u'v': 85063.0, u'_id': {u'sym': u'CL', u'month': u'Z', u'yearmonth': u'2016Z', u'year': 2016, u'dt': 20160511, u'market': u'CME'}}
+{u'oi': 212710.0, u'la': 47.16, u'h': 47.36, u'l': 45.53, u'o': 45.67, u's': 47.28, u'v': 66475.0, u'_id': {u'sym': u'CL', u'month': u'Z', u'yearmonth': u'2016Z', u'year': 2016, u'dt': 20160510, u'market': u'CME'}}
+{u'oi': 208807.0, u'la': 45.67, u'h': 47.94, u'l': 45.63, u'o': 47.4, u's': 45.8, u'v': 78120.0, u'_id': {u'sym': u'CL', u'month': u'Z', u'yearmonth': u'2016Z', u'year': 2016, u'dt': 20160509, u'market': u'CME'}}
+{u'oi': 208912.0, u'la': 46.97, u'h': 47.52, u'l': 45.83, u'o': 46.71, u's': 47.07, u'v': 49713.0, u'_id': {u'sym': u'CL', u'month': u'Z', u'yearmonth': u'2016Z', u'year': 2016, u'dt': 20160506, u'market': u'CME'}}
+{u'oi': 208743.0, u'la': 46.68, u'h': 48.1, u'l': 46.21, u'o': 46.46, u's': 46.55, u'v': 71133.0, u'_id': {u'sym': u'CL', u'month': u'Z', u'yearmonth': u'2016Z', u'year': 2016, u'dt': 20160505, u'market': u'CME'}}
+{u'oi': 207160.0, u'la': 46.44, u'h': 47.22, u'l': 45.7, u'o': 46.45, u's': 46.15, u'v': 69608.0, u'_id': {u'sym': u'CL', u'month': u'Z', u'yearmonth': u'2016Z', u'year': 2016, u'dt': 20160504, u'market': u'CME'}}
+{u'oi': 203387.0, u'la': 46.54, u'h': 47.55, u'l': 45.98, u'o': 47.09, u's': 46.29, u'v': 52203.0, u'_id': {u'sym': u'CL', u'month': u'Z', u'yearmonth': u'2016Z', u'year': 2016, u'dt': 20160503, u'market': u'CME'}}
+```
+
+```python
+import sys; sys.path.append(".."); import futures
+print futures.last_date_in_contract("CL", "CME", "F", 2016, db)
+```
+
+```text
+20151221
 ```
 
 ```python

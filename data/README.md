@@ -120,13 +120,15 @@ db.tickers.getIndexes()
 A simple index
 
 ```
-db.tickers.create_index("_id")
+db.tickers.createIndex("_id")
 ```
 
-For a number of selected columns (actually the one below is mandatory for futures.py)
+For a number of selected columns (actually the one below is mandatory
+for futures.py and the second one for simple.py)
 
 ```
 db.tickers.createIndex( { "_id.sym": 1, "_id.market": 1, "_id.month": -1, "_id.year": -1, "_id.dt": -1 } )
+db.tickers.createIndex( { "_id.sym": 1, "_id.dt": -1 } )
 ```
 
 To check indexing is working properly
