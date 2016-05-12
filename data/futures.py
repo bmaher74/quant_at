@@ -27,12 +27,12 @@ def get(market, sym, month, year, dt, db):
     yearmonth = "%d%s" % (year,month)
     q = {"$query" :{"_id": {"sym": sym, "market": market, "month": month,
                             "year": year, "yearmonth": yearmonth, "dt": dt }} }
-    res = list(db.tickers.find( q ))
+    res = list(db.futures.find( q ))
     return res
 
 def last_contract(sym, market, db):
     q = { "$query" : {"_id.sym": sym, "_id.market": market}, "$orderby":{"_id.yearmonth" : -1} }
-    res = db.tickers.find(q).limit(1)    
+    res = db.futures.find(q).limit(1)    
     return list(res) 
 
 def existing_nonexpired_contracts(sym, market, db, today):
@@ -41,7 +41,7 @@ def existing_nonexpired_contracts(sym, market, db, today):
                       "_id.yearmonth": {"$gte": yearmonth } }
     }
     res = {}
-    for x in db.tickers.find(q): res[(x['_id']['year'],x['_id']['month'])]=1
+    for x in db.futures.find(q): res[(x['_id']['year'],x['_id']['month'])]=1
     return res.keys()
 
 def last_date_in_contract(sym, market, month, year, db):
@@ -49,7 +49,7 @@ def last_date_in_contract(sym, market, month, year, db):
                       "_id.month": month, "_id.year": year},
           "$orderby":{"_id.dt" : -1}          
     }
-    res = db.tickers.find(q).limit(1)
+    res = db.futures.find(q).limit(1)
     res = list(res)
     if len(res) > 0: return res[0]['_id']['dt']
 
@@ -69,7 +69,7 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
     today_month,today_year = today().month, today().year
     
     connection = MongoClient()
-    tickers = connection[db].tickers
+    futures = connection[db].futures
 
     work_items = []
         
@@ -116,7 +116,7 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
                            "oi": srow[1][oicol]
                 }
 
-                tickers.save(new_row)
+                futures.save(new_row)
 
         except Quandl.Quandl.DatasetNotFound:
             print "No dataset"

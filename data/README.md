@@ -73,24 +73,24 @@ df = simple.get_multi(['DJIA','GOOG'])
 
 This returns a Pandas dataframe which can be processes, plotted.
 
-A simple query from mongo shell to see all tickers
+A simple query from mongo shell to see all futures
 
 ```
 use simple
-db.tickers.count()
+db.futures.count()
 ```
 
-Show a certain amount of tickers
+Show a certain amount of futures
 
 ```
-db.tickers.find().limit(10)
+db.futures.find().limit(10)
 ```
 
 Show all records for a symbol and market
 
 ```
-db.tickers.find({"_id.sym": "CL", "_id.market": "CME"})
-db.tickers.find({"_id.sym": "CL", "_id.market": "CME"}).sort({ "_id.month": 1 })
+db.futures.find({"_id.sym": "CL", "_id.market": "CME"})
+db.futures.find({"_id.sym": "CL", "_id.market": "CME"}).sort({ "_id.month": 1 })
 ```
 
 To see all earnings announcements for a particular date, use
@@ -114,27 +114,27 @@ In the case of composite Ids, indexes might not be created properly in
 MongoDB. Show indexes (on mongoshell)
 
 ```
-db.tickers.getIndexes()
+db.futures.getIndexes()
 ```
 
 A simple index
 
 ```
-db.tickers.createIndex("_id")
+db.futures.createIndex("_id")
 ```
 
 For a number of selected columns (actually the one below is mandatory
 for futures.py and the second one for simple.py)
 
 ```
-db.tickers.createIndex( { "_id.sym": 1, "_id.market": 1, "_id.month": -1, "_id.year": -1, "_id.dt": -1 } )
-db.tickers.createIndex( { "_id.sym": 1, "_id.dt": -1 } )
+db.futures.createIndex( { "_id.sym": 1, "_id.market": 1, "_id.month": -1, "_id.year": -1, "_id.dt": -1 } )
+db.futures.createIndex( { "_id.sym": 1, "_id.dt": -1 } )
 ```
 
 To check indexing is working properly
 
 ```
-db.tickers.find( {"_id.sym": "AMZN", "_id.dt": 20070101 } ).limit(1).explain()
+db.futures.find( {"_id.sym": "AMZN", "_id.dt": 20070101 } ).limit(1).explain()
 ```
 
 Drop database
