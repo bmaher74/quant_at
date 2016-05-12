@@ -120,7 +120,7 @@ db.tickers.create_index("_id")
 To check indexing is working properly
 
 ```
-print db.tickers.find( {"_id.sym": "DDD", "_id.dt": 20070101 } ).limit(1).explain()
+print db.tickers.find( {"_id.sym": "AMZN", "_id.dt": 20070101 } ).limit(1).explain()
 ```
 
 Drop database

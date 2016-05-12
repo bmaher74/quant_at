@@ -204,9 +204,9 @@ if __name__ == "__main__":
     
     f = '%(asctime)-15s: %(message)s'
     if len(sys.argv) == 3:
-        logging.basicConfig(filename='%s/stocks-%d.log' % (os.environ['TEMP'],int(sys.argv[1])),level=logging.DEBUG,format=f)        
+        logging.basicConfig(filename='%s/simple-%d.log' % (os.environ['TEMP'],int(sys.argv[1])),level=logging.DEBUG,format=f)        
         download_data(int(sys.argv[1]),int(sys.argv[2]))
     else:
-        logging.basicConfig(filename='%s/stocks.log' % os.environ['TEMP'],level=logging.DEBUG, format=f)
+        logging.basicConfig(filename='%s/simple.log' % os.environ['TEMP'],level=logging.DEBUG, format=f)
         download_data()
         
