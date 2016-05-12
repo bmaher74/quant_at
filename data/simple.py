@@ -5,11 +5,14 @@ from pandas_datareader import data, wb
 import numpy as np, sys
 from memo import *
 
-@memo                                    
+@memo # so that we dont constantly read the .quand file
 def get_quandl_auth():
-    f = '.quandl'
-    if not os.path.isfile(f): print '%s must exist\n' % f; exit(1)
-    return open(f).read()
+    fname = '%s/.quandl' % os.environ['HOME']
+    if not os.path.isfile(fname):
+        print 'Please create a %s file ' % fname
+        exit()
+    auth = open(fname).read()
+    return auth
 
 def web_load(symbol, backend, start, end):
     """
@@ -60,9 +63,6 @@ def do_download(items):
     beginning_of_time=get_beginning_of_time()
     today, today_int = get_today()
 
-    backend = "yahoo"
-    #backend = "google"
-
     logging.debug ("%d items" % len(items))
     for market,symbol,name in items:
         
@@ -84,7 +84,7 @@ def do_download(items):
                 new_row = {"_id": {"sym": symbol, "dt": dt },"a": float(srow[1])}
                 tickers.save(new_row)
 
-        elif market == "nasdaq" or market == "nyse" or market =="amex" or market == "etfs" :
+        elif market == "yahoo" :
             start = beginning_of_time; end = today            
             last_date = get_last_date_in_db(symbol,db,today)
             logging.debug('last %s' % last_date)
@@ -96,7 +96,7 @@ def do_download(items):
             if last_date: start = last_date            
             logging.debug("" + repr(start) + " " + repr(end))
 
-            s = web_load(symbol, backend, start, end)
+            s = web_load(symbol, market, start, end)
 
             # symbol could not be found
             if 'DataFrame' not in str(type(s)): continue
@@ -125,11 +125,9 @@ def download_data(ith_chunk=0, no_chunks=1,base_dir="."):
     come from a list of all available stock, etf symbols
     """
     res = []
-    for f in glob.glob(base_dir + '/data/*.csv'):
-        market = f.replace(base_dir + "/data/","").replace(".csv","")
-        df = pd.read_csv(f)
-        for line in df.iterrows():
-            res.append((market, line[1].Symbol, line[1].Name))
+    df = pd.read_csv("./data/simple.csv")
+    for line in df.iterrows():
+        res.append((line[1].Engine, line[1].Symbol, line[1].Name))
 
 
     random.seed(0)
@@ -205,9 +203,9 @@ if __name__ == "__main__":
     
     f = '%(asctime)-15s: %(message)s'
     if len(sys.argv) == 3:
-        logging.basicConfig(filename='/tmp/stocks-%d.log' % int(sys.argv[1]),level=logging.DEBUG,format=f)        
+        logging.basicConfig(filename='%s/stocks-%d.log' % (os.environ['TEMP'],int(sys.argv[1])),level=logging.DEBUG,format=f)        
         download_data(int(sys.argv[1]),int(sys.argv[2]))
     else:
-        logging.basicConfig(filename='/tmp/stocks.log',level=logging.DEBUG, format=f)
+        logging.basicConfig(filename='%s/stocks.log' % os.environ['TEMP'],level=logging.DEBUG, format=f)
         download_data()
         
