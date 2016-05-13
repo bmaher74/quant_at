@@ -143,15 +143,15 @@ To check indexing is working properly
 db.futures.find( {"_id.sym": "AMZN", "_id.dt": 20070101 } ).limit(1).explain()
 ```
 
+This should say something about BTrees, and indicate the table is not
+fully scanned, if the index is not there.
+
 Drop database
 
 ```
 use findb
 db.dropDatabase()
 ```
-
-This should say something about BTrees, and indicate the table is not
-fully scanned. 
 
 [1]: https://github.com/burakbayramli/kod/tree/master/dand
 
