@@ -34,8 +34,8 @@ it (no newlines) under your home directory.
 ## Usage
 
 Simplest usage for mass download is `python simple.py`. This will read
-all symbols from under `data` and start downloading them. Same for
-`python futures.py`.
+all symbols from under `data/simple.csv` and start downloading
+them. Same for `python futures.py`.
 
 For parallel execution, we provided a chunking ability [TBD],
 
@@ -57,6 +57,12 @@ parallel inserts, and since we are dividing the symbol list
 before handing it over to a processor, no two processes can insert or
 update on the same unique id. 
 
+For futures
+
+```
+python futures.py
+```
+
 For research, data exploration purposes, there is a utility
 function. To see all data for symbol DIJA,
 
@@ -76,7 +82,7 @@ This returns a Pandas dataframe which can be processes, plotted.
 A simple query from mongo shell to see all futures
 
 ```
-use simple
+use futures
 db.futures.count()
 ```
 
