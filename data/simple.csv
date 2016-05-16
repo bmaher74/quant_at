@@ -1,23 +1,23 @@
 Symbol,Engine,Name
 IBB,yahoo,iShares Nasdaq Biotechnology Index Fund
 SPY,yahoo,Standart and Poor
+XME,yahoo,SPDR S&P Metals & Mining ETF
 GLD,yahoo,SPDR Gold Trust
-GOOGL,yahoo,Alphabet Inc
-FB,yahoo,Facebook Inc
-NFLX,yahoo,Netflix
-AMZN,yahoo,Amazon
+BNO,yahoo,United States Brent Oil Fund
+DBA,yahoo,PowerShares DB Agriculture Fund
+IYH,yahoo,iShares U.S. Healthcare ETF
 DEXUSEU,fred,U.S. / Euro Foreign Exchange Rate
 CPIAUCSL,fred,Consumer Price Index for All Urban Consumers: All Items
 INDPRO,fred,Industrial Production Index
 DGS10,fred,10-Year Treasury Constant Maturity Rate
 UNRATE,fred,Civilian Unemployment Rate
-PAYEMS,fred,All Employees: Total Nonfarm Payrolls
-IC4WSA,fred,4-Week Moving Average of Initial Claims
-DJIA,fred,Dow Jones Industrial Average
 LNS11300060,fred,Civilian Labor Force Participation Rate: 25 to 54 years
 T10Y3M,fred,10-Year Treasury Constant Maturity Minus 3-Month Treasury Constant Maturity
-DCOILBRENTEU,fred,Crude Oil Prices: Brent - Europe; $ per Barrel
 DCOILWTICO,fred,Crude Oil Prices: West Texas Intermediate (WTI)
 IPG211111CN,fred,Industrial Production: Mining: Crude oil
-USALFTOTMDSMEI,fred,Civilian Labor Force: All Persons in the United States
 DFF,fred,Effective Federal Funds Rate
+GOOGL,yahoo,Alphabet Inc
+AMZN,yahoo,Amazon
+FB,yahoo,Facebook Inc
+NFLX,yahoo,Netflix
+DJIA,fred,Dow Jones Industrial Average
