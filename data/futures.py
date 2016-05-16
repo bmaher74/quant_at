@@ -1,5 +1,5 @@
 #
-# Downloads futures contracts for symbols in data/futures.csv
+# Downloads futures contracts for symbols in futures.csv
 #
 import Quandl, os, itertools, sys
 from pymongo import MongoClient
@@ -61,7 +61,7 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
     start_year,end_year=years
     months = ['F', 'G', 'H', 'J', 'K', 'M',
               'N', 'Q', 'U', 'V', 'W', 'Z']
-    futcsv = pd.read_csv("./data/futures.csv")
+    futcsv = pd.read_csv("futures.csv")
     instruments = zip(futcsv.Symbol,futcsv.Market)
 
     str_start = datetime.datetime(start_year-2, 1, 1).strftime('%Y-%m-%d')
