@@ -40,7 +40,7 @@ def insert_hft(df, symbol):
     
 if __name__ == "__main__":
     # hft data
-    hft_symbols = pd.read_csv("./data/hft.dat")
+    hft_symbols = pd.read_csv("hft.csv")
 
     for symbol in list(hft_symbols.Symbols):
         print 'HFT download for ' + symbol

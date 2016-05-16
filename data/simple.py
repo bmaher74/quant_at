@@ -126,7 +126,7 @@ def download_data(ith_chunk=0, no_chunks=1,base_dir="."):
     come from a list of all available stock, etf symbols
     """
     res = []
-    df = pd.read_csv("./data/simple.csv")
+    df = pd.read_csv("simple.csv")
     for line in df.iterrows():
         res.append((line[1].Engine, line[1].Symbol, line[1].Name))
 
