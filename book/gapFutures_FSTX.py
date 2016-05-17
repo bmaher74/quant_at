@@ -17,7 +17,7 @@ ret = ret.dropna()
 cumret=np.cumprod(1+ret)-1
 print 'APR', ((np.prod(1.+ret))**(252./len(ret)))-1
 print 'Sharpe', np.sqrt(252.)*np.mean(ret)/np.std(ret)
-print 'Dusme Kaliciligi', dd.calculateMaxDD(np.array(cumret))
+print 'Drawdown', dd.calculateMaxDD(np.array(cumret))
 
 plt.plot(cumret)
-#plt.show()
+plt.show()
