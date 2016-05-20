@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-# show positions in account
-
 from time import sleep
-
-# LOAD the ib.ext and ib.opt Libraries
 from ib.ext.Contract import Contract
 from ib.opt import ibConnection, message
+import os, sys
+
+# must have acccount no under $HOME/.ib
+__account__ = open("%s/.ib" % os.environ['HOME']).read()
 
 # DEFINE a basic function to capture error messages
 def error_handler(msg):
@@ -18,10 +18,10 @@ def replies_handler(msg):
 # DEFINE a basic function to print the "parsed" server replies for an
 # IB Request of "Portfolio Update" to list an IB portfolio position
 def print_portfolio_position(msg):
-    print "Position:", msg.contract.m_symbol,
-                       msg.position,
-                       msg.marketPrice,
-                       msg.contract.m_currency,
+    print "Position:", msg.contract.m_symbol, \
+                       msg.position,\
+                       msg.marketPrice,\
+                       msg.contract.m_currency,\
                        msg.contract.m_secType
 
 # Main code - adding "if __name__ ==" is not necessary
@@ -43,7 +43,7 @@ ibgw_conChannel.register(print_portfolio_position, 'UpdatePortfolio')
 ibgw_conChannel.register(replies_handler, 'UpdateAccountValue')
 
 # Make client request for AccountUpdates (includes request for Portfolio positions)
-ibgw_conChannel.reqAccountUpdates(1, 'DU401739')
+ibgw_conChannel.reqAccountUpdates(1, __account__)
 
 sleep(5)
 

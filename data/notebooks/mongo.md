@@ -9,6 +9,18 @@ db = connection.findb
 ```
 
 ```python
+import sys; sys.path.append('..')
+import futures
+res = futures.get(market="CME", sym="CL", month="F", year=1984, dt=19831205, db="findb")
+print res
+```
+
+```text
+[{u'oi': 5027.0, u'la': nan, u'h': 29.4, u'l': 29.27, u'o': 29.4, u's': 29.3, u'v': 421.0, u'_id': {u'sym': u'CL', u'month': u'F', u'yearmonth': u'1984F', u'year': 1984, u'dt': 19831205, u'market': u'CME'}}]
+```
+
+
+```python
 q = {"$query" :{"_id.sym": "GOOGL", "_id.dt": 20160210} }
 res = list(db.simple.find(q).limit(1))[0]
 print res

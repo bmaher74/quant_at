@@ -6,6 +6,13 @@ GLD,yahoo,SPDR Gold Trust
 BNO,yahoo,United States Brent Oil Fund
 DBA,yahoo,PowerShares DB Agriculture Fund
 IYH,yahoo,iShares U.S. Healthcare ETF
+GOOGL,yahoo,Alphabet Inc
+AMZN,yahoo,Amazon
+FB,yahoo,Facebook Inc
+NFLX,yahoo,Netflix
+SBUX,yahoo,Starbucks
+NORD,yahoo,Nordstrom
+MSFT,yahoo,Microsoft
 DEXUSEU,fred,U.S. / Euro Foreign Exchange Rate
 CPIAUCSL,fred,Consumer Price Index for All Urban Consumers: All Items
 INDPRO,fred,Industrial Production Index
@@ -16,8 +23,4 @@ T10Y3M,fred,10-Year Treasury Constant Maturity Minus 3-Month Treasury Constant M
 DCOILWTICO,fred,Crude Oil Prices: West Texas Intermediate (WTI)
 IPG211111CN,fred,Industrial Production: Mining: Crude oil
 DFF,fred,Effective Federal Funds Rate
-GOOGL,yahoo,Alphabet Inc
-AMZN,yahoo,Amazon
-FB,yahoo,Facebook Inc
-NFLX,yahoo,Netflix
 DJIA,fred,Dow Jones Industrial Average
