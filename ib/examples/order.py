@@ -10,8 +10,7 @@ def error_handler(msg):
 
 def reply_handler(msg):
     """Handles of server replies"""
-    print "Server Response: %s, %s" % (msg.typeName, msg)
-
+    print "Server Response: %s, %s" % (msg.typeName, msg)    
 
 def create_contract(symbol, sec_type, exch, prim_exch, curr):
     """Create a Contract object defining what will
@@ -49,7 +48,7 @@ if __name__ == "__main__":
     # (The clientId is chosen by us and we will need 
     # separate IDs for both the execution connection and
     # market data connection)
-    tws_conn = Connection.create(port=4002, clientId=1)
+    tws_conn = Connection.create(port=4002, clientId=100)
     tws_conn.connect()
 
     # Assign the error handling function defined above
@@ -65,13 +64,14 @@ if __name__ == "__main__":
     order_id = 1
 
     # Create a contract in GOOG stock via SMART order routing
-    goog_contract = create_contract('GOOG', 'STK', 'SMART', 'SMART', 'USD')
-
+    #contract = create_contract('GOOG', 'STK', 'SMART', 'SMART', 'USD')
     # Go long 100 shares of Google
-    goog_order = create_order('MKT', 100, 'BUY')
+    #order = create_order('MKT', 100, 'BUY')
+    contract = create_contract('GOOG', 'STK', 'SMART', 'SMART', 'USD')
+    order = create_order('MKT', 100, 'SELL')
 
     # Use the connection to the send the order to IB
-    tws_conn.placeOrder(order_id, goog_contract, goog_order)
+    tws_conn.placeOrder(order_id, contract, order)
 
     # Disconnect from TWS
     tws_conn.disconnect()

@@ -13,7 +13,8 @@ def error_handler(msg):
 
 # DEFINE a basic function to print the "raw" server replies
 def replies_handler(msg):
-    print "Server Reply:", msg
+    #print "Server Reply:", msg
+    pass
 
 # DEFINE a basic function to print the "parsed" server replies for an
 # IB Request of "Portfolio Update" to list an IB portfolio position
