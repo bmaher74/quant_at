@@ -11,13 +11,12 @@ AMZN,yahoo,Amazon
 FB,yahoo,Facebook Inc
 NFLX,yahoo,Netflix
 SBUX,yahoo,Starbucks
-NORD,yahoo,Nordstrom
 MSFT,yahoo,Microsoft
 DEXUSEU,fred,U.S. / Euro Foreign Exchange Rate
 CPIAUCSL,fred,Consumer Price Index for All Urban Consumers: All Items
 INDPRO,fred,Industrial Production Index
 DGS10,fred,10-Year Treasury Constant Maturity Rate
-UNRATE,fred,Civilian Unemployment Rate
+DGS2,fred,2-Year Treasury Constant Maturity Rate
 LNS11300060,fred,Civilian Labor Force Participation Rate: 25 to 54 years
 T10Y3M,fred,10-Year Treasury Constant Maturity Minus 3-Month Treasury Constant Maturity
 DCOILWTICO,fred,Crude Oil Prices: West Texas Intermediate (WTI)
