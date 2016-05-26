@@ -1,5 +1,6 @@
-# High freq data, in 5 minute bars for a given stock, for any given
-# day yahoo only gives goes back only a few weeks.
+# High freq data, in 5 minute bars for a given stock, going back a few
+# weeks (yahoo does not allow any more). Data is retrieved and
+# inserted into a mongo database.
 from urllib import urlretrieve
 from pymongo import MongoClient
 import numpy as np, pandas as pd, sys
