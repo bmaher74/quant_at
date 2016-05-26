@@ -3,7 +3,7 @@ import numpy as np
 import simple
 
 #col = 'a'; px = simple.get('IYH')
-col = 'PRICE'; ff = 'c:/Users/burak/Downloads/pysystemtrade/sysdata/legacycsv/LEANHOG_price.csv'
+col = 'PRICE'; ff = 'c:/Users/burak/Downloads/pysystemtrade/sysdata/legacycsv/CRUDE_W_price.csv'
 px = pd.read_csv(ff,parse_dates=True,index_col=0)
 
 lev = 1.
