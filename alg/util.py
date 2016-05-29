@@ -1,10 +1,15 @@
 from scipy.optimize import minimize
-import pandas as pd, random
-import numpy as np
 FLAG_BAD_RETURN=-99999.0
+import numpy as np, random
 import pandas as pd, dd
-import numpy as np 
 
+def ewmac(price, col, Lfast, Lslow):
+    price=price.resample("1B", how="last")
+    fast_ewma = pd.ewma(price, span=Lfast)
+    slow_ewma = pd.ewma(price, span=Lslow)
+    raw_ewmac = fast_ewma - slow_ewma
+    return raw_ewmac[col] / robust_vol_calc(price.diff()).vol
+    
 def crossover(df,col,lev):
     signals = pd.DataFrame(index=df.index) 
     signals['signal'] = 0 
@@ -35,12 +40,9 @@ def vol_equaliser(mean_list, stdev_list):
     if np.all(np.isnan(stdev_list)):
         return (([np.nan]*len(mean_list), [np.nan]*len(stdev_list)))
     avg_stdev=np.nanmean(stdev_list)
-
-    norm_factor=[asset_stdev/avg_stdev for asset_stdev in stdev_list]
-    
+    norm_factor=[asset_stdev/avg_stdev for asset_stdev in stdev_list]    
     norm_means=[mean_list[i]/norm_factor[i] for (i, notUsed) in enumerate(mean_list)]
-    norm_stdev=[stdev_list[i]/norm_factor[i] for (i, notUsed) in enumerate(stdev_list)]
-    
+    norm_stdev=[stdev_list[i]/norm_factor[i] for (i, notUsed) in enumerate(stdev_list)] 
     return (norm_means, norm_stdev)
 
 def apply_with_min_periods(xcol, my_func=np.nanmean, min_periods=0):
@@ -136,7 +138,6 @@ def un_fix_weights(mean_list, weights):
     
     fixed_weights=[_unfixit(xmean, xweight) for (xmean, xweight) in zip(mean_list, weights)]    
     return fixed_weights
-
     
 def optimise( sigma, mean_list):
     
@@ -233,9 +234,3 @@ def robust_vol_calc(x, days=35, min_periods=10, vol_abs_min=0.0000000001, vol_fl
     vol_floored.columns = ["vol"]
     return vol_floored
 
-def ewmac(price, Lfast, Lslow):
-    price=price.resample("1B", how="last")
-    fast_ewma = pd.ewma(price, span=Lfast)
-    slow_ewma = pd.ewma(price, span=Lslow)
-    raw_ewmac = fast_ewma - slow_ewma
-    return raw_ewmac.PRICE / robust_vol_calc(price.diff()).vol
