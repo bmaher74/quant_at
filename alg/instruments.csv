@@ -1,2 +1,8 @@
 instrument,currency,block_formula
+CRUDE_W,USD,(x*1.01-x) * 1000.
 EDOLLAR,USD,(x*1.01 - x) * 0.25 * 1000 * 1000 / 100.
+US5,USD,
+EUROSTX,EUR,
+V2X,EUR,
+MXP,USD,
+CORN,CORN,
