@@ -36,6 +36,7 @@ def fake_today_727():
 
 def init():
     c = MongoClient()
+    c[testdb].futures.drop()
     c[testdb].tickers.drop()
     return c[testdb]
 
@@ -59,6 +60,7 @@ def test_incremental():
     db = init()
     futures.download_data(downloader=fake_download_2,today=fake_today_726,
                           db=testdb, years=(1984,1985))
+    print futures.last_date_in_contract("CL","CME","F", 1984, db)
     assert futures.last_date_in_contract("CL","CME","F", 1984, db) == 19830726    
 
     futures.download_data(downloader=fake_download_3,today=fake_today_727,
@@ -68,4 +70,4 @@ def test_incremental():
 if __name__ == "__main__": 
     test_simple()
     test_incremental()
-    
+    init()
