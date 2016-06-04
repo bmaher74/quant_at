@@ -15,7 +15,7 @@ print daily_vol_target
 ```
 
 ```python
-f = 'c:/Users/burak/Downloads/legacycsv.zip'
+f = 'legacycsv.zip'
 import pandas as pd, zipfile
 dfs = {}; vol = {}
 instruments = ['CRUDE_W','EDOLLAR','US5','EUROSTX','V2X','MXP','CORN']
