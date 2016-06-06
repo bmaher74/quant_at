@@ -18,6 +18,7 @@ INDPRO,fred,Industrial Production Index
 DGS10,fred,10-Year Treasury Constant Maturity Rate
 DGS2,fred,2-Year Treasury Constant Maturity Rate
 LNS11300060,fred,Civilian Labor Force Participation Rate: 25 to 54 years
+LNS11300000,fred,Civilian Labor Force Participation Rate
 T10Y3M,fred,10-Year Treasury Constant Maturity Minus 3-Month Treasury Constant Maturity
 DCOILWTICO,fred,Crude Oil Prices: West Texas Intermediate (WTI)
 IPG211111CN,fred,Industrial Production: Mining: Crude oil
