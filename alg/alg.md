@@ -1,5 +1,4 @@
 
-198
 
 ```python
 my_curr = 'USD'
@@ -28,42 +27,30 @@ with zipfile.ZipFile(f, 'r') as z:
 ```python
 insdf = pd.read_csv('instruments.csv',index_col=0)
 dt = '2014-10-14'
+res = []
+cols = ['ins','price','vol','val_block','vol_block','units']
 for i in instruments:
     price = float(dfs[i].ix[dt])
     v = float(vol[i].ix[dt])
     block_val = price * insdf.ix[i].block_value / 100.
     block_vol = block_val*v
     inst_value_vol =  block_vol*exchange[my_curr][insdf.ix[i].currency]
-    print i, price, v, block_val, block_vol, daily_vol_target / inst_value_vol
+    units = daily_vol_target / inst_value_vol
+    res.append([i, price, v, block_val, block_vol, units])
+print pd.DataFrame(res,columns=cols)
 ```
 
 ```text
-CRUDE_W 85.3 1.2678229074 853.0 1081.45294001 2.88963105501
-EDOLLAR 97.055 0.0563436010408 2426.375 136.710704975 22.8584879331
-US5 117.06250025 0.169944541824 1170.6250025 198.941329697 15.708148753
-EUROSTX 2816.0 1.19173999773 281.6 335.59398336 8.46531592273
-V2X 22.8 2.68975960664 22.8 61.3265190314 46.3243167194
-MXP 0.07175 0.511000548817 358.75 183.321446888 17.0465597618
-CORN 422.75 1.24748688385 211.375 263.687540074 11.8511477604
+       ins       price       vol    val_block    vol_block      units
+0  CRUDE_W    85.30000  1.267823   853.000000  1081.452940   2.889631
+1  EDOLLAR    97.05500  0.056344  2426.375000   136.710705  22.858488
+2      US5   117.06250  0.169945  1170.625002   198.941330  15.708149
+3  EUROSTX  2816.00000  1.191740   281.600000   335.593983   8.465316
+4      V2X    22.80000  2.689760    22.800000    61.326519  46.324317
+5      MXP     0.07175  0.511001   358.750000   183.321447  17.046560
+6     CORN   422.75000  1.247487   211.375000   263.687540  11.851148
 ```
 
-
-
-
-
-
-
-```python
-print 75 * 1.33 * 1000 / 100.
-print 25. * 50.
-print 2500. * 0.5 * 10
-```
-
-```text
-997.5
-1250.0
-12500.0
-```
 
 
 
