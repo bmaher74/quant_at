@@ -93,13 +93,13 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
         for (nonexp_year,nonexp_month) in existing_nonexpired_contracts(sym, market, connection[db], today()):
             last_con = last_date_in_contract(sym,market,nonexp_month,nonexp_year,connection[db])
             last_con = pd.to_datetime(str(last_con), format='%Y%m%d')
-            #print 'nonexpired', last_con, today()
+            logging.debug("last date contract %s" % last_con)
             if today() > last_con: work_items.append([market, sym, nonexp_month, nonexp_year, last_con.strftime('%Y-%m-%d')])
 
     for market, sym, month, year, work_start in work_items:
         contract = "%s/%s%s%d" % (market,sym,month,year)
         try:
-            print contract
+            logging.debug(contract)
             df = downloader(contract,work_start,str_end)
             # sometimes oi is in Prev Days Open Interest sometimes just Open Interest
             # use whichever is there
@@ -119,7 +119,7 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
                 futures.save(new_row)
 
         except Quandl.Quandl.DatasetNotFound:
-            print "No dataset"
+            logging.error("No dataset")
                     
 if __name__ == "__main__":
     
