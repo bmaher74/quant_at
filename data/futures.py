@@ -38,7 +38,9 @@ def get_prices(market, sym, month, year, db):
     db = connection[db]
     res = []
     yearmonth = "%d%s" % (year,month)
-    q = {"$query" : {"_id.sym": sym, "_id.market": market, "_id.yearmonth": yearmonth } }
+    q = {"$query" : {"_id.sym": sym, "_id.market": market, "_id.yearmonth": yearmonth },
+         "$orderby":{"_id.dt" : 1} 
+    }
     res = list(db.futures.find( q ))
     return res
 
