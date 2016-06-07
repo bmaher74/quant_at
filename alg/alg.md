@@ -52,19 +52,37 @@ print pd.DataFrame(res,columns=cols)
 ```
 
 
+
 ```python
+# 20150123
 import sys; sys.path.append('../data')
 import futures
-res = futures.get(market="EUREX", sym="FESX", month="H", year=2015, dt=20150123, db="findb")
-print res
+res = futures.get_prices(market="EUREX", sym="FESX", month="H", year=2015,  db="findb")
+res = [x['s'] for x in res if x['_id']['dt'] < 20150123]
+df = pd.DataFrame(res)
+df['d'] = df.diff()
+df['d1'] = df.d.shift(1)
+print 2 * np.sqrt(-1*df.d.cov(df.d1))
 ```
 
 ```text
-[]
+26.7176250667
 ```
 
+```python
+import roll
+rm = roll.RollModel()
+res = np.array(res)
+for samp in res:
+    rm.addSample( samp )
+print "uncertainty in measured fair (closing) price= ", 2*rm.get_c()
+print "uncertainty in fair price (overnight move) dynamics= ", rm.get_sigmau2()
+```
 
-
+```text
+uncertainty in measured fair (closing) price=  26.6274319871
+uncertainty in fair price (overnight move) dynamics=  1269.44993289
+```
 
 
 

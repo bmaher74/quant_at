@@ -30,6 +30,20 @@ def get(market, sym, month, year, dt, db):
     res = list(db.futures.find( q ))
     return res
 
+def get_prices(market, sym, month, year, db):
+    """
+    Returns all data for symbol in a pandas dataframe
+    """
+    connection = MongoClient()
+    db = connection[db]
+    res = []
+    yearmonth = "%d%s" % (year,month)
+    q = {"$query" : {"_id.sym": sym, "_id.market": market, "_id.yearmonth": yearmonth } }
+    res = list(db.futures.find( q ))
+    return res
+
+
+
 def last_contract(sym, market, db):
     q = { "$query" : {"_id.sym": sym, "_id.market": market}, "$orderby":{"_id.yearmonth" : -1} }
     res = db.futures.find(q).limit(1)    
@@ -105,14 +119,17 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
             # use whichever is there
             oicol = [x for x in df.columns if 'Open Interest' in x][0]
             yearmonth = "%d%s" % (year,month)
+            logging.debug("%d records" % len(df))
             for srow in df.iterrows():
                 dt = str(srow[0])[0:10]
                 dt = int(dt.replace("-",""))
                 new_row = {"_id": {"sym": sym, "market": market, "month": month,
                                    "year": year, "yearmonth": yearmonth, "dt": dt },
-                           "o": srow[1].Open, "h": srow[1].High,
-                           "l": srow[1].Low, "la": srow[1].Last,
-                           "s": srow[1].Settle, "v": srow[1].Volume,
+                           "o": srow[1].Open,
+                           "h": srow[1].High,
+                           "l": srow[1].Low,
+                           "s": srow[1].Settle,
+                           "v": srow[1].Volume,
                            "oi": srow[1][oicol]
                 }
 
