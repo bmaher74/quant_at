@@ -76,12 +76,10 @@ res = np.array(res)
 for samp in res:
     rm.addSample( samp )
 print "uncertainty in measured fair (closing) price= ", 2*rm.get_c()
-print "uncertainty in fair price (overnight move) dynamics= ", rm.get_sigmau2()
 ```
 
 ```text
 uncertainty in measured fair (closing) price=  26.6274319871
-uncertainty in fair price (overnight move) dynamics=  1269.44993289
 ```
 
 
