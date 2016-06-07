@@ -56,5 +56,11 @@ My email address is skorsky12 %at% gmail.com
 Regards,
 
 
+```python
+df.spread.fillna(0).mean()
+```
 
+```text
+Out[1]: 11.50900756033092
+```
 
