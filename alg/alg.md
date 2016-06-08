@@ -36,7 +36,7 @@ for i in instruments:
     block_vol = block_val*v
     inst_value_vol =  block_vol*exchange[my_curr][insdf.ix[i].currency]
     units = daily_vol_target / inst_value_vol
-    exec_cost = insdf.ix[i].slippage / price * 100 * block_vol 
+    exec_cost = insdf.ix[i].slippage / price * 100 * block_val
     res.append([i, price, v, block_val, block_vol, units, exec_cost])
 print pd.DataFrame(res,columns=cols)
 ```
@@ -52,30 +52,35 @@ print pd.DataFrame(res,columns=cols)
 6     CORN   422.75000  1.247487   211.375000   263.687540  11.851148   
 
    exec_cost_per_block  
-0            18.425100  
-1             0.352148  
-2             0.679778  
-3             5.958700  
-4             6.858887  
-5             2.955372  
-6             7.796793  
+0            14.532865  
+1             6.250000  
+2             4.000000  
+3             5.000000  
+4             2.550000  
+5             5.783500  
+6             6.250000  
 ```
 
 ```python
-0.5 / 3370 * 100
+2 * 8 / 506 * 16.
 ```
 
 ```text
-Out[1]: 0.014836795252225518
+Out[1]: 0.0
 ```
 
-```python
-0.0148 * 337
-```
 
-```text
-Out[1]: 4.9876000000000005
-```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
