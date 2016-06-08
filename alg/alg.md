@@ -52,21 +52,6 @@ print pd.DataFrame(res,columns=cols)
 ```
 
 
-```python
-import pandas as pd
-res = futures.get_prices(market="EUREX", sym="FESX", month="H", year=2015, db="findb")
-date = [x['_id']['dt'] for x in res]
-lows = [x['l'] for x in res]
-highs = [x['h'] for x in res]
-settle = [x['s'] for x in res]
-df = pd.DataFrame([date, lows, highs, settle]).T
-df.columns = ['date','Lt','Ht','settle']
-df['Lt1'] = df.Lt.shift(-1)
-df['Ht1'] = df.Ht.shift(-1)
-print df.head()
-df.to_csv('fesx.csv',index=None)
-```
-
 
 
 
