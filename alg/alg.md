@@ -28,7 +28,7 @@ with zipfile.ZipFile(f, 'r') as z:
 insdf = pd.read_csv('instruments.csv',index_col=0)
 dt = '2014-10-14'
 res = []
-cols = ['ins','price','vol','val_block','vol_block','units']
+cols = ['ins','price','vol','val_block','vol_block','units','exec_cost_per_block']
 for i in instruments:
     price = float(dfs[i].ix[dt])
     v = float(vol[i].ix[dt])
@@ -36,19 +36,29 @@ for i in instruments:
     block_vol = block_val*v
     inst_value_vol =  block_vol*exchange[my_curr][insdf.ix[i].currency]
     units = daily_vol_target / inst_value_vol
-    res.append([i, price, v, block_val, block_vol, units])
+    exec_cost = insdf.ix[i].slippage / price * 100 * block_vol 
+    res.append([i, price, v, block_val, block_vol, units, exec_cost])
 print pd.DataFrame(res,columns=cols)
 ```
 
 ```text
-       ins       price       vol    val_block    vol_block      units
-0  CRUDE_W    85.30000  1.267823   853.000000  1081.452940   2.889631
-1  EDOLLAR    97.05500  0.056344  2426.375000   136.710705  22.858488
-2      US5   117.06250  0.169945  1170.625002   198.941330  15.708149
-3  EUROSTX  2816.00000  1.191740   281.600000   335.593983   8.465316
-4      V2X    22.80000  2.689760    22.800000    61.326519  46.324317
-5      MXP     0.07175  0.511001   358.750000   183.321447  17.046560
-6     CORN   422.75000  1.247487   211.375000   263.687540  11.851148
+       ins       price       vol    val_block    vol_block      units  \
+0  CRUDE_W    85.30000  1.267823   853.000000  1081.452940   2.889631   
+1  EDOLLAR    97.05500  0.056344  2426.375000   136.710705  22.858488   
+2      US5   117.06250  0.169945  1170.625002   198.941330  15.708149   
+3  EUROSTX  2816.00000  1.191740   281.600000   335.593983   8.465316   
+4      V2X    22.80000  2.689760    22.800000    61.326519  46.324317   
+5      MXP     0.07175  0.511001   358.750000   183.321447  17.046560   
+6     CORN   422.75000  1.247487   211.375000   263.687540  11.851148   
+
+   exec_cost_per_block  
+0            18.425100  
+1             0.352148  
+2             0.679778  
+3             5.958700  
+4             6.858887  
+5             2.955372  
+6             7.796793  
 ```
 
 ```python
@@ -59,7 +69,13 @@ print pd.DataFrame(res,columns=cols)
 Out[1]: 0.014836795252225518
 ```
 
+```python
+0.0148 * 337
+```
 
+```text
+Out[1]: 4.9876000000000005
+```
 
 
 
