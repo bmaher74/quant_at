@@ -156,7 +156,8 @@ def stitch(dfs, price_col, dates):
     """
     Stitches together a list of contracts. dfs should contain a list of dataframe,
     price_col is the column name to be combined, and dates is a list of
-    stitch dates. 
+    stitch dates. The stitching method is called the Panama method - more
+    details can be found at http://qoppac.blogspot.de/2015/05/systems-building-futures-rolling.html
     """
     
     res = []
