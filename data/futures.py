@@ -143,7 +143,6 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
         except Quandl.Quandl.DatasetNotFound:
             logging.error("No dataset")
 
-
 def shift(lst,empty):
     res = lst[:]
     temp = res[0]
@@ -153,11 +152,12 @@ def shift(lst,empty):
     return res
     
 def stitch(dfs, price_col, dates):
-    """
-    Stitches together a list of contracts. dfs should contain a list of dataframe,
-    price_col is the column name to be combined, and dates is a list of
-    stitch dates. The stitching method is called the Panama method - more
-    details can be found at http://qoppac.blogspot.de/2015/05/systems-building-futures-rolling.html
+    """Stitches together a list of contract prices. dfs should contain a
+    list of dataframe objects, price_col is the column name to be
+    combined, and dates is a list of stitch dates. The stitching
+    method is called the Panama method - more details can be found at
+    http://qoppac.blogspot.de/2015/05/systems-building-futures-rolling.html
+
     """
     
     res = []
@@ -177,7 +177,6 @@ def stitch(dfs, price_col, dates):
         tmp = dfs[i][(dfs[i].index > dates[i]) & (dfs[i].index <= dates_end[i])]
         res.append(tmp.Settle)
     return pd.concat(res)
-
 
             
 if __name__ == "__main__":
