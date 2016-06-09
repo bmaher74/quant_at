@@ -155,20 +155,20 @@ def shift(lst,empty):
 def stitch(dfs, dates):
     res = []
 
-    datess = list(reversed(dates))
-    dfss = list(reversed(dfs))    
-    dfss_pair = shift(dfss,pd.DataFrame())
+    datesr = list(reversed(dates))
+    dfsr = list(reversed(dfs))    
+    dfsr_pair = shift(dfsr,pd.DataFrame())
         
-    for i,v in enumerate(datess):
-        tmp1=float(dfss[i].ix[v,'Settle'])
-        tmp2=float(dfss_pair[i].ix[v,'Settle'])
-        dfss_pair[i].loc[:,'Settle'] = dfss_pair[i].Settle + tmp1-tmp2
+    for i,v in enumerate(datesr):
+        tmp1=float(dfsr[i].ix[v,'Settle'])
+        tmp2=float(dfsr_pair[i].ix[v,'Settle'])
+        dfsr_pair[i].loc[:,'Settle'] = dfsr_pair[i].Settle + tmp1-tmp2
 
     dates.insert(0,'1900-01-01')
-    datess = shift(dates,'2200-01-01')
+    dates_end = shift(dates,'2200-01-01')
     
     for i,v in enumerate(dates):
-        tmp = dfs[i][(dfs[i].index > dates[i]) & (dfs[i].index <= datess[i])]
+        tmp = dfs[i][(dfs[i].index > dates[i]) & (dfs[i].index <= dates_end[i])]
         res.append(tmp.Settle)
     return pd.concat(res)
 
