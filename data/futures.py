@@ -80,7 +80,7 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
     start_year,end_year=years
     months = ['F', 'G', 'H', 'J', 'K', 'M',
               'N', 'Q', 'U', 'V', 'W', 'Z']
-    futcsv = pd.read_csv("futures.csv")
+    futcsv = pd.read_csv('futures.csv')
     instruments = zip(futcsv.Symbol,futcsv.Market)
 
     str_start = datetime.datetime(start_year-2, 1, 1).strftime('%Y-%m-%d')
@@ -142,7 +142,38 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
 
         except Quandl.Quandl.DatasetNotFound:
             logging.error("No dataset")
-                    
+
+
+def shift(lst,empty):
+    res = lst[:]
+    temp = res[0]
+    for index in range(len(lst) - 1): res[index] = res[index + 1]         
+    res[index + 1] = temp
+    res[-1] = empty
+    return res
+    
+def stitch(dfs, dates):
+    res = []
+
+    datess = list(reversed(dates))
+    dfss = list(reversed(dfs))    
+    dfss_pair = shift(dfss,pd.DataFrame())
+        
+    for i,v in enumerate(datess):
+        tmp1=float(dfss[i].ix[v,'Settle'])
+        tmp2=float(dfss_pair[i].ix[v,'Settle'])
+        dfss_pair[i].loc[:,'Settle'] = dfss_pair[i].Settle + tmp1-tmp2
+
+    dates.insert(0,'1900-01-01')
+    datess = shift(dates,'2200-01-01')
+    
+    for i,v in enumerate(dates):
+        tmp = dfs[i][(dfs[i].index > dates[i]) & (dfs[i].index <= datess[i])]
+        res.append(tmp.Settle)
+    return pd.concat(res)
+
+
+            
 if __name__ == "__main__":
     
     f = '%(asctime)-15s: %(message)s'

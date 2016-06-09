@@ -1,5 +1,6 @@
 import os, futures, pandas as pd, datetime
 from pymongo import MongoClient
+import numpy as np
 import Quandl
 
 testdb = "fakedb"
@@ -66,8 +67,20 @@ def test_incremental():
     futures.download_data(downloader=fake_download_3,today=fake_today_727,
                           db=testdb, years=(1984,1985))
     assert futures.last_date_in_contract("CL","CME","F", 1984, db) == 19830727
-    
-if __name__ == "__main__": 
+
+def test_stitch():
+    stitch_points = ['2015-03-13','2015-04-15']
+    dfs = []
+    dfs.append(pd.read_csv('test/data_stitch/vixmay.csv',index_col=0,parse_dates=True))
+    dfs.append(pd.read_csv('test/data_stitch/vixjune.csv',index_col=0,parse_dates=True))
+    dfs.append(pd.read_csv('test/data_stitch/vixjuly.csv',index_col=0,parse_dates=True))
+    res = futures.stitch(dfs,stitch_points)
+    exp = pd.read_csv('test/data_stitch/stitch_expected.csv',index_col=0,parse_dates=True)
+    exp['res'] = res
+    assert np.sum(exp.res-exp.Settle) < 1
+            
+if __name__ == "__main__":    
     test_simple()
     test_incremental()
-    init()
+    test_stitch()
+    
