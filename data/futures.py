@@ -152,17 +152,19 @@ def shift(lst,empty):
     res[-1] = empty
     return res
     
-def stitch(dfs, dates):
+def stitch(dfs, price_col, dates):
+    """
+    Stitches together a list of contracts
+    """
     res = []
-
     datesr = list(reversed(dates))
     dfsr = list(reversed(dfs))    
     dfsr_pair = shift(dfsr,pd.DataFrame())
         
     for i,v in enumerate(datesr):
-        tmp1=float(dfsr[i].ix[v,'Settle'])
-        tmp2=float(dfsr_pair[i].ix[v,'Settle'])
-        dfsr_pair[i].loc[:,'Settle'] = dfsr_pair[i].Settle + tmp1-tmp2
+        tmp1=float(dfsr[i].ix[v,price_col])
+        tmp2=float(dfsr_pair[i].ix[v,price_col])
+        dfsr_pair[i].loc[:,price_col] = dfsr_pair[i][price_col] + tmp1-tmp2
 
     dates.insert(0,'1900-01-01')
     dates_end = shift(dates,'2200-01-01')
