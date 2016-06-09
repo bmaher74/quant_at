@@ -154,8 +154,10 @@ def shift(lst,empty):
 def stitch(dfs, price_col, dates):
     """Stitches together a list of contract prices. dfs should contain a
     list of dataframe objects, price_col is the column name to be
-    combined, and dates is a list of stitch dates. The stitching
-    method is called the Panama method - more details can be found at
+    combined, and dates is a list of stitch dates. The dataframes must
+    be date indexed, and the order of dates must match the order of
+    the dataframes. The stitching method is called the Panama method -
+    more details can be found at
     http://qoppac.blogspot.de/2015/05/systems-building-futures-rolling.html
 
     """
