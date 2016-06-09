@@ -1,5 +1,8 @@
 #
-# Downloads futures contracts for symbols in futures.csv
+# Futures Contracts downloader - symbols are in futures.csv, each
+# symbol in this file is retrieved from Quandl and inserted into a
+# Mongo database. At each new invocation, only new data for
+# non-expired contracts are downloaded. 
 #
 import Quandl, os, itertools, sys
 from pymongo import MongoClient
