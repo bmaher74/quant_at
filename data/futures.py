@@ -154,8 +154,11 @@ def shift(lst,empty):
     
 def stitch(dfs, price_col, dates):
     """
-    Stitches together a list of contracts
+    Stitches together a list of contracts. dfs should contain a list of dataframe,
+    price_col is the column name to be combined, and dates is a list of
+    stitch dates. 
     """
+    
     res = []
     datesr = list(reversed(dates))
     dfsr = list(reversed(dfs))    
