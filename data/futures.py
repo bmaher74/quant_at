@@ -159,7 +159,6 @@ def stitch(dfs, price_col, dates):
     the dataframes. The stitching method is called the Panama method -
     more details can be found at
     http://qoppac.blogspot.de/2015/05/systems-building-futures-rolling.html
-
     """
     
     res = []
