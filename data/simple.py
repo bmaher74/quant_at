@@ -5,6 +5,8 @@ from pandas_datareader import data, wb
 import numpy as np, sys
 from memo import *
 
+MONGO_STAT =  "C:\\Progra~1\\MongoDB\\Server\\3.2\\bin\\mongostat.exe /rowcount:1"
+
 @memo # so that we dont constantly read the .quand file
 def get_quandl_auth():
     fname = '%s/.quandl' % os.environ['HOME']
@@ -196,9 +198,17 @@ def get_hft_for_dates(symbol, start, end):
     dfs = pd.concat(res)
     return dfs
 
-        
-    
+def check_mongo():
+    pipe = os.popen(MONGO_STAT + ' 2>&1', 'r')
+    text = pipe.read()
+    if 'no reachable servers' in text:
+        print "\n\n**** Mongo is not running ****\n\n"
+        exit()
+
 if __name__ == "__main__":
+
+    check_mongo()
+    exit()
     
     f = '%(asctime)-15s: %(message)s'
     if len(sys.argv) == 3:
