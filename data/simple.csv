@@ -24,3 +24,4 @@ DCOILWTICO,fred,Crude Oil Prices: West Texas Intermediate (WTI)
 IPG211111CN,fred,Industrial Production: Mining: Crude oil
 DFF,fred,Effective Federal Funds Rate
 DJIA,fred,Dow Jones Industrial Average
+OPHNFB,fred,Real Output Per Hour of All Persons Nonfarm
