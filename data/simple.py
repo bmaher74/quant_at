@@ -208,7 +208,6 @@ def check_mongo():
 if __name__ == "__main__":
 
     check_mongo()
-    exit()
     
     f = '%(asctime)-15s: %(message)s'
     if len(sys.argv) == 3:
