@@ -1,14 +1,14 @@
 from scipy.optimize import minimize
 FLAG_BAD_RETURN=-99999.0
 import numpy as np, random
-import pandas as pd, dd
+import pandas as pd
 
-def ewmac(price, col, Lfast, Lslow):
-    price=price.resample("1B", how="last")
-    fast_ewma = pd.ewma(price, span=Lfast)
-    slow_ewma = pd.ewma(price, span=Lslow)
+def ewmac(df, col, Lfast, Lslow):
+    price=df[col].resample("1B", how="last")
+    fast_ewma = pd.ewma(df[col], span=Lfast)
+    slow_ewma = pd.ewma(df[col], span=Lslow)
     raw_ewmac = fast_ewma - slow_ewma
-    return raw_ewmac[col] / robust_vol_calc(price.diff()).vol
+    return raw_ewmac / robust_vol_calc(df[col].diff()).vol
     
 def crossover(df,col,lev):
     signals = pd.DataFrame(index=df.index) 

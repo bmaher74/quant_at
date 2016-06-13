@@ -61,13 +61,62 @@ print pd.DataFrame(res,columns=cols)
 6             6.250000  
 ```
 
+Turnover
+
 ```python
-2 * 8 / 506 * 16.
+avg =  (df.price / 10).diff().abs().mean()
+print avg * 256
+```
+
+```python
+f = 'legacycsv.zip'
+import pandas as pd, zipfile, util
+with zipfile.ZipFile(f, 'r') as z:
+     crdf = pd.read_csv(z.open('CRUDE_W_price.csv'), index_col=0,parse_dates=True )
+
+fast_ewma = pd.ewma(crdf.PRICE, span=32)
+slow_ewma = pd.ewma(crdf.PRICE, span=128)
+raw_ewmac = fast_ewma - slow_ewma
+vol = util.robust_vol_calc(crdf[['PRICE']].diff()).vol
+pred = raw_ewmac /  vol
+print pred.mean()
+forecast_scalar = 10. / pred.mean()
+print forecast_scalar
+pred_scaled = pred * forecast_scalar
+print pred_scaled.tail(20)
 ```
 
 ```text
-Out[1]: 0.0
+0.996495521789
+10.0351680277
+DATETIME
+2016-04-14   -17.212719
+2016-04-15   -16.234287
+2016-04-18   -15.826642
+2016-04-19   -14.761395
+2016-04-20   -13.042248
+2016-04-21   -11.828032
+2016-04-22   -10.526289
+2016-04-25    -9.355273
+2016-04-26    -7.821639
+2016-04-27    -5.572717
+2016-04-28    -3.544346
+2016-04-29    -1.536177
+2016-05-02    -0.141449
+2016-05-03     0.714540
+2016-05-04     1.446155
+2016-05-05     2.348545
+2016-05-06     3.489593
+2016-05-09     3.611675
+2016-05-10     4.445694
+2016-05-11     5.902835
+dtype: float64
 ```
+
+
+
+
+
 
 
 
