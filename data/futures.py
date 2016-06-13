@@ -181,6 +181,8 @@ def stitch(dfs, price_col, dates):
 
             
 if __name__ == "__main__":
+
+    simple.check_mongo()    
     
     f = '%(asctime)-15s: %(message)s'
     if len(sys.argv) == 3:
