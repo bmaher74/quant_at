@@ -33,22 +33,24 @@ it (no newlines) under your home directory.
 
 ## Usage
 
-Simplest usage for mass download is `python simple.py`. This will read
-all symbols from under `data/simple.csv` and start downloading
-them. Same for `python futures.py`.
+Simplest usage for mass download is `python simple.py` (start your
+Mongo instance first of course). This will read all symbols from under
+`data/simple.csv` and start downloading them. Same for `python
+futures.py`.
 
-For parallel execution, we provided a chunking ability [TBD],
+For parallel execution, we provided a chunking ability [works for
+simple, TBD for futures],
 
 ```
 python simple.py 0 4
 ```
 
 This divides the symbol list into 4 chunks, and processes the 0th one
-(it could have been 1,2,etc). For parallel execution 4 processes of
-`simple.py` would be started, each for / using a different chunk number.
-These processes would ideally be run under a monitoring tool, we
-prefer [dand][1]. A sample configuration for this tool can be found in
-[dand.conf](dand.conf) which can simply be executed with `python
+(it could have been 1, 2, etc). For parallel execution 4 processes of
+`simple.py` would be started, each for / using a different chunk
+number.  These processes would ideally be run under a monitoring tool,
+we prefer [dand][1]. A sample configuration for this tool can be found
+in [dand.conf](dand.conf) which can simply be executed with `python
 dand.py dand.conf`.
 
 Parallel inserts into Mongo are no problem, both in terms of
@@ -63,8 +65,8 @@ For futures
 python futures.py
 ```
 
-For research, data exploration purposes, there is a utility
-function. To see all data for symbol DIJA,
+For research, data exploration purposes, there are utility
+functions. To see all data for symbol DIJA,
 
 ```
 import simple
@@ -76,8 +78,6 @@ For multiple symbols in one Dataframe,
 ```
 df = simple.get_multi(['DJIA','GOOG'])
 ```
-
-This returns a Pandas dataframe which can be processes, plotted.
 
 A simple query from mongo shell to see all futures
 
@@ -99,15 +99,16 @@ db.futures.find({"_id.sym": "CL", "_id.market": "CME"})
 db.futures.find({"_id.sym": "CL", "_id.market": "CME"}).sort({ "_id.month": 1 })
 ```
 
-To see all earnings announcements for a particular date, use
+To see all earnings announcements for a particular date, 
 
 ```
 db.earnings.find( {"_id": 20110126 } )
 ```
 
-which gives all announcements as a list of tuples for January 26, 2011. 
+which gives all companies announcing their earnings as a list of
+tuples for January 26, 2011.
 
-For some symbols we retrieve high-frequency data. Minute level tick
+For symbols for which we have high-frequency data available, minute level tick
 data for a symbol and specific day can be accessed with,
 
 ```
