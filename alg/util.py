@@ -24,8 +24,7 @@ def sharpe(price, forecast, daily_returns_volatility):
     denominator = daily_returns_volatility
     numerator = forecast *  multiplier
     positions = numerator.ffill() /  denominator.ffill()
-    positions = positions.shift(1)
-    cum_trades = positions.ffill()
+    cum_trades = positions.shift(1).ffill()
     trades_to_use=cum_trades.diff()
     price_returns = price.diff()
     instr_ccy_returns = cum_trades.shift(1)* price_returns 
