@@ -2,7 +2,8 @@
 ```python
 import util, zipfile, pandas as pd
 with zipfile.ZipFile('legacycsv.zip', 'r') as z:
-     df = pd.read_csv(z.open('EDOLLAR_price.csv'), index_col=0,parse_dates=True )
+#     df = pd.read_csv(z.open('EDOLLAR_price.csv'), index_col=0,parse_dates=True )
+     df = pd.read_csv(z.open('CORN_price.csv'), index_col=0,parse_dates=True )
 
 fast_ewma = pd.ewma(df.PRICE, span=32)
 slow_ewma = pd.ewma(df.PRICE, span=128)
@@ -17,7 +18,7 @@ print util.sharpe(df.PRICE, forecast, vol)
 
 ```text
 multiplier=0.001
-0.508384873452
+0.133140584329
 ```
 
 
