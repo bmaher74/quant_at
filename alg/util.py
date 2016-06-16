@@ -1,7 +1,40 @@
 from scipy.optimize import minimize
-FLAG_BAD_RETURN=-99999.0
 import numpy as np, random
 import pandas as pd
+CALENDAR_DAYS_IN_YEAR = 365.25
+BUSINESS_DAYS_IN_YEAR = 256.0
+ROOT_BDAYS_INYEAR = BUSINESS_DAYS_IN_YEAR**.5
+WEEKS_IN_YEAR = CALENDAR_DAYS_IN_YEAR / 7.0
+ROOT_WEEKS_IN_YEAR = WEEKS_IN_YEAR**.5
+MONTHS_IN_YEAR = 12.0
+ROOT_MONTHS_IN_YEAR = MONTHS_IN_YEAR**.5
+ARBITRARY_START=pd.datetime(1900,1,1)
+FLAG_BAD_RETURN=-99999.0
+
+DEFAULT_CAPITAL = 1.0
+DEFAULT_ANN_RISK_TARGET = 0.16
+DEFAULT_DAILY_CAPITAL=1.0 * DEFAULT_ANN_RISK_TARGET / ROOT_BDAYS_INYEAR
+
+def sharpe(price, forecast, vol): 
+    base_capital = DEFAULT_CAPITAL
+    daily_risk_capital = DEFAULT_CAPITAL * DEFAULT_ANN_RISK_TARGET / ROOT_BDAYS_INYEAR        
+    ts_capital=pd.Series([DEFAULT_CAPITAL]*len(price), index=price.index)        
+    ann_risk = ts_capital * DEFAULT_ANN_RISK_TARGET
+    get_daily_returns_volatility = vol
+    multiplier = daily_risk_capital * 1.0 * 1.0 / 10.0
+    denominator = get_daily_returns_volatility
+    numerator = forecast *  multiplier
+    positions = numerator.ffill() /  denominator.ffill()
+    use_positions = positions.shift(1)
+    cum_trades = use_positions.ffill()
+    trades_to_use=cum_trades.diff()
+    price_returns = price.diff()
+    instr_ccy_returns = cum_trades.shift(1)* price_returns 
+    instr_ccy_returns=instr_ccy_returns.cumsum().ffill().reindex(price.index).diff()
+    base_ccy_returns = instr_ccy_returns 
+    mean_return = base_ccy_returns.mean() * BUSINESS_DAYS_IN_YEAR
+    vol = base_ccy_returns.std() * ROOT_BDAYS_INYEAR
+    return mean_return / vol
 
 def ewmac(df, col, Lfast, Lslow):
     price=df[col].resample("1B", how="last")
