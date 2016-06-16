@@ -12,11 +12,11 @@ forecast = raw_ewmac /  vol
 ```
 
 ```python
-import util
 print util.sharpe(df.PRICE, forecast, vol)
 ```
 
 ```text
+multiplier=0.001
 0.508384873452
 ```
 
