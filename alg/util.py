@@ -27,9 +27,8 @@ def sharpe(price, forecast):
     price_returns = price.diff()
     instr_ccy_returns = cum_trades.shift(1)*price_returns 
     instr_ccy_returns=instr_ccy_returns.cumsum().ffill().reindex(price.index).diff()
-    base_ccy_returns = instr_ccy_returns 
-    mean_return = base_ccy_returns.mean() * BUSINESS_DAYS_IN_YEAR
-    vol = base_ccy_returns.std() * ROOT_BDAYS_INYEAR
+    mean_return = instr_ccy_returns.mean() * BUSINESS_DAYS_IN_YEAR
+    vol = instr_ccy_returns.std() * ROOT_BDAYS_INYEAR
     return mean_return / vol
     
 def crossover(df,col,lev):
