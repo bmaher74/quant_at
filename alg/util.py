@@ -14,20 +14,18 @@ FLAG_BAD_RETURN=-99999.0
 DEFAULT_CAPITAL = 1.0
 DEFAULT_ANN_RISK_TARGET = 0.16
 
-def sharpe(price, forecast, ):
+def sharpe(price, forecast):
     base_capital = DEFAULT_CAPITAL
     daily_risk_capital = DEFAULT_CAPITAL * DEFAULT_ANN_RISK_TARGET / ROOT_BDAYS_INYEAR        
     ts_capital=pd.Series([DEFAULT_CAPITAL]*len(price), index=price.index)        
     ann_risk = ts_capital * DEFAULT_ANN_RISK_TARGET
-    multiplier = daily_risk_capital * 1.0 * 1.0 / 10.0
     daily_returns_volatility = robust_vol_calc(price.diff())
-    denominator = daily_returns_volatility
+    multiplier = daily_risk_capital * 1.0 * 1.0 / 10.0
     numerator = forecast *  multiplier
-    positions = numerator.ffill() /  denominator.ffill()
+    positions = numerator.ffill() /  daily_returns_volatility.ffill()
     cum_trades = positions.shift(1).ffill()
-    trades_to_use=cum_trades.diff()
     price_returns = price.diff()
-    instr_ccy_returns = cum_trades.shift(1)* price_returns 
+    instr_ccy_returns = cum_trades.shift(1)*price_returns 
     instr_ccy_returns=instr_ccy_returns.cumsum().ffill().reindex(price.index).diff()
     base_ccy_returns = instr_ccy_returns 
     mean_return = base_ccy_returns.mean() * BUSINESS_DAYS_IN_YEAR
