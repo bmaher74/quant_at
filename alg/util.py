@@ -33,13 +33,6 @@ def sharpe(price, forecast, ):
     mean_return = base_ccy_returns.mean() * BUSINESS_DAYS_IN_YEAR
     vol = base_ccy_returns.std() * ROOT_BDAYS_INYEAR
     return mean_return / vol
-
-def ewmac(df, col, Lfast, Lslow):
-    price=df[col].resample("1B", how="last")
-    fast_ewma = pd.ewma(df[col], span=Lfast)
-    slow_ewma = pd.ewma(df[col], span=Lslow)
-    raw_ewmac = fast_ewma - slow_ewma
-    return raw_ewmac / robust_vol_calc(df[col].diff()).vol
     
 def crossover(df,col,lev):
     signals = pd.DataFrame(index=df.index) 
