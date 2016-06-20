@@ -6,57 +6,53 @@ with zipfile.ZipFile('legacycsv.zip', 'r') as z:
      df = pd.read_csv(z.open('SP500_price.csv'), index_col=0,parse_dates=True )
      df['x'] = pd.read_csv(z.open('US20_price.csv'), index_col=0,parse_dates=True )
 df.columns = ['SP500','US20']
-print df.tail(4)     
-```
+df = df.sort_index()
 
-```text
-               SP500        US20
-DATETIME                        
-2016-05-06  2053.000  165.125000
-2016-05-09  2054.250  165.625000
-2016-05-10  2077.750  165.625000
-2016-05-11  2070.875  166.390625
+def calc_ewmac_forecast(price,slow,fast):
+    vol = util.robust_vol_calc(price.diff())
+    fast_ewma = pd.ewma(price, span=slow)
+    slow_ewma = pd.ewma(price, span=fast)
+    raw_ewmac = fast_ewma - slow_ewma
+    return raw_ewmac /  vol 
+    
+df['US20_ewmac8_32'] = calc_ewmac_forecast(df['US20'], 8, 32)
+df['US20_ewmac32_128'] = calc_ewmac_forecast(df['US20'], 8, 32)
+df['SP500_ewmac8_32'] = calc_ewmac_forecast(df['SP500'], 32, 128)
+df['SP500_ewmac32_128'] = calc_ewmac_forecast(df['SP500'], 32, 128)
+df['US20'] = (df['US20_ewmac8_32'] + df['US20_ewmac32_128']) / 2
+df['SP500'] = (df['SP500_ewmac8_32'] + df['SP500_ewmac32_128']) / 2
+df = df[['SP500','US20']]
 ```
-
 
 
 ```python
-print util.generate_fitting_dates(df, 'expanding')
+fdates = util.generate_fitting_dates(df, 'expanding')
+print fdates
 ```
 
 ```text
-data=               SP500        US20
-DATETIME                        
-2016-05-06  2053.000  165.125000
-2016-05-09  2054.250  165.625000
-2016-05-10  2077.750  165.625000
-2016-05-11  2070.875  166.390625
+data=               SP500      US20
+DATETIME                      
+2016-05-06  3.408225  0.304604
+2016-05-09  3.519699  0.545661
+2016-05-10  3.647720  0.729759
+2016-05-11  3.756441  0.990425
 date_method=expanding
 [Fit without data, use from 1997-09-10 00:00:00 to 1998-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 1998-09-30 00:00:00, use in 1998-09-30 00:00:00 to 1999-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 1999-09-30 00:00:00, use in 1999-09-30 00:00:00 to 2000-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2000-09-30 00:00:00, use in 2000-09-30 00:00:00 to 2001-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2001-09-30 00:00:00, use in 2001-09-30 00:00:00 to 2002-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2002-09-30 00:00:00, use in 2002-09-30 00:00:00 to 2003-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2003-09-30 00:00:00, use in 2003-09-30 00:00:00 to 2004-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2004-09-30 00:00:00, use in 2004-09-30 00:00:00 to 2005-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2005-09-30 00:00:00, use in 2005-09-30 00:00:00 to 2006-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2006-09-30 00:00:00, use in 2006-09-30 00:00:00 to 2007-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2007-09-30 00:00:00, use in 2007-09-30 00:00:00 to 2008-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2008-09-30 00:00:00, use in 2008-09-30 00:00:00 to 2009-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2009-09-30 00:00:00, use in 2009-09-30 00:00:00 to 2010-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2010-09-30 00:00:00, use in 2010-09-30 00:00:00 to 2011-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2011-09-30 00:00:00, use in 2011-09-30 00:00:00 to 2012-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2012-09-30 00:00:00, use in 2012-09-30 00:00:00 to 2013-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2013-09-30 00:00:00, use in 2013-09-30 00:00:00 to 2014-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2014-09-30 00:00:00, use in 2014-09-30 00:00:00 to 2015-09-30 00:00:00, Fit from 1997-09-10 00:00:00 to 2015-09-30 00:00:00, use in 2015-09-30 00:00:00 to 2016-05-11 00:00:00]
 ```
 
-
-
-
-
-
-
 ```python
-import util, zipfile, pandas as pd
-with zipfile.ZipFile('legacycsv.zip', 'r') as z:
-     df = pd.read_csv(z.open('EDOLLAR_price.csv'), index_col=0,parse_dates=True )
-
-fast_ewma = pd.ewma(df.PRICE, span=32)
-slow_ewma = pd.ewma(df.PRICE, span=128)
-raw_ewmac = fast_ewma - slow_ewma
-vol = util.robust_vol_calc(df.PRICE.diff())
-forecast = raw_ewmac /  vol 
-
-print util.sharpe(df.PRICE, forecast)
+res = []
+for fit_period in fdates:            
+    #print fit_period
+    df2 = df[(df.index >= fit_period.fit_start) & (df.index <= fit_period.fit_end)]
+    weights,diag=util.markosolver(df2)
+    res.append(weights)
+print res
 ```
 
 ```text
-0.508384873452
+[[nan, nan], [0.47202595827358379, 0.52797404172641627], [0.74159216952633755, 0.25840783047366245], [0.91441385616474546, 0.085586143835254536], [0.55379632616809604, 0.44620367383190401], [0.0, 1.0], [0.0, 1.0], [0.40699394310948211, 0.59300605689051789], [0.5036910641938448, 0.4963089358061552], [0.59165397298289524, 0.40834602701710476], [0.68566879190155883, 0.31433120809844112], [0.59076720789678572, 0.40923279210321428], [0.5, 0.5], [0.55003476136361695, 0.44996523863638305], [0.59582669253363674, 0.40417330746636326], [0.61082079859630689, 0.38917920140369305], [0.69221354451209949, 0.30778645548790051], [0.71198478069145266, 0.28801521930854734], [0.71124822328323334, 0.28875177671676666]]
 ```
 
 
