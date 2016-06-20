@@ -204,6 +204,7 @@ def markosolver(period_subset_data):
 
 def bootstrap_portfolio(subset_data, monte_runs=100, bootstrap_length=50):
 
+    print ("bootstrap_portfolio=" + str(bootstrap_portfolio))
     all_results=[bs_one_time(subset_data, bootstrap_length) for unused_index in range(monte_runs)]
         
     ### We can take an average here; only because our weights always add
