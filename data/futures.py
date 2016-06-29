@@ -33,7 +33,7 @@ def get(market, sym, month, year, dt, db):
     res = list(db.futures.find( q ))
     return res
 
-def get_prices(market, sym, month, year, db):
+def get_contract(market, sym, month, year, db):
     """
     Returns all data for symbol in a pandas dataframe
     """
@@ -46,8 +46,6 @@ def get_prices(market, sym, month, year, db):
     }
     res = list(db.futures.find( q ))
     return res
-
-
 
 def last_contract(sym, market, db):
     q = { "$query" : {"_id.sym": sym, "_id.market": market}, "$orderby":{"_id.yearmonth" : -1} }
