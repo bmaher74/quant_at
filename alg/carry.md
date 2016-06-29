@@ -25,20 +25,20 @@ print (df[f].PRICE - df[f].CARRY).mean()
 ```python
 import sys; sys.path.append('../data')
 import futures
-res = futures.get_contract(market="CME", sym="CL", month="Q", year=2008)
-res.to_csv('aug.csv')
-res = futures.get_contract(market="CME", sym="CL", month="N", year=2008)
-res.to_csv('july.csv')
+#res = futures.get_contract(market="CME", sym="CL", month="Z", year=2008)
+#res.to_csv('dec.csv')
+res = futures.get_contract(market="CME", sym="CL", month="W", year=2008)
+res.to_csv('nov.csv')
 ```
 
 ```python
-print futures.contract_month_codes[8-1] # August
-print futures.contract_month_codes[7-1] # July
+print futures.contract_month_codes[12-1] 
+print futures.contract_month_codes[11-1] 
 ```
 
 ```text
-Q
-N
+Z
+W
 ```
 
 

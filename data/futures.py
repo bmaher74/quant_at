@@ -10,7 +10,7 @@ import logging, datetime, simple
 import pandas as pd
 from memo import *
 
-contract_month_codes = ['F', 'G', 'H', 'J', 'K', 'M','N', 'Q', 'U', 'V', 'W', 'Z']
+contract_month_codes = ['F', 'G', 'H', 'J', 'K', 'M','N', 'Q', 'U', 'V', 'X', 'Z']
 contract_month_dict = dict(zip(contract_month_codes,range(1,len(contract_month_codes)+1)))
 
 def web_download(contract,start,end):
