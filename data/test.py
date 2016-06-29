@@ -52,9 +52,9 @@ def test_simple():
     res = futures.last_contract("CL","CME", db)
     assert res[0]['_id']['month'] == 'G'
 
-    res = futures.existing_nonexpired_contracts("CL","CME", db,fake_today_1())
+    res = futures.existing_nonexpired_contracts("CL","CME", fake_today_1(), db)
     assert len(res) == 0
-    res = futures.existing_nonexpired_contracts("CL","CME", db,fake_today_2())
+    res = futures.existing_nonexpired_contracts("CL","CME", fake_today_2(), db)
     assert len(res) > 0
 
 def test_incremental():

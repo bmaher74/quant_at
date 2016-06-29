@@ -45,6 +45,8 @@ def get_contract(market, sym, month, year, db):
          "$orderby":{"_id.dt" : 1} 
     }
     res = list(db.futures.find( q ))
+    res = pd.DataFrame(res)
+    res['_id'] = res['_id'].map(lambda x: x["dt"])
     return res
 
 def last_contract(sym, market, db):
@@ -52,7 +54,7 @@ def last_contract(sym, market, db):
     res = db.futures.find(q).limit(1)    
     return list(res) 
 
-def existing_nonexpired_contracts(sym, market, db, today):
+def existing_nonexpired_contracts(sym, market, today, db):
     yearmonth = "%d%s" % (today.year,contract_month_codes[today.month-1])
     q = { "$query" : {"_id.sym": sym, "_id.market": market,
                       "_id.yearmonth": {"$gte": yearmonth } }
@@ -107,7 +109,7 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
         # additional days that are not there. if today is a new day, and
         # for for existing non-expired contracts we would have new price
         # data.  
-        for (nonexp_year,nonexp_month) in existing_nonexpired_contracts(sym, market, connection[db], today()):
+        for (nonexp_year,nonexp_month) in existing_nonexpired_contracts(sym, market, today(), connection[db]):
             last_con = last_date_in_contract(sym,market,nonexp_month,nonexp_year,connection[db])
             last_con = pd.to_datetime(str(last_con), format='%Y%m%d')
             logging.debug("last date contract %s" % last_con)
