@@ -12,29 +12,33 @@ plt.savefig('carry_01.png')
 ![](carry_01.png)
 
 
+```python
+f = (df.index >= '2008-08-01') & (df.index < '2008-09-01')
+print (df[f].PRICE - df[f].CARRY).mean()
+```
+
+```text
+0.381428571429
+```
+
 
 ```python
 import sys; sys.path.append('../data')
 import futures
 res = futures.get_contract(market="CME", sym="CL", month="Q", year=2008)
-print res.tail(5)
-```
-
-```text
-          _id       h       l  la       o     oi       s       v
-612  20080717  136.75  129.00 NaN  135.11  80629  129.29  379076
-613  20080718  132.04  128.23 NaN  129.56  63111  128.88  208698
-614  20080721  132.05  128.63 NaN  128.88  23594  131.04  133661
-615  20080722  132.07  125.63 NaN  131.04  23594  127.95  133661
-616  20080723  128.60  126.90 NaN  127.05  23594  126.90  133661
+res.to_csv('aug.csv')
+res = futures.get_contract(market="CME", sym="CL", month="N", year=2008)
+res.to_csv('july.csv')
 ```
 
 ```python
 print futures.contract_month_codes[8-1] # August
+print futures.contract_month_codes[7-1] # July
 ```
 
 ```text
 Q
+N
 ```
 
 
