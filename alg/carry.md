@@ -1,4 +1,18 @@
 
+
+```python
+import util, zipfile, pandas as pd
+with zipfile.ZipFile('legacycsv.zip', 'r') as z:
+     df = pd.read_csv(z.open('CRUDE_W_carrydata.csv'), index_col=0,parse_dates=True )
+df = df[(df.index > '2008-06-01') & (df.index < '2011-01-01')]
+df[['PRICE','CARRY']].plot()
+plt.savefig('carry_01.png')
+```
+
+![](carry_01.png)
+
+
+
 ```python
 import sys; sys.path.append('../data')
 import futures
@@ -15,7 +29,13 @@ print res.tail(5)
 616  20080723  128.60  126.90 NaN  127.05  23594  126.90  133661
 ```
 
+```python
+print futures.contract_month_codes[8-1] # August
+```
 
+```text
+Q
+```
 
 
 
