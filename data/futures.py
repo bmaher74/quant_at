@@ -21,7 +21,7 @@ def web_download(contract,start,end):
 def systemtoday():
     return datetime.datetime.today()
 
-def get(market, sym, month, year, dt, db):
+def get(market, sym, month, year, dt, db="findb"):
     """
     Returns all data for symbol in a pandas dataframe
     """
@@ -33,7 +33,7 @@ def get(market, sym, month, year, dt, db):
     res = list(db.futures.find( q ))
     return res
 
-def get_contract(market, sym, month, year, db):
+def get_contract(market, sym, month, year, db="findb"):
     """
     Returns all data for symbol in a pandas dataframe
     """
@@ -49,12 +49,12 @@ def get_contract(market, sym, month, year, db):
     res['_id'] = res['_id'].map(lambda x: x["dt"])
     return res
 
-def last_contract(sym, market, db):
+def last_contract(sym, market, db="findb"):
     q = { "$query" : {"_id.sym": sym, "_id.market": market}, "$orderby":{"_id.yearmonth" : -1} }
     res = db.futures.find(q).limit(1)    
     return list(res) 
 
-def existing_nonexpired_contracts(sym, market, today, db):
+def existing_nonexpired_contracts(sym, market, today, db="findb"):
     yearmonth = "%d%s" % (today.year,contract_month_codes[today.month-1])
     q = { "$query" : {"_id.sym": sym, "_id.market": market,
                       "_id.yearmonth": {"$gte": yearmonth } }
@@ -63,7 +63,7 @@ def existing_nonexpired_contracts(sym, market, today, db):
     for x in db.futures.find(q): res[(x['_id']['year'],x['_id']['month'])]=1
     return res.keys()
 
-def last_date_in_contract(sym, market, month, year, db):
+def last_date_in_contract(sym, market, month, year, db="findb"):
     q = { "$query" : {"_id.sym": sym, "_id.market": market,
                       "_id.month": month, "_id.year": year},
           "$orderby":{"_id.dt" : -1}          
