@@ -27,7 +27,7 @@ import sys; sys.path.append('../data')
 import futures
 #res = futures.get_contract(market="CME", sym="CL", month="Z", year=2008)
 #res.to_csv('dec.csv')
-res = futures.get_contract(market="CME", sym="CL", month="W", year=2008)
+res = futures.get_contract(market="CME", sym="CL", month="X", year=2008)
 res.to_csv('nov.csv')
 ```
 

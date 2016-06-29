@@ -78,8 +78,6 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
     # a tuple of contract years, defining the beginning
     # of time and end of time
     start_year,end_year=years
-    months = ['F', 'G', 'H', 'J', 'K', 'M',
-              'N', 'Q', 'U', 'V', 'W', 'Z']
     futcsv = pd.read_csv('futures.csv')
     instruments = zip(futcsv.Symbol,futcsv.Market)
 
@@ -98,7 +96,7 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
     for (sym,market) in instruments:
         last = last_contract(sym, market, connection[db])
         for year in range(start_year,end_year):
-            for month in months:
+            for month in contract_month_codes:
                 if len(last)==0 or (len(last) > 0 and last[0]['_id']['yearmonth'] < "%d%s" % (year,month)):
                     # for non-existing contracts, get as much as possible
                     # from str_start (two years from the beginning of time)
@@ -194,6 +192,6 @@ if __name__ == "__main__":
         download_data()
 
 # F - Jan, G - Feb, H - Mar, J - Apr, K - May, M - Jun
-# N - Jul, Q - Aug, U - Sep, V - Oct, W - Nov, Z - Dec
+# N - Jul, Q - Aug, U - Sep, V - Oct, X - Nov, Z - Dec
 #
         
