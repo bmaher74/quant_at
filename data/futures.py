@@ -4,6 +4,10 @@
 # Mongo database. At each new invocation, only new data for
 # non-expired contracts are downloaded. 
 #
+# F - Jan, G - Feb, H - Mar, J - Apr, K - May, M - Jun
+# N - Jul, Q - Aug, U - Sep, V - Oct, X - Nov, Z - Dec
+#
+
 import Quandl, os, itertools, sys
 from pymongo import MongoClient
 import logging, datetime, simple
@@ -46,7 +50,9 @@ def get_contract(market, sym, month, year, db="findb"):
     }
     res = list(db.futures.find( q ))
     res = pd.DataFrame(res)
-    res['_id'] = res['_id'].map(lambda x: x["dt"])
+    res['Date'] = res['_id'].map(lambda x: datetime.datetime.strptime(str(x["dt"]), '%Y%m%d'))
+    res = res.drop('_id',axis=1)
+    res = res.set_index('Date')
     return res
 
 def last_contract(sym, market, db="findb"):
@@ -191,7 +197,4 @@ if __name__ == "__main__":
         logging.basicConfig(filename='%s/futures.log' % os.environ['TEMP'],level=logging.DEBUG, format=f)
         download_data()
 
-# F - Jan, G - Feb, H - Mar, J - Apr, K - May, M - Jun
-# N - Jul, Q - Aug, U - Sep, V - Oct, X - Nov, Z - Dec
-#
         

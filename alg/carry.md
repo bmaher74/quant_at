@@ -1,6 +1,6 @@
 
 eurodollar
-
+===================
 2008-10-08
 2009-01-07
 2009-04-09
@@ -10,7 +10,7 @@ eurodollar
 * 40 months out
 
 crude oil
-
+===============
 always hold december contract
 rollover november 15
 
@@ -19,8 +19,8 @@ rollover november 15
 ```python
 import sys; sys.path.append('../data')
 import futures
-res = []
 def get_contracts(market, sym, from_year, to_year):
+    res = []
     for year in range(from_year,to_year):
         for month in futures.contract_month_codes:
      	    res.append(futures.get_contract(market=market, sym=sym, month=month, year=year))
@@ -31,6 +31,25 @@ print len(res)
 
 ```text
 36
+```
+
+```python
+
+def rollover_dates(contracts, method):
+    start_date = contracts[0].head(1).index[0]
+    end_date = contracts[-1].tail(1).index[0]
+    print start_date, end_date
+    return
+    if "out_40_months_liquid" == method:
+       pass
+       # ED style rolling
+       #roll every 6 weeks, go to the 40 month ahead
+
+rollover_dates(res, "out_40_months_liquid")
+```
+
+```text
+2004-08-23 00:00:00 2004-08-24 00:00:00
 ```
 
 
@@ -67,8 +86,14 @@ df = df[(df.index > '2008-06-01') & (df.index < '2011-01-01')]
 import sys; sys.path.append('../data')
 import futures
 res = futures.get_contract(market="CME", sym="CL", month="Z", year=2008)
+print res.head(1)
 ```
 
+```text
+                h      l      o  oi      s  v
+Date                                         
+2001-11-21  21.29  21.29  21.29   0  21.29  0
+```
 
 
 
