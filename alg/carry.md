@@ -36,7 +36,12 @@ print len(res)
 ```python
 import pandas as pd
 
-def rollover_dates(contracts, method):
+def contract_per_date(contracts, method):
+    """
+    Takes dates in contracts making them a single continuous timeline,
+    and calculates which contract should be active for which date, depending
+    on rollover method.
+    """ 
     start_date = contracts[0].head(1).index[0] # first dt of first contract
     end_date = contracts[-1].tail(1).index[0] # last date of last contract
     delta = end_date - start_date
@@ -45,31 +50,32 @@ def rollover_dates(contracts, method):
     for i in range(delta.days + 1):
     	day = start_date + datetime.timedelta(days=i)
 	if day.weekday() < 5: dates.append(day)
-    df = pd.DataFrame(index=dates)
-    # do the calculation only every 90 days
-    df2 = df.resample("3M",how="first")
-    # get the contract 40 months out
-    df2['Date40'] = df2.index.map(lambda x: x+datetime.timedelta(days=40*30))
-    df2['contract'] = df2.Date40.map(lambda x: "%d%02d" % (x.year, x.month))
-    df['contract'] = df2.contract
-    df.contract = df.contract.fillna(method="ffill")
-    df.contract = df.contract.fillna(method="bfill")
-    return
-    if "out_40_months_liquid" == method:
-       pass
-       # ED style rolling
-       #roll every 6 weeks, go to the 40 month ahead
 
-rollover_dates(res, "out_40_months_liquid")
+    if method=="out_40_months_every_90_days":
+        df = pd.DataFrame(index=dates)
+        # ED style rolling
+        #roll every 6 weeks, go to the 40 month ahead
+        # do the calculation only every 90 days
+        df2 = df.resample("3M",how="first")
+        # get the contract 40 months out
+        df2['Date40'] = df2.index.map(lambda x: x+datetime.timedelta(days=40*30))
+        df2['contract'] = df2.Date40.map(lambda x: "%d%02d" % (x.year, x.month))
+        df['contract'] = df2.contract
+        df.contract = df.contract.fillna(method="ffill")
+        df.contract = df.contract.fillna(method="bfill")
+        return df
+       
+res2 = contract_per_date(res, "out_40_months_every_90_days")
+print res2.head()
 ```
 
 ```text
-               Date40 contract
-1997-08-31 2000-12-13   200012
-1997-11-30 2001-03-14   200103
-1998-02-28 2001-06-12   200106
-1998-05-31 2001-09-12   200109
-1998-08-31 2001-12-13   200112
+           contract
+1997-08-21   200112
+1997-08-22   200112
+1997-08-25   200112
+1997-08-26   200112
+1997-08-27   200112
 ```
 
 ```python
