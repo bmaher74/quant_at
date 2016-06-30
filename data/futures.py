@@ -69,6 +69,16 @@ def existing_nonexpired_contracts(sym, market, today, db="findb"):
     for x in db.futures.find(q): res[(x['_id']['year'],x['_id']['month'])]=1
     return res.keys()
 
+def get_contracts(market, sym, from_year, to_year):
+    """
+    Get all contracts, from jan to dec, between given years
+    """
+    res = []
+    for year in range(from_year,to_year):
+        for month in contract_month_codes:
+     	    res.append(get_contract(market=market, sym=sym, month=month, year=year))
+    return res	    
+
 def last_date_in_contract(sym, market, month, year, db="findb"):
     q = { "$query" : {"_id.sym": sym, "_id.market": market,
                       "_id.month": month, "_id.year": year},
@@ -182,6 +192,35 @@ def stitch(dfs, price_col, dates):
         tmp = dfs[i][(dfs[i].index > dates[i]) & (dfs[i].index <= dates_end[i])]
         res.append(tmp.Settle)
     return pd.concat(res)
+
+def contract_per_date(contracts, method):
+    """
+    Takes dates in contracts making them a single continuous timeline,
+    and calculates which contract should be active for which date, depending
+    on rollover method.
+    """ 
+    start_date = contracts[0].head(1).index[0] # first dt of first contract
+    end_date = contracts[-1].tail(1).index[0] # last date of last contract
+    delta = end_date - start_date
+    dates = []
+    # get bizdays between start and end
+    for i in range(delta.days + 1):
+    	day = start_date + datetime.timedelta(days=i)
+	if day.weekday() < 5: dates.append(day)
+
+    if method=="out_40_months_every_90_days":
+        df = pd.DataFrame(index=dates)
+        # ED style rolling
+        #roll every 6 weeks, go to the 40 month ahead
+        # do the calculation only every 90 days
+        df2 = df.resample("3M",how="first")
+        # get the contract 40 months out
+        df2['Date40'] = df2.index.map(lambda x: x+datetime.timedelta(days=40*30))
+        df2['contract'] = df2.Date40.map(lambda x: "%d%02d" % (x.year, x.month))
+        df['contract'] = df2.contract
+        df.contract = df.contract.fillna(method="ffill")
+        df.contract = df.contract.fillna(method="bfill")
+        return df
 
             
 if __name__ == "__main__":

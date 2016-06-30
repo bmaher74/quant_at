@@ -51,12 +51,13 @@ def test_simple():
     assert res[0]['oi'] == 5.0
     res = futures.last_contract("CL","CME", db)
     assert res[0]['_id']['month'] == 'G'
-
     res = futures.existing_nonexpired_contracts("CL","CME", fake_today_1(), db)
     assert len(res) == 0
     res = futures.existing_nonexpired_contracts("CL","CME", fake_today_2(), db)
     assert len(res) > 0
-
+    res = futures.get_contract(market="CME", sym="CL", month="G", year=1984, db=testdb)
+    assert len(res)==143
+    
 def test_incremental():
     db = init()
     futures.download_data(downloader=fake_download_2,today=fake_today_726,

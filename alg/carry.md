@@ -18,14 +18,7 @@ rollover november 15
 
 ```python
 import sys; sys.path.append('../data')
-import futures
-def get_contracts(market, sym, from_year, to_year):
-    res = []
-    for year in range(from_year,to_year):
-        for month in futures.contract_month_codes:
-     	    res.append(futures.get_contract(market=market, sym=sym, month=month, year=year))
-    return res	    
-res = get_contracts("CME","CL",2000,2010)
+res = futures.get_contracts("CME","CL",2000,2010)
 print len(res)
 ```
 
@@ -34,38 +27,9 @@ print len(res)
 ```
 
 ```python
-import pandas as pd
-
-def contract_per_date(contracts, method):
-    """
-    Takes dates in contracts making them a single continuous timeline,
-    and calculates which contract should be active for which date, depending
-    on rollover method.
-    """ 
-    start_date = contracts[0].head(1).index[0] # first dt of first contract
-    end_date = contracts[-1].tail(1).index[0] # last date of last contract
-    delta = end_date - start_date
-    dates = []
-    # get bizdays between start and end
-    for i in range(delta.days + 1):
-    	day = start_date + datetime.timedelta(days=i)
-	if day.weekday() < 5: dates.append(day)
-
-    if method=="out_40_months_every_90_days":
-        df = pd.DataFrame(index=dates)
-        # ED style rolling
-        #roll every 6 weeks, go to the 40 month ahead
-        # do the calculation only every 90 days
-        df2 = df.resample("3M",how="first")
-        # get the contract 40 months out
-        df2['Date40'] = df2.index.map(lambda x: x+datetime.timedelta(days=40*30))
-        df2['contract'] = df2.Date40.map(lambda x: "%d%02d" % (x.year, x.month))
-        df['contract'] = df2.contract
-        df.contract = df.contract.fillna(method="ffill")
-        df.contract = df.contract.fillna(method="bfill")
-        return df
-       
-res2 = contract_per_date(res, "out_40_months_every_90_days")
+import sys; sys.path.append('../data')
+import futures       
+res2 = futures.contract_per_date(res, "out_40_months_every_90_days")
 print res2.head()
 ```
 
@@ -80,16 +44,6 @@ print res2.head()
 
 ```python
 1997-08-21
-```
-
-```python
-print datetime.datetime.strptime("1998-08-31", "%Y-%m-%d")+datetime.timedelta(days=40*30)
-print datetime.datetime.strptime("1998-11-30", "%Y-%m-%d")+datetime.timedelta(days=40*30)
-```
-
-```text
-2001-12-13 00:00:00
-2002-03-14 00:00:00
 ```
 
 
