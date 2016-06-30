@@ -1,21 +1,4 @@
 
-eurodollar
-===================
-2008-10-08
-2009-01-07
-2009-04-09
-2009-07-10
-
-* very liquid
-* 40 months out
-
-crude oil
-===============
-always hold december contract
-rollover november 15
-
-
-
 ```python
 import sys; sys.path.append('../data')
 res = futures.get_contracts("CME","CL",2000,2010)
@@ -29,17 +12,13 @@ print len(res)
 ```python
 import sys; sys.path.append('../data')
 import futures       
-res2 = futures.contract_per_date(res, "out_40_months_every_90_days")
-print res2.head()
+#res2 = futures.contract_per_date(res, "out_40_months_every_90_days")
+res2 = futures.contract_per_date(res, "hold_dec_roll_nov")
+#print res2.head()
 ```
 
 ```text
-           contract
-1997-08-21   200112
-1997-08-22   200112
-1997-08-25   200112
-1997-08-26   200112
-1997-08-27   200112
+hold_dec_roll_nov
 ```
 
 ```python
@@ -62,6 +41,23 @@ print res2.head()
 
 
 
+
+
+
+eurodollar
+===================
+2008-10-08
+2009-01-07
+2009-04-09
+2009-07-10
+
+* very liquid
+* 40 months out
+
+crude oil
+===============
+always hold december contract
+rollover november 15
 
 
 

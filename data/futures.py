@@ -12,6 +12,7 @@ import Quandl, os, itertools, sys
 from pymongo import MongoClient
 import logging, datetime, simple
 import pandas as pd
+import numpy as np
 from memo import *
 
 contract_month_codes = ['F', 'G', 'H', 'J', 'K', 'M','N', 'Q', 'U', 'V', 'X', 'Z']
@@ -206,11 +207,9 @@ def contract_per_date(contracts, method):
     for i in range(delta.days + 1):
     	day = start_date + datetime.timedelta(days=i)
 	if day.weekday() < 5: dates.append(day)
-
+    df = pd.DataFrame(index=dates)
     if method=="out_40_months_every_90_days":
-        df = pd.DataFrame(index=dates)
-        # ED style rolling
-        #roll every 6 weeks, go to the 40 month ahead
+        # roll every 6 weeks, go to the 40 month ahead
         # do the calculation only every 90 days
         df2 = df.resample("3M",how="first")
         # get the contract 40 months out
@@ -219,8 +218,23 @@ def contract_per_date(contracts, method):
         df['contract'] = df2.contract
         df.contract = df.contract.fillna(method="ffill")
         df.contract = df.contract.fillna(method="bfill")
-        return df
-
+    elif method=="hold_dec_roll_nov":
+        # in the middle of november, roll to the december of next year
+        df = pd.DataFrame(index=dates)
+        # only take novembers
+        df2 = df[df.index.month == 11]
+        df2['year'] = df2.index.year
+        # need to measure 'middle of november', smallest distance to nov 15
+        df2['mid'] = df2.index.map(lambda x: np.abs(x.day-15))
+        # pick the min mid out of year
+        df2 = df2[df2.groupby(['year'])['mid'].transform(min) == df2['mid']]
+        df2['contract'] = df2.index.map(lambda x: "%d%02d" % (x.year+1, 12))
+        df['contract'] = df2.contract
+        df.contract = df.contract.fillna(method="ffill")                
+        df.to_csv('out.csv')
+        
+    return df
+        
             
 if __name__ == "__main__":
 
