@@ -194,10 +194,9 @@ def stitch(dfs, price_col, dates):
     return pd.concat(res)
 
 def contract_per_date(contracts, method):
-    """
-    Takes dates in contracts making them a single continuous timeline,
-    and calculates which contract should be active for which date, depending
-    on rollover method.
+    """Forms a single continuous timeline from dates in contracts, and for
+    each date it calculates which contract should be active for which
+    date, depending on rollover method.
     """ 
     start_date = contracts[0].head(1).index[0] # first dt of first contract
     end_date = contracts[-1].tail(1).index[0] # last date of last contract
