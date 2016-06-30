@@ -34,11 +34,15 @@ print len(res)
 ```
 
 ```python
+import pandas as pd
 
 def rollover_dates(contracts, method):
-    start_date = contracts[0].head(1).index[0]
-    end_date = contracts[-1].tail(1).index[0]
-    print start_date, end_date
+    start_date = contracts[0].head(1).index[0] # first dt of first contract
+    end_date = contracts[-1].tail(1).index[0] # last date of last contract
+    delta = end_date - start_date
+    dates = [start_date + datetime.timedelta(days=i) for i in range(delta.days + 1)]
+    df = pd.DataFrame(index=dates)
+    print df.head()
     return
     if "out_40_months_liquid" == method:
        pass
@@ -49,7 +53,9 @@ rollover_dates(res, "out_40_months_liquid")
 ```
 
 ```text
-2004-08-23 00:00:00 2009-11-20 00:00:00
+Empty DataFrame
+Columns: []
+Index: [2004-08-23 00:00:00, 2004-08-24 00:00:00, 2004-08-25 00:00:00, 2004-08-26 00:00:00, 2004-08-27 00:00:00]
 ```
 
 
