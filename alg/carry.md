@@ -1,5 +1,57 @@
 
-Rollover
+eurodollar
+
+2008-10-08
+2009-01-07
+2009-04-09
+2009-07-10
+
+* very liquid
+* 40 months out
+
+crude oil
+
+always hold december contract
+rollover november 15
+
+
+
+```python
+import sys; sys.path.append('../data')
+import futures
+res = []
+def get_contracts(market, sym, from_year, to_year):
+    for year in range(from_year,to_year):
+        for month in futures.contract_month_codes:
+     	    res.append(futures.get_contract(market=market, sym=sym, month=month, year=year))
+    return res	    
+res = get_contracts("CME","CL",2007,2010)
+print len(res)
+```
+
+```text
+36
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -9,42 +61,13 @@ import util, zipfile, pandas as pd
 with zipfile.ZipFile('legacycsv.zip', 'r') as z:
      df = pd.read_csv(z.open('CRUDE_W_carrydata.csv'), index_col=0,parse_dates=True )
 df = df[(df.index > '2008-06-01') & (df.index < '2011-01-01')]
-df[['PRICE','CARRY']].plot(style=['b-','g--'])
-plt.savefig('carry_01.png')
 ```
-
-![](carry_01.png)
-
-
-```python
-f = (df.index >= '2008-08-01') & (df.index < '2008-09-01')
-print (df[f].PRICE - df[f].CARRY).mean()
-```
-
-```text
-0.381428571429
-```
-
 
 ```python
 import sys; sys.path.append('../data')
 import futures
 res = futures.get_contract(market="CME", sym="CL", month="Z", year=2008)
-res.to_csv('dec.csv')
-res = futures.get_contract(market="CME", sym="CL", month="X", year=2008)
-res.to_csv('nov.csv')
 ```
-
-```python
-print futures.contract_month_codes[12-1] 
-print futures.contract_month_codes[11-1] 
-```
-
-```text
-Z
-W
-```
-
 
 
 

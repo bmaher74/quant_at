@@ -135,6 +135,7 @@ for futures.py and the second one for simple.py)
 
 ```
 db.futures.createIndex( { "_id.sym": 1, "_id.market": 1, "_id.month": -1, "_id.year": -1, "_id.dt": -1 } )
+db.futures.createIndex( { "_id.sym": 1, "_id.market": 1, "_id.yearmonth": -1} )
 db.futures.createIndex( { "_id.sym": 1, "_id.dt": -1 } )
 ```
 
