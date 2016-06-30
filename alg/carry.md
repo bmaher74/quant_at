@@ -1,11 +1,15 @@
 
+Rollover
+
+
+
 
 ```python
 import util, zipfile, pandas as pd
 with zipfile.ZipFile('legacycsv.zip', 'r') as z:
      df = pd.read_csv(z.open('CRUDE_W_carrydata.csv'), index_col=0,parse_dates=True )
 df = df[(df.index > '2008-06-01') & (df.index < '2011-01-01')]
-df[['PRICE','CARRY']].plot()
+df[['PRICE','CARRY']].plot(style=['b-','g--'])
 plt.savefig('carry_01.png')
 ```
 
@@ -25,8 +29,8 @@ print (df[f].PRICE - df[f].CARRY).mean()
 ```python
 import sys; sys.path.append('../data')
 import futures
-#res = futures.get_contract(market="CME", sym="CL", month="Z", year=2008)
-#res.to_csv('dec.csv')
+res = futures.get_contract(market="CME", sym="CL", month="Z", year=2008)
+res.to_csv('dec.csv')
 res = futures.get_contract(market="CME", sym="CL", month="X", year=2008)
 res.to_csv('nov.csv')
 ```
