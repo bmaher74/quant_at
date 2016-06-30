@@ -25,12 +25,12 @@ def get_contracts(market, sym, from_year, to_year):
         for month in futures.contract_month_codes:
      	    res.append(futures.get_contract(market=market, sym=sym, month=month, year=year))
     return res	    
-res = get_contracts("CME","CL",2007,2010)
+res = get_contracts("CME","CL",2000,2010)
 print len(res)
 ```
 
 ```text
-36
+120
 ```
 
 ```python
@@ -40,9 +40,20 @@ def rollover_dates(contracts, method):
     start_date = contracts[0].head(1).index[0] # first dt of first contract
     end_date = contracts[-1].tail(1).index[0] # last date of last contract
     delta = end_date - start_date
-    dates = [start_date + datetime.timedelta(days=i) for i in range(delta.days + 1)]
+    dates = []
+    # get bizdays between start and end
+    for i in range(delta.days + 1):
+    	day = start_date + datetime.timedelta(days=i)
+	if day.weekday() < 5: dates.append(day)
     df = pd.DataFrame(index=dates)
-    print df.head()
+    # do the calculation only every 90 days
+    df2 = df.resample("3M",how="first")
+    # get the contract 40 months out
+    df2['Date40'] = df2.index.map(lambda x: x+datetime.timedelta(days=40*30))
+    df2['contract'] = df2.Date40.map(lambda x: "%d%02d" % (x.year, x.month))
+    df['contract'] = df2.contract
+    df.contract = df.contract.fillna(method="ffill")
+    df.contract = df.contract.fillna(method="bfill")
     return
     if "out_40_months_liquid" == method:
        pass
@@ -53,13 +64,27 @@ rollover_dates(res, "out_40_months_liquid")
 ```
 
 ```text
-Empty DataFrame
-Columns: []
-Index: [2004-08-23 00:00:00, 2004-08-24 00:00:00, 2004-08-25 00:00:00, 2004-08-26 00:00:00, 2004-08-27 00:00:00]
+               Date40 contract
+1997-08-31 2000-12-13   200012
+1997-11-30 2001-03-14   200103
+1998-02-28 2001-06-12   200106
+1998-05-31 2001-09-12   200109
+1998-08-31 2001-12-13   200112
 ```
 
+```python
+1997-08-21
+```
 
+```python
+print datetime.datetime.strptime("1998-08-31", "%Y-%m-%d")+datetime.timedelta(days=40*30)
+print datetime.datetime.strptime("1998-11-30", "%Y-%m-%d")+datetime.timedelta(days=40*30)
+```
 
+```text
+2001-12-13 00:00:00
+2002-03-14 00:00:00
+```
 
 
 
