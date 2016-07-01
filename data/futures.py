@@ -4,9 +4,6 @@
 # Mongo database. At each new invocation, only new data for
 # non-expired contracts are downloaded. 
 #
-# F - Jan, G - Feb, H - Mar, J - Apr, K - May, M - Jun
-# N - Jul, Q - Aug, U - Sep, V - Oct, X - Nov, Z - Dec
-#
 
 import Quandl, os, itertools, sys
 from pymongo import MongoClient
@@ -209,8 +206,7 @@ def contract_per_date(contracts, method):
 	if day.weekday() < 5: dates.append(day)
     df = pd.DataFrame(index=dates)
     if method=="out_40_months_every_90_days":
-        # roll every 6 weeks, go to the 40 month ahead
-        # do the calculation only every 90 days
+        # roll every 90 days
         df2 = df.resample("3M",how="first")
         # get the contract 40 months out
         df2['Date40'] = df2.index.map(lambda x: x+datetime.timedelta(days=40*30))
@@ -231,7 +227,6 @@ def contract_per_date(contracts, method):
         df2['contract'] = df2.index.map(lambda x: "%d%02d" % (x.year+1, 12))
         df['contract'] = df2.contract
         df.contract = df.contract.fillna(method="ffill")                
-        df.to_csv('out.csv')
         
     return df
         
@@ -249,4 +244,8 @@ if __name__ == "__main__":
         logging.basicConfig(filename='%s/futures.log' % os.environ['TEMP'],level=logging.DEBUG, format=f)
         download_data()
 
-        
+
+#
+# F - Jan, G - Feb, H - Mar, J - Apr, K - May, M - Jun
+# N - Jul, Q - Aug, U - Sep, V - Oct, X - Nov, Z - Dec
+#

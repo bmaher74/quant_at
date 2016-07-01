@@ -2,11 +2,6 @@
 ```python
 import sys; sys.path.append('../data')
 res = futures.get_contracts("CME","CL",2000,2010)
-print len(res)
-```
-
-```text
-120
 ```
 
 ```python
@@ -16,18 +11,6 @@ import futures
 res2 = futures.contract_per_date(res, "hold_dec_roll_nov")
 #print res2.head()
 ```
-
-```text
-hold_dec_roll_nov
-```
-
-```python
-1997-08-21
-```
-
-
-
-
 
 
 
@@ -59,6 +42,12 @@ crude oil
 always hold december contract
 rollover november 15
 
+gold
+========
+In January I'd want to be in April Gold, so I can measure rolldown off
+February. 70 days before April Gold expires I would then switch to
+June Gold. 70 days before June Gold expires I would move to August
+Gold, and so on.
 
 
 
