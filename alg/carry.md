@@ -1,17 +1,24 @@
 
 ```python
 import sys; sys.path.append('../data')
+import futures       
 res = futures.get_contracts("CME","CL",2000,2010)
 ```
 
 ```python
-import sys; sys.path.append('../data')
-import futures       
 #res2 = futures.contract_per_date(res, "out_40_months_every_90_days")
 res2 = futures.contract_per_date(res, "hold_dec_roll_nov")
-#print res2.head()
+print res2.tail()
 ```
 
+```text
+           contract
+2009-11-16   201012
+2009-11-17   201012
+2009-11-18   201012
+2009-11-19   201012
+2009-11-20   201012
+```
 
 
 

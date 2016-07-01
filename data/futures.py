@@ -21,7 +21,8 @@ def web_download(contract,start,end):
     return df
 
 def systemtoday():
-    return datetime.datetime.today()
+    #return datetime.datetime.today()
+    return datetime.datetime(2016, 6, 30) 
 
 def get(market, sym, month, year, dt, db="findb"):
     """
@@ -230,7 +231,11 @@ def contract_per_date(contracts, method):
         
     return df
         
-            
+def create_carry(contract, contract_method, carry_method):
+    df = contract_per_date(contracts, contract_method)
+    #if carry_method = 
+
+
 if __name__ == "__main__":
 
     simple.check_mongo()    
