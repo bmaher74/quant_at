@@ -233,7 +233,8 @@ def contract_per_date(contracts, method):
         
 def create_carry(contract, contract_method, carry_method):
     df = contract_per_date(contracts, contract_method)
-    #if carry_method = 
+    if carry_method = "next_closest":
+        print carry_method
 
 
 if __name__ == "__main__":
