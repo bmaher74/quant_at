@@ -1,5 +1,17 @@
 
 ```python
+import datetime
+d1 = datetime.datetime(2016, 3, 24)
+d2 = datetime.datetime(2016, 6, 20)
+print (d2-d1).days 
+```
+
+```text
+56
+```
+
+
+```python
 import sys; sys.path.append('../data')
 import futures       
 res = futures.get_contracts("CME","CL",2000,2010)
