@@ -1,15 +1,4 @@
 
-```python
-import datetime
-d1 = datetime.datetime(2016, 3, 24)
-d2 = datetime.datetime(2016, 6, 20)
-print (d2-d1).days 
-```
-
-```text
-88
-```
-
 
 ```python
 import sys; sys.path.append('../data')
