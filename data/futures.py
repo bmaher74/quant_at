@@ -191,52 +191,7 @@ def stitch_prices(dfs, price_col, dates):
         tmp = dfs[i][(dfs[i].index > dates[i]) & (dfs[i].index <= dates_end[i])]
         res.append(tmp.Settle)
     return pd.concat(res)
-
-def stitch_contracts(contracts, method):
-    """Forms a single continuous timeline from dates in contracts, and for
-    each date it calculates which contract should be active for which
-    date, depending on rollover method.
-    """ 
-    start_date = contracts[0].head(1).index[0] # first dt of first contract
-    end_date = contracts[-1].tail(1).index[0] # last date of last contract
-    delta = end_date - start_date
-    dates = []
-    # get bizdays between start and end
-    for i in range(delta.days + 1):
-    	day = start_date + datetime.timedelta(days=i)
-	if day.weekday() < 5: dates.append(day)
-    df = pd.DataFrame(index=dates)
-    if method=="out_40_months_every_90_days":
-        # roll every 90 days
-        df2 = df.resample("3M",how="first")
-        # get the contract 40 months out
-        df2['Date40'] = df2.index.map(lambda x: x+datetime.timedelta(days=40*30))
-        df2['contract'] = df2.Date40.map(lambda x: "%d%02d" % (x.year, x.month))
-        df['contract'] = df2.contract
-        df.contract = df.contract.fillna(method="ffill")
-        df.contract = df.contract.fillna(method="bfill")
-    elif method=="hold_dec_roll_nov":
-        # in the middle of november, roll to the december of next year
-        df = pd.DataFrame(index=dates)
-        # only take novembers
-        df2 = df[df.index.month == 11]
-        df2['year'] = df2.index.year
-        # need to measure 'middle of november', smallest distance to nov 15
-        df2['mid'] = df2.index.map(lambda x: np.abs(x.day-15))
-        # pick the min mid out of year
-        df2 = df2[df2.groupby(['year'])['mid'].transform(min) == df2['mid']]
-        df2['contract'] = df2.index.map(lambda x: "%d%02d" % (x.year+1, 12))
-        df['contract'] = df2.contract
-        df.contract = df.contract.fillna(method="ffill")                
         
-    return df
-        
-def create_carry(contract, contract_method, carry_method):
-    df = contract_per_date(contracts, contract_method)
-    #if carry_method = "next_closest":
-    #    print carry_method
-
-
 if __name__ == "__main__":
 
     simple.check_mongo()    
