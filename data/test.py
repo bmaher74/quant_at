@@ -75,7 +75,7 @@ def test_stitch():
     base = 'test/data_stitch/vix%s.csv'
     for f in ['may','june','july']:
         dfs.append(pd.read_csv(base % f,index_col=0,parse_dates=True))
-    res = futures.stitch(dfs,'Settle',stitch_points)
+    res = futures.stitch_prices(dfs,'Settle',stitch_points)
     exp = pd.read_csv('test/data_stitch/stitch_expected.csv',index_col=0,parse_dates=True)
     exp['res'] = res
     assert np.sum(exp.res-exp.Settle) < 1

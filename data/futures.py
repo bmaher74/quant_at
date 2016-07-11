@@ -164,7 +164,7 @@ def shift(lst,empty):
     res[-1] = empty
     return res
     
-def stitch(dfs, price_col, dates):
+def stitch_prices(dfs, price_col, dates):
     """Stitches together a list of contract prices. dfs should contain a
     list of dataframe objects, price_col is the column name to be
     combined, and dates is a list of stitch dates. The dataframes must
@@ -192,7 +192,7 @@ def stitch(dfs, price_col, dates):
         res.append(tmp.Settle)
     return pd.concat(res)
 
-def contract_per_date(contracts, method):
+def stitch_contracts(contracts, method):
     """Forms a single continuous timeline from dates in contracts, and for
     each date it calculates which contract should be active for which
     date, depending on rollover method.
