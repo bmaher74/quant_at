@@ -7,20 +7,28 @@ inst = pd.read_csv('instruments.csv',index_col=0).to_dict()
 print inst['carryoffset']['CL']
 ```
 
+```text
+-1
+```
+
 ```python
 res = futures.get_contracts("CME","CL",2000,2010)
 ```
 
 ```python
-def stitch_contracts(contracts_list):
-    print len(contracts_list)
+def stitch_contracts(instrument, contracts_list):
+    insts = pd.read_csv('instruments.csv',index_col=0).to_dict()
+    cycle = insts['rollcycle'][instrument]
+    offset = insts['rolloffset'][instrument]
+    exp = insts['expiration'][instrument]
+    print cycle,offset,exp
 
 
-res2 = stitch_contracts(res)
+res2 = stitch_contracts("CL", res)
 ```
 
 ```text
-120
+Z 50 25
 ```
 
 
