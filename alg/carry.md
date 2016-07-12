@@ -1,44 +1,26 @@
 
-
 ```python
+import pandas as pd
 import sys; sys.path.append('../data')
 import futures       
+inst = pd.read_csv('instruments.csv',index_col=0).to_dict()
+print inst['carryoffset']['CL']
+```
+
+```python
 res = futures.get_contracts("CME","CL",2000,2010)
 ```
 
 ```python
-#res2 = futures.stitch_contracts(res, "out_40_months_every_90_days")
-res2 = futures.stitch_contracts(res, "hold_dec_roll_nov")
-print res2.tail()
-res2.to_csv("out.csv")
-```
-
-```text
-           contract
-2009-11-16   201012
-2009-11-17   201012
-2009-11-18   201012
-2009-11-19   201012
-2009-11-20   201012
-```
-
-```python
-import pandas as pd
-inst = pd.read_csv('instruments.csv',index_col=0).to_dict()
-print inst['carryoffset']['CL']
-
-def create_carry(contract, contracts_list):
+def stitch_contracts(contracts_list):
     print len(contracts_list)
-    
 
-create_carry("CL", res2)
 
+res2 = stitch_contracts(res)
 ```
 
 ```text
-{'currency': {'EDOLLAR': 'USD', 'CL': 'USD', 'EUROSTX': 'EUR', 'CORN': 'USD', 'V2X': 'EUR', 'MXP': 'USD', 'US5': 'USD'}, 'block_value': {'EDOLLAR': 2500, 'CL': 1000, 'EUROSTX': 10, 'CORN': 50, 'V2X': 100, 'MXP': 500000, 'US5': 1000}, 'carryoffset': {'EDOLLAR': -3, 'CL': -1, 'EUROSTX': 3, 'CORN': -3, 'V2X': -1, 'MXP': 3, 'US5': -9}, 'slippage': {'EDOLLAR': 0.0025000000000000001, 'CL': 0.0145328653, 'EUROSTX': 0.5, 'CORN': 0.125, 'V2X': 0.025499999999999998, 'MXP': 1.1567000000000001e-05, 'US5': 0.0040000000000000001}}
--1
-3197
+120
 ```
 
 
