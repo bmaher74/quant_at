@@ -2,13 +2,7 @@
 ```python
 import pandas as pd
 import sys; sys.path.append('../data')
-import futures       
-inst = pd.read_csv('instruments.csv',index_col=0).to_dict()
-print inst['carryoffset']['CL']
-```
-
-```text
--1
+import futures    
 ```
 
 ```python
@@ -16,12 +10,23 @@ res = futures.get_contracts("CME","CL",2000,2010)
 ```
 
 ```python
-def stitch_contracts(instrument, contracts_list):
+import datetime
+def stitch_contracts(instrument, contract_list):
     insts = pd.read_csv('instruments.csv',index_col=0).to_dict()
     cycle = insts['rollcycle'][instrument]
     offset = insts['rolloffset'][instrument]
     exp = insts['expiration'][instrument]
     print cycle,offset,exp
+    
+    start_date = contract_list[0].head(1).index[0] # first dt of first contract
+    end_date = contract_list[-1].tail(1).index[0] # last date of last contract
+    delta = end_date - start_date
+    dates = []
+    # get bizdays between start and end
+    for i in range(delta.days + 1):
+    	day = start_date + datetime.timedelta(days=i)
+	if day.weekday() < 5: dates.append(day)
+    print dates[:4]
 
 
 res2 = stitch_contracts("CL", res)
@@ -29,6 +34,7 @@ res2 = stitch_contracts("CL", res)
 
 ```text
 Z 50 25
+[Timestamp('1997-08-21 00:00:00'), Timestamp('1997-08-22 00:00:00'), Timestamp('1997-08-25 00:00:00'), Timestamp('1997-08-26 00:00:00')]
 ```
 
 
