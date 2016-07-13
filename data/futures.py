@@ -48,6 +48,7 @@ def get_contract(market, sym, month, year, db="findb"):
          "$orderby":{"_id.dt" : 1} 
     }
     res = list(db.futures.find( q ))
+    if len(res) == 0: return None
     res = pd.DataFrame(res)
     res['Date'] = res['_id'].map(lambda x: datetime.datetime.strptime(str(x["dt"]), '%Y%m%d'))
     res = res.drop('_id',axis=1)
@@ -75,7 +76,8 @@ def get_contracts(market, sym, from_year, to_year):
     res = []
     for year in range(from_year,to_year):
         for month in contract_month_codes:
-     	    res.append(get_contract(market=market, sym=sym, month=month, year=year))
+            c = get_contract(market=market, sym=sym, month=month, year=year)
+            if 'DataFrame' in str(type(c)): res.append(c)
     return res	    
 
 def last_date_in_contract(sym, market, month, year, db="findb"):

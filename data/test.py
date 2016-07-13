@@ -46,28 +46,28 @@ def test_simple():
     futures.download_data(downloader=fake_download_1,today=fake_today_1,
                           db=testdb, years=(1984,1985))
     res = futures.get(market="CME", sym="CL", month="F", year=1984, dt=19831205, db=testdb)
-    assert res[0]['oi'] == 5027.0
+    assert (res[0]['oi'] == 5027.0)
     res = futures.get(market="CME", sym="CL", month="G", year=1984, dt=19830624, db=testdb)
-    assert res[0]['oi'] == 5.0
+    assert (res[0]['oi'] == 5.0)
     res = futures.last_contract("CL","CME", db)
-    assert res[0]['_id']['month'] == 'G'
+    assert (res[0]['_id']['month'] == 'G')
     res = futures.existing_nonexpired_contracts("CL","CME", fake_today_1(), db)
-    assert len(res) == 0
+    assert (len(res) == 0)
     res = futures.existing_nonexpired_contracts("CL","CME", fake_today_2(), db)
-    assert len(res) > 0
+    assert (len(res) > 0)
     res = futures.get_contract(market="CME", sym="CL", month="G", year=1984, db=testdb)
-    assert len(res)==143
+    assert (len(res)==143)
     
 def test_incremental():
     db = init()
     futures.download_data(downloader=fake_download_2,today=fake_today_726,
                           db=testdb, years=(1984,1985))
     print futures.last_date_in_contract("CL","CME","F", 1984, db)
-    assert futures.last_date_in_contract("CL","CME","F", 1984, db) == 19830726    
+    assert (futures.last_date_in_contract("CL","CME","F", 1984, db) == 19830726)
 
     futures.download_data(downloader=fake_download_3,today=fake_today_727,
                           db=testdb, years=(1984,1985))
-    assert futures.last_date_in_contract("CL","CME","F", 1984, db) == 19830727
+    assert (futures.last_date_in_contract("CL","CME","F", 1984, db) == 19830727)
 
 def test_stitch():
     stitch_points = ['2015-03-13','2015-04-15']
@@ -78,10 +78,18 @@ def test_stitch():
     res = futures.stitch_prices(dfs,'Settle',stitch_points)
     exp = pd.read_csv('test/data_stitch/stitch_expected.csv',index_col=0,parse_dates=True)
     exp['res'] = res
-    assert np.sum(exp.res-exp.Settle) < 1
+    assert (np.sum(exp.res-exp.Settle) < 1)
 
+def test_missing_contract():
+    db = init()
+    futures.download_data(downloader=fake_download_1,today=fake_today_1,
+                          db=testdb, years=(1984,1985))
+    res = futures.get_contract(market="CME", sym="CL", month="Z", year=1984, db=testdb)
+    assert (res==None)
+    
 if __name__ == "__main__":    
     test_simple()
     test_incremental()
     test_stitch()
+    test_missing_contract()
     

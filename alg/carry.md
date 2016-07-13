@@ -6,11 +6,18 @@ import futures
 ```
 
 ```python
-res = futures.get_contracts("CME","CL",2000,2010)
+#res = futures.get_contracts("CME","CL",2000,2010)
+res = futures.get_contracts("CME","FV",2000,2010)
+print len(res)
+```
+
+```text
+40
 ```
 
 ```python
 import datetime
+    
 def stitch_contracts(instrument, contract_list):
     insts = pd.read_csv('instruments.csv',index_col=0).to_dict()
     cycle = insts['rollcycle'][instrument]
@@ -26,15 +33,31 @@ def stitch_contracts(instrument, contract_list):
     for i in range(delta.days + 1):
     	day = start_date + datetime.timedelta(days=i)
 	if day.weekday() < 5: dates.append(day)
-    print dates[:4]
+    df = pd.DataFrame(index=dates)
+    cycle_d = [futures.contract_month_dict[x] for x in cycle]
+    print cycle_d
+    df['effcont'] = np.nan
+    for year in np.unique(df.index.year):
+    	for c in cycle_d:
+	    v = int("%d%02d" % (year,c))
+	    df.loc[(df.index.year == year) & (df.index.month == c) & (df.index.day==exp),'effcont'] = v
+    df = df.fillna(method='bfill')	    
+    print df.head()
+    df.to_csv('out.csv')
 
+res2 = stitch_contracts("FV", res)
 
-res2 = stitch_contracts("CL", res)
 ```
 
 ```text
-Z 50 25
-[Timestamp('1997-08-21 00:00:00'), Timestamp('1997-08-22 00:00:00'), Timestamp('1997-08-25 00:00:00'), Timestamp('1997-08-26 00:00:00')]
+HMUZ 50 30
+[3, 6, 9, 12]
+            effcont
+1999-08-30   199909
+1999-08-31   199909
+1999-09-01   199909
+1999-09-02   199909
+1999-09-03   199909
 ```
 
 
@@ -57,6 +80,13 @@ Z 50 25
 
 
 
+def which_contract(day, cycle, offset, exp):
+    day = pd.to_datetime(day, format='%Y-%m-%d')
+    tmp = day + datetime.timedelta(days=offset)
+    print day, tmp
+    print "%d%02d" % (tmp.year,tmp.month)    
+
+which_contract("2010-01-15", "HMUZ", 50, 25)
 
 
 eurodollar
