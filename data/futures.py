@@ -200,10 +200,11 @@ def which_contract(instrument, contract_list, cycle, offset, exp):
     calculates which contract would be effective on that date for a
     given offset (how far ahead) and a rollcycle for the contracts in
     question.
+
+    Returns: A date-indexed Dataframe with each day pointing to a contract.
     """
     start_date = contract_list[0].head(1).index[0] # first dt of first contract
     end_date = contract_list[-1].tail(1).index[0] # last date of last contract
-    print start_date, end_date
     delta = end_date - start_date
     dates = []
     # get bizdays between start and end
@@ -217,14 +218,12 @@ def which_contract(instrument, contract_list, cycle, offset, exp):
     	return df.index[np.argmin(diffs)]
 
     cycle_d = [contract_month_dict[x] for x in cycle]
-    print cycle_d
     df['effcont'] = np.nan
     for year in np.unique(df.index.year):
     	for c in cycle_d:
 	    v = "%d%02d" % (year,c)
 	    exp_d = datetime.datetime(year, c, exp)
 	    df.loc[closest_biz(exp_d),'effcont'] = v
-    print df[(df.index.year == 2001) & (df.index.month == 6) & (df.index.day==29)]
     df = df.fillna(method='bfill')
     # get the contract offset days in the future - the little arithmetic
     # below was necessary to turn offset days into offset business days.

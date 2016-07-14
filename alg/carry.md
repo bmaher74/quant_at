@@ -3,6 +3,7 @@
 import pandas as pd
 import sys; sys.path.append('../data')
 import futures    
+insts = pd.read_csv('instruments.csv',index_col=0).to_dict()
 ```
 
 ```python
@@ -16,20 +17,42 @@ print len(res)
 ```
 
 ```python
+ins = "FV"
+res2 = futures.which_contract("FV", res, insts['rollcycle'][ins], insts['rolloffset'][ins], insts['expiration'][ins])
+```
+
+
+```python
 import datetime
 
-
-i = "FV"
-insts = pd.read_csv('instruments.csv',index_col=0).to_dict()
-res2 = futures.which_contract("FV", res, insts['rollcycle'][i], insts['rolloffset'][i], insts['expiration'][i])
+def create_carry(df, offset):
+    print df[1000:1020]
+        
+create_carry(res2)
 ```
 
 ```text
-HMUZ 50 30
-1999-08-30 00:00:00 2009-12-31 00:00:00
-[3, 6, 9, 12]
            effcont
-2001-06-29  200106
+2003-06-30  200309
+2003-07-01  200309
+2003-07-02  200309
+2003-07-03  200309
+2003-07-04  200309
+2003-07-07  200309
+2003-07-08  200309
+2003-07-09  200309
+2003-07-10  200309
+2003-07-11  200309
+2003-07-14  200309
+2003-07-15  200309
+2003-07-16  200309
+2003-07-17  200309
+2003-07-18  200309
+2003-07-21  200309
+2003-07-22  200309
+2003-07-23  200309
+2003-07-24  200309
+2003-07-25  200309
 ```
 
 
