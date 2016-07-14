@@ -49,7 +49,14 @@ res3.to_csv("out.csv")
 1999-09-03  199912    199902
 ```
 
+```python
+cached_prices = dict((x,res[x].s.to_dict()) for x in res.keys())
+print cached_prices["200406"][pd.to_datetime("2004-04-22", format='%Y-%m-%d')]
+```
 
+```text
+110.609375
+```
 
 
 
