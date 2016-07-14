@@ -235,6 +235,17 @@ def which_contract(instrument, contract_list, cycle, offset, exp):
     df['effcont'] = df.effcont.shift(-int(offset*2/3 + 3))
     return df
 
+def create_carry(df, offset, contract_list):
+    df['effcont'] = df.effcont.astype(str)
+    def offset_contract(con):
+    	s = pd.to_datetime(con, format='%Y%m')
+    	ss = s + datetime.timedelta(days=31*offset)
+    	return "%d%02d" % (int(ss.year), int(ss.month)) 
+    df['carrycont'] = df.effcont.map(offset_contract)
+    df['effprice'] = df.apply(lambda x: contract_list.get(x.effcont).s.get(x.name) if x.effcont in contract_list else np.nan,axis=1)
+    df['carryprice'] = df.apply(lambda x: contract_list.get(x.carrycont).s.get(x.name) if x.carrycont in contract_list else np.nan,axis=1)
+    return df
+
 if __name__ == "__main__":
 
     simple.check_mongo()    

@@ -10,46 +10,46 @@ res = futures.get_contracts("CME","FV",2000,2010)
 
 ```python
 ins = "FV"
-res2 = futures.which_contract("FV", res, insts['rollcycle'][ins], insts['rolloffset'][ins], insts['expiration'][ins])
+print insts['carryoffset'][ins]
+res2 = futures.which_contract(ins, res, insts['rollcycle'][ins], insts['rolloffset'][ins], insts['expiration'][ins])
 ```
 
-
 ```python
-import pandas as pd
-import datetime
-
-def create_carry(df, offset):
-    df['effcont'] = df.effcont.astype(str)
-    def offset_contract(con):
-    	s = pd.to_datetime(con, format='%Y%m')
-    	ss = s + datetime.timedelta(days=31*offset)
-    	return "%d%02d" % (int(ss.year), int(ss.month)) 
-    df['carrycont'] = df.effcont.map(offset_contract)
-    return df
-
-res3 = create_carry(res2[pd.isnull(res2.effcont)==False], int(insts['carryoffset'][ins]))
+res3 = futures.create_carry(res2[pd.isnull(res2.effcont)==False],\
+			    int(insts['carryoffset'][ins]),\
+			    res)
 print res3.head()
-```
-
-```text
-           effcont carrycont
-1999-08-30  199912    199902
-1999-08-31  199912    199902
-1999-09-01  199912    199902
-1999-09-02  199912    199902
-1999-09-03  199912    199902
-```
-
-```python
-res3['effprice'] = res3.apply(lambda x: res.get(x.effcont).s.get(x.name) if x.effcont in res else np.nan,axis=1)
-res3['carryprice'] = res3.apply(lambda x: res.get(x.carrycont).s.get(x.name) if x.carrycont in res else np.nan,axis=1)
 res3.to_csv("out.csv")
 ```
 
-
-```python
-print res["200608"]["2007-03-02"]
+```text
+           effcont carrycont  effprice  carryprice
+1999-08-30  199912    200003       NaN  100.000000
+1999-08-31  199912    200003       NaN   99.914062
+1999-09-01  199912    200003       NaN   99.937500
+1999-09-02  199912    200003       NaN   99.835938
+1999-09-03  199912    200003       NaN  100.375000
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
