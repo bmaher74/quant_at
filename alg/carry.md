@@ -16,9 +16,20 @@ print len(res)
 ```
 
 ```python
-import datetime
-    
-def stitch_contracts(instrument, contract_list):
+s = pd.to_datetime("2001-01-20", format='%Y-%m-%d')
+print s + datetime.timedelta(days=50)
+```
+
+```text
+2001-03-11 00:00:00
+```
+
+
+
+```python
+import datetime, itertools
+
+def create_carry(instrument, contract_list):
     insts = pd.read_csv('instruments.csv',index_col=0).to_dict()
     cycle = insts['rollcycle'][instrument]
     offset = insts['rolloffset'][instrument]
@@ -27,6 +38,7 @@ def stitch_contracts(instrument, contract_list):
     
     start_date = contract_list[0].head(1).index[0] # first dt of first contract
     end_date = contract_list[-1].tail(1).index[0] # last date of last contract
+    print start_date, end_date
     delta = end_date - start_date
     dates = []
     # get bizdays between start and end
@@ -39,25 +51,25 @@ def stitch_contracts(instrument, contract_list):
     df['effcont'] = np.nan
     for year in np.unique(df.index.year):
     	for c in cycle_d:
-	    v = int("%d%02d" % (year,c))
+	    v = "%d%02d" % (year,c)
 	    df.loc[(df.index.year == year) & (df.index.month == c) & (df.index.day==exp),'effcont'] = v
-    df = df.fillna(method='bfill')	    
-    print df.head()
+    print df[(df.index.year == 2001) & (df.index.month == 6) & (df.index.day==30)]
+    df = df.fillna(method='bfill')
+    #df['effcont'] = df.effcont.shift(-offset)
+    #print df.head()
     df.to_csv('out.csv')
 
-res2 = stitch_contracts("FV", res)
+res2 = create_carry("FV", res)
 
 ```
 
 ```text
 HMUZ 50 30
+1999-08-30 00:00:00 2009-12-31 00:00:00
 [3, 6, 9, 12]
-            effcont
-1999-08-30   199909
-1999-08-31   199909
-1999-09-01   199909
-1999-09-02   199909
-1999-09-03   199909
+Empty DataFrame
+Columns: [effcont]
+Index: []
 ```
 
 
@@ -69,24 +81,6 @@ HMUZ 50 30
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-def which_contract(day, cycle, offset, exp):
-    day = pd.to_datetime(day, format='%Y-%m-%d')
-    tmp = day + datetime.timedelta(days=offset)
-    print day, tmp
-    print "%d%02d" % (tmp.year,tmp.month)    
-
-which_contract("2010-01-15", "HMUZ", 50, 25)
 
 
 eurodollar
