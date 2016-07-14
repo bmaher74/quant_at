@@ -4,16 +4,8 @@ import pandas as pd
 import sys; sys.path.append('../data')
 import futures    
 insts = pd.read_csv('instruments.csv',index_col=0).to_dict()
-```
-
-```python
 #res = futures.get_contracts("CME","CL",2000,2010)
 res = futures.get_contracts("CME","FV",2000,2010)
-print len(res)
-```
-
-```text
-40
 ```
 
 ```python
@@ -37,7 +29,6 @@ def create_carry(df, offset):
 
 res3 = create_carry(res2[pd.isnull(res2.effcont)==False], int(insts['carryoffset'][ins]))
 print res3.head()
-res3.to_csv("out.csv")
 ```
 
 ```text
@@ -50,16 +41,15 @@ res3.to_csv("out.csv")
 ```
 
 ```python
-cached_prices = dict((x,res[x].s.to_dict()) for x in res.keys())
-print cached_prices["200406"][pd.to_datetime("2004-04-22", format='%Y-%m-%d')]
-```
-
-```text
-110.609375
+res3['effprice'] = res3.apply(lambda x: res.get(x.effcont).s.get(x.name) if x.effcont in res else np.nan,axis=1)
+res3['carryprice'] = res3.apply(lambda x: res.get(x.carrycont).s.get(x.name) if x.carrycont in res else np.nan,axis=1)
+res3.to_csv("out.csv")
 ```
 
 
-
+```python
+print res["200608"]["2007-03-02"]
+```
 
 
 
