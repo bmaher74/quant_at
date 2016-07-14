@@ -22,35 +22,30 @@ res2 = futures.which_contract("FV", res, insts['rollcycle'][ins], insts['rolloff
 ```
 
 ```python
+import pandas as pd
 import datetime
 
-def offset_contract(con, offset):
-    s = pd.to_datetime(con, format='%Y%m')
-    ss = s + datetime.timedelta(days=31*offset)
-    return "%d%02d" % (ss.year, ss.month)
-print offset_contract("200003", 2)
-print offset_contract("200003", -4)
-
 def create_carry(df, offset):
-    print offset, df[1000:1010]
-        
-create_carry(res2, insts['carryoffset'][ins])
+    df['effcont'] = df.effcont.astype(str)
+    def offset_contract(con):
+    	s = pd.to_datetime(con, format='%Y%m')
+    	ss = s + datetime.timedelta(days=31*offset)
+    	return "%d%02d" % (int(ss.year), int(ss.month)) 
+    df['carrycont'] = df.effcont.map(offset_contract)
+    return df
+
+res3 = create_carry(res2[pd.isnull(res2.effcont)==False], int(insts['carryoffset'][ins]))
+print res3.head()
+res3.to_csv("out.csv")
 ```
 
 ```text
-200005
-199910
--9            effcont
-2003-06-30  200309
-2003-07-01  200309
-2003-07-02  200309
-2003-07-03  200309
-2003-07-04  200309
-2003-07-07  200309
-2003-07-08  200309
-2003-07-09  200309
-2003-07-10  200309
-2003-07-11  200309
+           effcont carrycont
+1999-08-30  199912    199902
+1999-08-31  199912    199902
+1999-09-01  199912    199902
+1999-09-02  199912    199902
+1999-09-03  199912    199902
 ```
 
 
