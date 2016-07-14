@@ -71,7 +71,11 @@ def existing_nonexpired_contracts(sym, market, today, db="findb"):
 
 def get_contracts(market, sym, from_year, to_year):
     """
-    Get all contracts, from jan to dec, between given years
+    Get all contracts, from jan to dec, between given years, for all possible
+    year / month combination.
+
+    Returns: An ordered dictionary whose key is YYYYMM type year-month code,
+    and value is the contract in a dataframe.
     """
     res = collections.OrderedDict()
     for year in range(from_year,to_year):
