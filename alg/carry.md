@@ -21,13 +21,18 @@ ins = "FV"
 res2 = futures.which_contract("FV", res, insts['rollcycle'][ins], insts['rolloffset'][ins], insts['expiration'][ins])
 ```
 
-
 ```python
 import datetime
 
+def offset_contract(con, offset):
+    s = pd.to_datetime(con, format='%Y%m')
+    ss = s + datetime.timedelta(days=31*offset)
+    return "%d%02d" % (ss.year, ss.month)
+print offset_contract("200003", 2)
+print offset_contract("200003", -4)
+
 def create_carry(df, offset):
     print offset, df[1000:1010]
-    
         
 create_carry(res2, insts['carryoffset'][ins])
 ```
