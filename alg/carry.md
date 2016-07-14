@@ -38,6 +38,8 @@ create_carry(res2, insts['carryoffset'][ins])
 ```
 
 ```text
+200005
+199910
 -9            effcont
 2003-06-30  200309
 2003-07-01  200309
