@@ -26,13 +26,14 @@ res2 = futures.which_contract("FV", res, insts['rollcycle'][ins], insts['rolloff
 import datetime
 
 def create_carry(df, offset):
-    print df[1000:1020]
+    print offset, df[1000:1010]
+    
         
-create_carry(res2)
+create_carry(res2, insts['carryoffset'][ins])
 ```
 
 ```text
-           effcont
+-9            effcont
 2003-06-30  200309
 2003-07-01  200309
 2003-07-02  200309
@@ -43,16 +44,6 @@ create_carry(res2)
 2003-07-09  200309
 2003-07-10  200309
 2003-07-11  200309
-2003-07-14  200309
-2003-07-15  200309
-2003-07-16  200309
-2003-07-17  200309
-2003-07-18  200309
-2003-07-21  200309
-2003-07-22  200309
-2003-07-23  200309
-2003-07-24  200309
-2003-07-25  200309
 ```
 
 
