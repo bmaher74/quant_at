@@ -193,7 +193,44 @@ def stitch_prices(dfs, price_col, dates):
         tmp = dfs[i][(dfs[i].index > dates[i]) & (dfs[i].index <= dates_end[i])]
         res.append(tmp.Settle)
     return pd.concat(res)
-        
+
+def which_contract(instrument, contract_list, cycle, offset, exp):
+    """
+    For a list of contracts it creates a continuous date index, and
+    calculates which contract would be effective on that date for a
+    given offset (how far ahead) and a rollcycle for the contracts in
+    question.
+    """
+    start_date = contract_list[0].head(1).index[0] # first dt of first contract
+    end_date = contract_list[-1].tail(1).index[0] # last date of last contract
+    print start_date, end_date
+    delta = end_date - start_date
+    dates = []
+    # get bizdays between start and end
+    for i in range(delta.days + 1):
+    	day = start_date + datetime.timedelta(days=i)
+	if day.weekday() < 5: dates.append(day)
+    df = pd.DataFrame(index=dates)
+    
+    def closest_biz(d): # get closest biz day
+    	diffs = np.abs((d - df.index).days)
+    	return df.index[np.argmin(diffs)]
+
+    cycle_d = [contract_month_dict[x] for x in cycle]
+    print cycle_d
+    df['effcont'] = np.nan
+    for year in np.unique(df.index.year):
+    	for c in cycle_d:
+	    v = "%d%02d" % (year,c)
+	    exp_d = datetime.datetime(year, c, exp)
+	    df.loc[closest_biz(exp_d),'effcont'] = v
+    print df[(df.index.year == 2001) & (df.index.month == 6) & (df.index.day==29)]
+    df = df.fillna(method='bfill')
+    # get the contract offset days in the future - the little arithmetic
+    # below was necessary to turn offset days into offset business days.
+    df['effcont'] = df.effcont.shift(-int(offset*2/3 + 3))
+    return df
+
 if __name__ == "__main__":
 
     simple.check_mongo()    

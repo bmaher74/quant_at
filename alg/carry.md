@@ -16,57 +16,12 @@ print len(res)
 ```
 
 ```python
-s = pd.to_datetime("2001-08-10", format='%Y-%m-%d')
-print s + datetime.timedelta(days=50)
-```
-
-```text
-2001-09-29 00:00:00
-```
+import datetime
 
 
-
-```python
-import datetime, itertools
-
-def create_carry(instrument, contract_list):
-    insts = pd.read_csv('instruments.csv',index_col=0).to_dict()
-    cycle = insts['rollcycle'][instrument]
-    offset = insts['rolloffset'][instrument]
-    exp = insts['expiration'][instrument]
-    print cycle,offset,exp
-
-    start_date = contract_list[0].head(1).index[0] # first dt of first contract
-    end_date = contract_list[-1].tail(1).index[0] # last date of last contract
-    print start_date, end_date
-    delta = end_date - start_date
-    dates = []
-    # get bizdays between start and end
-    for i in range(delta.days + 1):
-    	day = start_date + datetime.timedelta(days=i)
-	if day.weekday() < 5: dates.append(day)
-    df = pd.DataFrame(index=dates)
-    
-    def closest_biz(d): # get closest biz day
-    	diffs = np.abs((d - df.index).days)
-    	return df.index[np.argmin(diffs)]
-
-    cycle_d = [futures.contract_month_dict[x] for x in cycle]
-    print cycle_d
-    df['effcont'] = np.nan
-    for year in np.unique(df.index.year):
-    	for c in cycle_d:
-	    v = "%d%02d" % (year,c)
-	    exp_d = datetime.datetime(year, c, exp)
-	    df.loc[closest_biz(exp_d),'effcont'] = v
-    print df[(df.index.year == 2001) & (df.index.month == 6) & (df.index.day==29)]
-    df = df.fillna(method='bfill')
-    df['effcont'] = df.effcont.shift(-int(offset*2/3 + 3))
-    df.to_csv('out.csv')
-
-
-res2 = create_carry("FV", res)
-
+i = "FV"
+insts = pd.read_csv('instruments.csv',index_col=0).to_dict()
+res2 = futures.which_contract("FV", res, insts['rollcycle'][i], insts['rolloffset'][i], insts['expiration'][i])
 ```
 
 ```text
