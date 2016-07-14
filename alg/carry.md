@@ -16,12 +16,12 @@ print len(res)
 ```
 
 ```python
-s = pd.to_datetime("2001-02-16", format='%Y-%m-%d')
+s = pd.to_datetime("2001-08-10", format='%Y-%m-%d')
 print s + datetime.timedelta(days=50)
 ```
 
 ```text
-2001-04-07 00:00:00
+2001-09-29 00:00:00
 ```
 
 
