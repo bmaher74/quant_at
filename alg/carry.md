@@ -21,6 +21,7 @@ ins = "FV"
 res2 = futures.which_contract("FV", res, insts['rollcycle'][ins], insts['rolloffset'][ins], insts['expiration'][ins])
 ```
 
+
 ```python
 import pandas as pd
 import datetime

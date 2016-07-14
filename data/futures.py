@@ -8,7 +8,7 @@
 import Quandl, os, itertools, sys
 from pymongo import MongoClient
 import logging, datetime, simple
-import pandas as pd
+import pandas as pd, collections
 import numpy as np
 from memo import *
 
@@ -73,11 +73,12 @@ def get_contracts(market, sym, from_year, to_year):
     """
     Get all contracts, from jan to dec, between given years
     """
-    res = []
+    res = collections.OrderedDict()
     for year in range(from_year,to_year):
         for month in contract_month_codes:
             c = get_contract(market=market, sym=sym, month=month, year=year)
-            if 'DataFrame' in str(type(c)): res.append(c)
+            key = "%d%02d" % (year,contract_month_dict[month])
+            if 'DataFrame' in str(type(c)): res[key] = c
     return res	    
 
 def last_date_in_contract(sym, market, month, year, db="findb"):
@@ -203,8 +204,8 @@ def which_contract(instrument, contract_list, cycle, offset, exp):
 
     Returns: A date-indexed Dataframe with each day pointing to a contract.
     """
-    start_date = contract_list[0].head(1).index[0] # first dt of first contract
-    end_date = contract_list[-1].tail(1).index[0] # last date of last contract
+    start_date = contract_list[contract_list.keys()[0]].head(1).index[0] # first dt of first contract
+    end_date = contract_list[contract_list.keys()[-1]].tail(1).index[0] # last date of last contract
     delta = end_date - start_date
     dates = []
     # get bizdays between start and end
