@@ -236,6 +236,17 @@ def which_contract(instrument, contract_list, cycle, offset, exp):
     return df
 
 def create_carry(df, offset, contract_list):
+    """
+    Creates a new column for the carry contract, gets prices for both
+    effective and carry contracts.
+    
+    Input:
+    
+    df: Dataframe indexed by date which has an 'effcont' column for the effective
+    contract for that day
+    offset: How far / behind will we look for a carry contract in relation to the
+    effective contract.        
+    """    
     df['effcont'] = df.effcont.astype(str)
     def offset_contract(con):
     	s = pd.to_datetime(con, format='%Y%m')
