@@ -1,10 +1,3 @@
-#
-# Futures Contracts downloader - symbols are in futures.csv, each
-# symbol in this file is retrieved from Quandl and inserted into a
-# Mongo database. At each new invocation, only new data for
-# non-expired contracts are downloaded. 
-#
-
 import Quandl, os, itertools, sys
 from pymongo import MongoClient
 import logging, datetime, simple
@@ -97,6 +90,13 @@ def last_date_in_contract(sym, market, month, year, db="findb"):
 def download_data(chunk=1,chunk_size=1,downloader=web_download,
                   today=systemtoday,db="findb",years=(1984,2022)):
 
+    """
+    Futures Contracts downloader - symbols are in futures.csv, each
+    symbol in this file is retrieved from Quandl and inserted into a
+    Mongo database. At each new invocation, only new data for
+    non-expired contracts are downloaded. 
+    """
+    
     # a tuple of contract years, defining the beginning
     # of time and end of time
     start_year,end_year=years
