@@ -31,7 +31,7 @@ def get(market, sym, month, year, dt, db="findb"):
 
 def get_contract(market, sym, month, year, db="findb"):
     """
-    Returns all data for symbol in a pandas dataframe
+    Returns all data for contract symbol in a pandas dataframe
     """
     connection = MongoClient()
     db = connection[db]
@@ -67,7 +67,7 @@ def get_contracts(market, sym, from_year, to_year):
     Get all contracts, from jan to dec, between given years, for all possible
     year / month combination.
 
-    Returns: An ordered dictionary whose key is YYYYMM type year-month code,
+    Returns: An ordered dictionary whose key is YYYYMM year-month code,
     and value is the contract in a dataframe.
     """
     res = collections.OrderedDict()
@@ -206,7 +206,8 @@ def which_contract(instrument, contract_list, cycle, offset, exp):
     given offset (how far ahead) and a rollcycle for the contracts in
     question.
 
-    Returns: A date-indexed Dataframe with each day pointing to a contract.
+    Returns: A date-indexed Dataframe and an effcont column which points to the
+    effective contract for that date.
     """
     start_date = contract_list[contract_list.keys()[0]].head(1).index[0] # first dt of first contract
     end_date = contract_list[contract_list.keys()[-1]].tail(1).index[0] # last date of last contract
@@ -245,7 +246,11 @@ def create_carry(df, offset, contract_list):
     df: Dataframe indexed by date which has an 'effcont' column for the effective
     contract for that day
     offset: How far / behind will we look for a carry contract in relation to the
-    effective contract.        
+    effective contract.
+
+    Returns:
+    Same dataframe df with carry contract, effective price, carry price colunns
+    appended.
     """    
     df['effcont'] = df.effcont.astype(str)
     def offset_contract(con):
