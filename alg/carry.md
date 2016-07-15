@@ -4,36 +4,49 @@ import pandas as pd
 import sys; sys.path.append('../data')
 import futures    
 insts = pd.read_csv('instruments.csv',index_col=0).to_dict()
-#res = futures.get_contracts("CME","CL",2000,2010)
-res = futures.get_contracts("CME","FV",2000,2010)
+res = futures.get_contracts("CME","CL",2007,2013)
+#res = futures.get_contracts("CME","FV",2000,2010)
 ```
 
 ```python
-ins = "FV"
-print insts['carryoffset'][ins]
-res2 = futures.which_contract(ins, res, insts['rollcycle'][ins], insts['rolloffset'][ins], insts['expiration'][ins])
+#ins = "FV"
+ins = "CL"
+roll = insts['rollcycle'][ins]
+rolloff = insts['rolloffset'][ins]
+exp = insts['expiration'][ins]
+res2 = futures.which_contract(ins, res, roll, rolloff, exp)
+res2.to_csv("out2.csv")
 ```
 
+
 ```python
-res3 = futures.create_carry(res2[pd.isnull(res2.effcont)==False],\
-			    int(insts['carryoffset'][ins]),\
-			    res)
+carryoff = int(insts['carryoffset'][ins])
+res3 = futures.create_carry(res2[pd.isnull(res2.effcont)==False],carryoff,res)
 print res3.head()
-res3.to_csv("out.csv")
+res3.to_csv("out3.csv")
 ```
 
 ```text
            effcont carrycont  effprice  carryprice
-1999-08-30  199912    200003       NaN  100.000000
-1999-08-31  199912    200003       NaN   99.914062
-1999-09-01  199912    200003       NaN   99.937500
-1999-09-02  199912    200003       NaN   99.835938
-1999-09-03  199912    200003       NaN  100.375000
+2004-08-23  200412    200411       NaN         NaN
+2004-08-24  200412    200411       NaN         NaN
+2004-08-25  200412    200411       NaN         NaN
+2004-08-26  200412    200411       NaN         NaN
+2004-08-27  200412    200411       NaN         NaN
 ```
 
+```python
+res4 = res3[(res3.index > '2008-01-01') & (res3.index <'2012-01-01')]
+res4[['effprice','carryprice']].plot()
+plt.savefig('carry_01.png')
+```
 
+![](carry_01.png)
 
-
+```python
+carryfor = res4.carryprice-res4.effprice
+carryfor.to_csv("out4.csv")
+```
 
 
 
