@@ -150,7 +150,7 @@ Price differential Current contract price minus nearer contract price.
 
 Distance between contracts: The time in years between the two contracts
 (current and nearer). For adjacent quarterly expiries it is 0.25 and
-for monthly 0.083.
+for monthly 0.083 (=1/12).
 
 Net expected return in price units: You need to annualise the price
 differential by dividing by the distance between contracts.
