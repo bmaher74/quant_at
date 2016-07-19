@@ -4,26 +4,22 @@ import pandas as pd
 import sys; sys.path.append('../data')
 import futures    
 insts = pd.read_csv('instruments.csv',index_col=0).to_dict()
-res = futures.get_contracts("CME","CL",2007,2013)
-#res = futures.get_contracts("CME","FV",2000,2010)
-```
-
-```python
-#ins = "FV"
 ins = "CL"
+#ins = "FV"
 roll = insts['rollcycle'][ins]
 rolloff = insts['rolloffset'][ins]
 exp = insts['expiration'][ins]
-res2 = futures.which_contract(ins, res, roll, rolloff, exp)
-res2.to_csv("out2.csv")
+carryoff = int(insts['carryoffset'][ins])
+
+res = futures.get_contracts("CME",ins,2007,2013)
 ```
 
-
 ```python
-carryoff = int(insts['carryoffset'][ins])
+res2 = futures.which_contract(ins, res, roll, rolloff, exp)
+#res2.to_csv("out2.csv")
 res3 = futures.create_carry(res2[pd.isnull(res2.effcont)==False],carryoff,res)
 print res3.head()
-res3.to_csv("out3.csv")
+#res3.to_csv("out3.csv")
 ```
 
 ```text
@@ -34,6 +30,23 @@ res3.to_csv("out3.csv")
 2004-08-26  200412    200411       NaN         NaN
 2004-08-27  200412    200411       NaN         NaN
 ```
+
+```python
+import util
+raw_carry = res3.carryprice-res3.effprice
+vol = util.robust_vol_calc(res3.effprice.diff())
+print util.carry(raw_carry, vol).tail()
+```
+
+```text
+2012-09-21   -0.010464
+2012-09-24   -0.010514
+2012-09-25   -0.010578
+2012-09-26   -0.010654
+2012-09-27   -0.010721
+dtype: float64
+```
+
 
 ```python
 res4 = res3[(res3.index > '2008-01-01') & (res3.index <'2012-01-01')]
