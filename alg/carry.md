@@ -10,7 +10,6 @@ roll = insts['rollcycle'][ins]
 rolloff = insts['rolloffset'][ins]
 exp = insts['expiration'][ins]
 carryoff = int(insts['carryoffset'][ins])
-
 res = futures.get_contracts("CME",ins,2007,2013)
 ```
 
@@ -35,15 +34,17 @@ print res3.head()
 import util
 raw_carry = res3.carryprice-res3.effprice
 vol = util.robust_vol_calc(res3.effprice.diff())
-print util.carry(raw_carry, vol).tail()
+resc =  util.carry(raw_carry, vol,  carryoff*1/util.CALENDAR_DAYS_IN_YEAR)
+print resc.tail()
+resc.to_csv("out5.csv")
 ```
 
 ```text
-2012-09-21   -0.010464
-2012-09-24   -0.010514
-2012-09-25   -0.010578
-2012-09-26   -0.010654
-2012-09-27   -0.010721
+2012-09-21    3.821985
+2012-09-24    3.840104
+2012-09-25    3.863710
+2012-09-26    3.891397
+2012-09-27    3.915782
 dtype: float64
 ```
 

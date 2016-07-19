@@ -31,10 +31,10 @@ def sharpe(price, forecast):
     vol = instr_ccy_returns.std() * ROOT_BDAYS_INYEAR
     return mean_return / vol
 
-def carry(daily_ann_roll, vol, smooth_days=90):
+def carry(daily_ann_roll, vol, diff_in_years, smooth_days=90):
     ann_stdev = vol * ROOT_BDAYS_INYEAR
     raw_carry = daily_ann_roll / ann_stdev
-    smooth_carry = pd.ewma(raw_carry, smooth_days)
+    smooth_carry = pd.ewma(raw_carry, smooth_days) / diff_in_years
     return smooth_carry.fillna(method='ffill')
 
 def crossover(df,col,lev):
