@@ -34,9 +34,17 @@ print res3.head()
 import util
 raw_carry = res3.carryprice-res3.effprice
 vol = util.robust_vol_calc(res3.effprice.diff())
-resc =  util.carry(raw_carry, vol,  carryoff*1/util.CALENDAR_DAYS_IN_YEAR)
+
+def carry(daily_ann_roll, vol, diff_in_years, smooth_days=90):
+    ann_stdev = vol * util.ROOT_BDAYS_INYEAR
+    raw_carry = daily_ann_roll / ann_stdev
+    smooth_carry = pd.ewma(raw_carry, smooth_days) / diff_in_years
+    return smooth_carry.fillna(method='ffill')
+
+resc =  carry(raw_carry, vol,  carryoff*1/util.CALENDAR_DAYS_IN_YEAR)
 print resc.tail()
 resc.to_csv("out5.csv")
+print util.sharpe(res3.effprice, resc)
 ```
 
 ```text
@@ -46,12 +54,14 @@ resc.to_csv("out5.csv")
 2012-09-26    3.891397
 2012-09-27    3.915782
 dtype: float64
+0.333073569506
 ```
 
 
 ```python
-res4 = res3[(res3.index > '2008-01-01') & (res3.index <'2012-01-01')]
-res4[['effprice','carryprice']].plot()
+res4 = res3[(res3.index > '2007-01-01') & (res3.index <'2012-01-01')]
+res4['carryprice2'] = res4.effprice + resc
+res4[['effprice','carryprice2']].plot()
 plt.savefig('carry_01.png')
 ```
 
