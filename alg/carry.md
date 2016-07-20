@@ -3,22 +3,26 @@
 import pandas as pd
 import sys; sys.path.append('../data')
 import futures    
-insts = pd.read_csv('instruments.csv',index_col=0).to_dict()
+insts = pd.read_csv('instruments.csv',index_col=0,comment='#').to_dict()
 ins = "CL"
 #ins = "FV"
 roll = insts['rollcycle'][ins]
 rolloff = insts['rolloffset'][ins]
-exp = insts['expiration'][ins]
+expday = insts['expday'][ins]
+expmon = insts['expmon'][ins]
 carryoff = int(insts['carryoffset'][ins])
+```
+
+```python
 res = futures.get_contracts("CME",ins,2007,2013)
 ```
 
 ```python
-res2 = futures.which_contract(ins, res, roll, rolloff, exp)
-#res2.to_csv("out2.csv")
+res2 = futures.which_contract(ins, res, roll, rolloff, expday, expmon)
+res2.to_csv("out2.csv")
 res3 = futures.create_carry(res2[pd.isnull(res2.effcont)==False],carryoff,res)
 print res3.head()
-#res3.to_csv("out3.csv")
+res3.to_csv("out3.csv")
 ```
 
 ```text
@@ -48,31 +52,24 @@ print util.sharpe(res3.effprice, resc)
 ```
 
 ```text
-2012-09-21    3.821985
-2012-09-24    3.840104
-2012-09-25    3.863710
-2012-09-26    3.891397
-2012-09-27    3.915782
+2012-09-21    3.774181
+2012-09-24    3.792665
+2012-09-25    3.816581
+2012-09-26    3.844538
+2012-09-27    3.869225
 dtype: float64
-0.333073569506
+0.40103374339
 ```
 
 
 ```python
-res4 = res3[(res3.index > '2007-01-01') & (res3.index <'2012-01-01')]
+res4 = res3[(res3.index > '2008-01-01') & (res3.index <'2012-01-01')]
 res4['carryprice2'] = res4.effprice + resc
 res4[['effprice','carryprice2']].plot()
 plt.savefig('carry_01.png')
 ```
 
 ![](carry_01.png)
-
-```python
-carryfor = res4.carryprice-res4.effprice
-carryfor.to_csv("out4.csv")
-```
-
-
 
 
 

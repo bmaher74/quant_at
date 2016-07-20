@@ -199,7 +199,7 @@ def stitch_prices(dfs, price_col, dates):
         res.append(tmp.Settle)
     return pd.concat(res)
 
-def which_contract(instrument, contract_list, cycle, offset, exp):
+def which_contract(instrument, contract_list, cycle, offset, expday, expmon):
     """
     For a list of contracts it creates a continuous date index, and
     calculates which contract would be effective on that date for a
@@ -228,7 +228,10 @@ def which_contract(instrument, contract_list, cycle, offset, exp):
     for year in np.unique(df.index.year):
     	for c in cycle_d:
 	    v = "%d%02d" % (year,c)
-	    exp_d = datetime.datetime(year, c, exp)
+	    exp_d = datetime.datetime(year, c, expday)
+            # sometimes expiration month is the previous month
+            # this happens for crude oil for example
+            if expmon=="prev": exp_d = exp_d - datetime.timedelta(days=30)
 	    df.loc[closest_biz(exp_d),'effcont'] = v
     df = df.fillna(method='bfill')
     # get the contract offset days in the future - the little arithmetic
