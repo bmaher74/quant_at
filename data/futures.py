@@ -272,10 +272,15 @@ def create_carry(df, offset, contract_list):
 if __name__ == "__main__":
 
     simple.check_mongo()    
-    
     f = '%(asctime)-15s: %(message)s'
     logging.basicConfig(filename='%s/futures.log' % os.environ['TEMP'],level=logging.DEBUG, format=f)
-    download_data()
+    
+    if len(sys.argv) == 3:
+        if sys.argv[1] == "--get-load-contract":
+            print sys.argv[2]
+    elif len(sys.argv) == 2:
+        if sys.argv[1] == "--latest":
+            download_data()
 
 
 #
