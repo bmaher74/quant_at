@@ -87,9 +87,20 @@ def test_missing_contract():
     res = futures.get_contract(market="CME", sym="CL", month="Z", year=1984, db=testdb)
     assert (res==None)
     
+def test_one_load():
+    db = init()
+    futures.download_and_save(work_items=[('CME','CL','G',1984,'1980-01-01')],
+                              downloader=fake_download_2,
+                              str_end='2016-01-01',
+                              futures=db.futures)
+    
+    res = futures.get_contract(market="CME", sym="CL", month="G", year=1984, db=testdb)
+    assert (len(res) == 22)
+    
 if __name__ == "__main__":    
     test_simple()
     test_incremental()
     test_stitch()
     test_missing_contract()
+    test_one_load()
     
