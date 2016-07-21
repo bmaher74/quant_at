@@ -223,6 +223,7 @@ def which_contract(instrument, contract_list, cycle, offset, expday, expmon):
     	diffs = np.abs((d - df.index).days)
     	return df.index[np.argmin(diffs)]
 
+    rolldates = []
     cycle_d = [contract_month_dict[x] for x in cycle]
     df['effcont'] = np.nan
     for year in np.unique(df.index.year):
@@ -232,12 +233,14 @@ def which_contract(instrument, contract_list, cycle, offset, expday, expmon):
             # sometimes expiration month is the previous month
             # this happens for crude oil for example
             if expmon=="prev": exp_d = exp_d - datetime.timedelta(days=30)
-	    df.loc[closest_biz(exp_d),'effcont'] = v
+            rolldate = closest_biz(exp_d)
+            rolldates.append(rolldate.strftime('%Y-%m-%d'))
+	    df.loc[rolldate,'effcont'] = v
     df = df.fillna(method='bfill')
     # get the contract offset days in the future - the little arithmetic
     # below was necessary to turn offset days into offset business days.
     df['effcont'] = df.effcont.shift(-int(offset*2/3 + 3))
-    return df
+    return df, rolldates
 
 def create_carry(df, offset, contract_list):
     """
