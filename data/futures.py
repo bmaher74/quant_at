@@ -87,6 +87,36 @@ def last_date_in_contract(sym, market, month, year, db="findb"):
     res = list(res)
     if len(res) > 0: return res[0]['_id']['dt']
 
+def download_and_save(work_items, downloader, str_end, futures):
+    for market, sym, month, year, work_start in work_items:
+        contract = "%s/%s%s%d" % (market,sym,month,year)
+        try:
+            logging.debug(contract)
+            df = downloader(contract,work_start,str_end)
+            # sometimes oi is in Prev Days Open Interest sometimes just Open Interest
+            # use whichever is there
+            oicol = [x for x in df.columns if 'Open Interest' in x][0]
+            yearmonth = "%d%s" % (year,month)
+            logging.debug("%d records" % len(df))
+            for srow in df.iterrows():
+                dt = str(srow[0])[0:10]
+                dt = int(dt.replace("-",""))
+                new_row = {"_id": {"sym": sym, "market": market, "month": month,
+                                   "year": year, "yearmonth": yearmonth, "dt": dt },
+                           "o": srow[1].Open,
+                           "h": srow[1].High,
+                           "l": srow[1].Low,
+                           "s": srow[1].Settle,
+                           "v": srow[1].Volume,
+                           "oi": srow[1][oicol]
+                }
+
+                futures.save(new_row)
+
+        except Quandl.Quandl.DatasetNotFound:
+            logging.error("No dataset")
+    
+    
 def download_data(chunk=1,chunk_size=1,downloader=web_download,
                   today=systemtoday,db="findb",years=(1984,2022)):
 
@@ -135,33 +165,7 @@ def download_data(chunk=1,chunk_size=1,downloader=web_download,
             logging.debug("last date contract %s" % last_con)
             if today() > last_con: work_items.append([market, sym, nonexp_month, nonexp_year, last_con.strftime('%Y-%m-%d')])
 
-    for market, sym, month, year, work_start in work_items:
-        contract = "%s/%s%s%d" % (market,sym,month,year)
-        try:
-            logging.debug(contract)
-            df = downloader(contract,work_start,str_end)
-            # sometimes oi is in Prev Days Open Interest sometimes just Open Interest
-            # use whichever is there
-            oicol = [x for x in df.columns if 'Open Interest' in x][0]
-            yearmonth = "%d%s" % (year,month)
-            logging.debug("%d records" % len(df))
-            for srow in df.iterrows():
-                dt = str(srow[0])[0:10]
-                dt = int(dt.replace("-",""))
-                new_row = {"_id": {"sym": sym, "market": market, "month": month,
-                                   "year": year, "yearmonth": yearmonth, "dt": dt },
-                           "o": srow[1].Open,
-                           "h": srow[1].High,
-                           "l": srow[1].Low,
-                           "s": srow[1].Settle,
-                           "v": srow[1].Volume,
-                           "oi": srow[1][oicol]
-                }
-
-                futures.save(new_row)
-
-        except Quandl.Quandl.DatasetNotFound:
-            logging.error("No dataset")
+    download_and_save(work_items, downloader, str_end, futures)
 
 def shift(lst,empty):
     res = lst[:]
