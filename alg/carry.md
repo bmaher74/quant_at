@@ -17,18 +17,47 @@ carryoff = int(insts['carryoffset'][ins])
 ctd = futures.get_contracts("CME",ins,2007,2013)
 ```
 
-
 ```python
 res2, rolldates = futures.which_contract(ins, ctd, roll, rolloff, expday, expmon)
 print rolldates
 res2.to_csv("out2.csv")
+```
+
+```text
+[Timestamp('2004-11-25 00:00:00'), Timestamp('2005-11-25 00:00:00'), Timestamp('2006-11-24 00:00:00'), Timestamp('2007-11-26 00:00:00'), Timestamp('2008-11-25 00:00:00'), Timestamp('2009-11-25 00:00:00'), Timestamp('2010-11-25 00:00:00'), Timestamp('2011-11-25 00:00:00'), Timestamp('2012-11-16 00:00:00')]
+```
+
+```python
+import datetime
+def prev_weekday(adate):
+    adate -= datetime.timedelta(days=1)
+    while adate.weekday() > 4:  adate -= datetime.timedelta(days=1)
+    return adate
+def next_weekday(adate):
+    adate += datetime.timedelta(days=1)
+    while adate.weekday() > 4:  adate += datetime.timedelta(days=1)
+    return adate
+conts1 = [res2.ix[x].effcont for x in rolldates]
+conts2 = [res2.ix[next_weekday(x)].effcont for x in rolldates if next_weekday(x) in res2.index]
+print conts1
+print conts2
+```
+
+```text
+['200512', '200612', '200712', '200812', '200912', '201012', '201112', '201212', nan]
+['200512', '200612', '200712', '200812', '200912', '201012', '201112', '201212']
+```
+
+
+
+```python
 res3 = futures.create_carry(res2[pd.isnull(res2.effcont)==False],carryoff,ctd)
 print res3.head()
 res3.to_csv("out3.csv")
 ```
 
 ```text
-['2004-11-25', '2005-11-25', '2006-11-24', '2007-11-26', '2008-11-25', '2009-11-25', '2010-11-25', '2011-11-25', '2012-11-16']
+[]
            effcont carrycont  effprice  carryprice
 2004-08-23  200412    200411       NaN         NaN
 2004-08-24  200412    200411       NaN         NaN
@@ -64,7 +93,21 @@ dtype: float64
 0.40103374339
 ```
 
+```python
+ctl = [x for x in ctd.values()]
+print ctl[0].columns
+print rolldates
+print len(ctl)
+print len(rolldates)
+#df_stitched = futures.stitch_prices(ctl, 's', rolldates)
+```
 
+```text
+Index([u'h', u'l', u'o', u'oi', u's', u'v'], dtype='object')
+['2004-11-25', '2005-11-25', '2006-11-24', '2007-11-26', '2008-11-25', '2009-11-25', '2010-11-25', '2011-11-25', '2012-11-16']
+72
+9
+```
 
 
 
