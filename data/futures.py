@@ -280,6 +280,7 @@ if __name__ == "__main__":
             print sys.argv[2]
     elif len(sys.argv) == 2:
         if sys.argv[1] == "--latest":
+            print 'latest'
             download_data()
 
 
