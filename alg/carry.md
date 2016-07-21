@@ -29,7 +29,6 @@ res3.to_csv("out3.csv")
 ```
 
 ```text
-[]
            effcont carrycont  effprice  carryprice
 2004-08-23  200412    200411       NaN         NaN
 2004-08-24  200412    200411       NaN         NaN
@@ -66,20 +65,36 @@ dtype: float64
 ```
 
 ```python
-ctl = [x for x in ctd.values()]
-print ctl[0].columns
+tmp = res2.effcont.dropna().astype(int).diff().dropna()
+rolldates = tmp[tmp > 0].index
+rollconts = np.unique(res2.effcont.dropna())
 print rolldates
-print len(ctl)
-print len(rolldates)
-#df_stitched = futures.stitch_prices(ctl, 's', rolldates)
+print rollconts
+#df_stitched = futures.stitch_prices([ctd[x] for x in rollconts], 's', rolldates)
 ```
 
 ```text
-Index([u'h', u'l', u'o', u'oi', u's', u'v'], dtype='object')
-['2004-11-25', '2005-11-25', '2006-11-24', '2007-11-26', '2008-11-25', '2009-11-25', '2010-11-25', '2011-11-25', '2012-11-16']
-72
-9
+DatetimeIndex(['2004-10-07', '2005-10-07', '2006-10-06', '2007-10-08',
+               '2008-10-07', '2009-10-07', '2010-10-07', '2011-10-07'],
+              dtype='datetime64[ns]', freq=None)
+['200412' '200512' '200612' '200712' '200812' '200912' '201012' '201112'
+ '201212']
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
