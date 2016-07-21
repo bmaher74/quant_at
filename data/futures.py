@@ -117,8 +117,7 @@ def download_and_save(work_items, downloader, str_end, futures):
             logging.error("No dataset")
     
     
-def download_data(chunk=1,chunk_size=1,downloader=web_download,
-                  today=systemtoday,db="findb",years=(1984,2022)):
+def download_data(downloader=web_download,today=systemtoday,db="findb",years=(1984,2022)):
 
     """
     Futures Contracts downloader - symbols are in futures.csv, each
@@ -275,13 +274,8 @@ if __name__ == "__main__":
     simple.check_mongo()    
     
     f = '%(asctime)-15s: %(message)s'
-    if len(sys.argv) == 3:
-        p = (os.environ['TEMP'],int(sys.argv[1]))
-        logging.basicConfig(filename='%s/futures-%d.log' % p,level=logging.DEBUG,format=f)
-        download_data(chunk=int(sys.argv[1]),chunk_size=int(sys.argv[2]))
-    else:
-        logging.basicConfig(filename='%s/futures.log' % os.environ['TEMP'],level=logging.DEBUG, format=f)
-        download_data()
+    logging.basicConfig(filename='%s/futures.log' % os.environ['TEMP'],level=logging.DEBUG, format=f)
+    download_data()
 
 
 #
