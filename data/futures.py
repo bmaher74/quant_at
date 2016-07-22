@@ -110,7 +110,6 @@ def download_and_save(work_items, db, downloader=web_download, today=systemtoday
                            "v": srow[1].Volume,
                            "oi": srow[1][oicol]
                 }
-
                 db.save(new_row)
 
         except Quandl.Quandl.DatasetNotFound:

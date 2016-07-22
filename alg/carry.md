@@ -15,9 +15,14 @@ carryoff = int(insts['carryoffset'][ins])
 
 ```python
 #ctd = futures.get_contracts("CME",ins,2007,2013)
-x = futures.get_contract("CME", "CL", 12, 2004, db="findb")
+x = futures.get_contract("CME", "CL", "X", 2004, db="findb")
 print len(x)
 ```
+
+```text
+603
+```
+
 
 ```python
 res2 = futures.which_contract(ins, ctd, roll, rolloff, expday, expmon)
