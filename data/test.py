@@ -121,7 +121,7 @@ def test_rollover():
         smooth_carry = pd.ewma(raw_carry, smooth_days) / diff_in_years
         return smooth_carry.fillna(method='ffill')
     resc =  carry(raw_carry, vol,  carryoff*1/util.CALENDAR_DAYS_IN_YEAR)
-    assert (util.sharpe(res3.effprice, resc) - 0.4) < 0.0001
+    assert (util.sharpe(res3.effprice, resc) - 0.4) < 0.01
     dfs = futures.stitch_contracts(res2, ctd, 's')
 
     
