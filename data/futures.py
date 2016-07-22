@@ -201,6 +201,17 @@ def stitch_prices(dfs, price_col, dates):
         res.append(tmp[price_col])
     return pd.concat(res)
 
+def stitch_contracts(dfc, ctd):
+    tmp = dfc.effcont.dropna().astype(int).diff().dropna()
+    rolldates = tmp[tmp > 0].index
+    rollconts = np.unique(dfc.effcont.dropna())
+    rollconts = [x for x in rollconts if x in ctd]
+    rolldates = [x for x in rolldates if \
+                 int("%d%02d" % (x.year, x.month)) >= int(ctd.keys()[0]) and \
+                 int("%d%02d" % (x.year, x.month)) <= int(ctd.keys()[-1])]
+    dfs = stitch_prices([ctd[x] for x in rollconts], 's', rolldates)
+    return dfs
+
 def which_contract(instrument, contract_list, cycle, offset, expday, expmon):
     """
     For a list of contracts it creates a continuous date index, and

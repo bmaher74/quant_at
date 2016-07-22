@@ -30,26 +30,7 @@ res2.to_csv("out2.csv")
 ```
 
 ```python
-tmp = res2.effcont.dropna().astype(int).diff().dropna()
-rolldates = tmp[tmp > 0].index
-rollconts = np.unique(res2.effcont.dropna())
-#print int(ctd.keys()[0]), int(ctd.keys()[-1])
-print rolldates
-rollconts = [x for x in rollconts if x in ctd]
-print rollconts
-rolldates = [x for x in rolldates if \
-             int("%d%02d" % (x.year, x.month)) >= int(ctd.keys()[0]) and \
-             int("%d%02d" % (x.year, x.month)) <= int(ctd.keys()[-1])]
-print rolldates
-dfs = futures.stitch_prices([ctd[x] for x in rollconts], 's', rolldates)
-```
-
-```text
-DatetimeIndex(['2004-10-07', '2005-10-07', '2006-10-06', '2007-10-08',
-               '2008-10-07', '2009-10-07', '2010-10-07', '2011-10-07'],
-              dtype='datetime64[ns]', freq=None)
-['200712', '200812', '200912', '201012', '201112', '201212']
-[Timestamp('2007-10-08 00:00:00'), Timestamp('2008-10-07 00:00:00'), Timestamp('2009-10-07 00:00:00'), Timestamp('2010-10-07 00:00:00'), Timestamp('2011-10-07 00:00:00')]
+dfs = futures.stitch_contracts(res2, ctd)
 ```
 
 ```python
