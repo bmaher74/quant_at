@@ -30,26 +30,12 @@ res2.to_csv("out2.csv")
 ```
 
 ```python
-dfs = futures.stitch_contracts(res2, ctd)
-```
-
-```python
+dfs = futures.stitch_contracts(res2, ctd, 's')
 dfs.plot()
 plt.savefig('carry_01.png')
 ```
 
 ![](carry_01.png)
-
-```python
-import util, zipfile, pandas as pd
-with zipfile.ZipFile('legacycsv.zip', 'r') as z:
-     dfc = pd.read_csv(z.open('CRUDE_W_price.csv'), index_col=0,parse_dates=True )
-dfc[(dfc.index > '2002-01-01') & (dfc.index < '2013-01-01')].PRICE.plot()
-plt.savefig('carry_02.png')
-```
-
-
-![](carry_02.png)
 
 
 

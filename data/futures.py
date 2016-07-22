@@ -201,7 +201,17 @@ def stitch_prices(dfs, price_col, dates):
         res.append(tmp[price_col])
     return pd.concat(res)
 
-def stitch_contracts(dfc, ctd):
+def stitch_contracts(dfc, ctd, price_col):
+    """
+    Using a contract mapped series and a dictionary of contracts,
+    creates a continuous time series. 
+    
+    Inputs
+
+    dfc: Date indexed series with each date mapped to a contract in YYYYMM format
+
+    Returns
+    """
     tmp = dfc.effcont.dropna().astype(int).diff().dropna()
     rolldates = tmp[tmp > 0].index
     rollconts = np.unique(dfc.effcont.dropna())
@@ -209,7 +219,7 @@ def stitch_contracts(dfc, ctd):
     rolldates = [x for x in rolldates if \
                  int("%d%02d" % (x.year, x.month)) >= int(ctd.keys()[0]) and \
                  int("%d%02d" % (x.year, x.month)) <= int(ctd.keys()[-1])]
-    dfs = stitch_prices([ctd[x] for x in rollconts], 's', rolldates)
+    dfs = stitch_prices([ctd[x] for x in rollconts], price_col, rolldates)
     return dfs
 
 def which_contract(instrument, contract_list, cycle, offset, expday, expmon):
