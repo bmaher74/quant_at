@@ -90,9 +90,8 @@ def test_missing_contract():
 def test_one_load():
     db = init()
     futures.download_and_save(work_items=[('CME','CL','G',1984,'1980-01-01')],
-                              downloader=fake_download_2,
-                              str_end='2016-01-01',
-                              futures=db.futures)
+                              db=db.futures,
+                              downloader=fake_download_2)
     
     res = futures.get_contract(market="CME", sym="CL", month="G", year=1984, db=testdb)
     assert (len(res) == 22)

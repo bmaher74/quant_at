@@ -87,12 +87,12 @@ def last_date_in_contract(sym, market, month, year, db="findb"):
     res = list(res)
     if len(res) > 0: return res[0]['_id']['dt']
 
-def download_and_save(work_items, downloader, str_end, futures):
+def download_and_save(work_items, db, downloader=web_download, today=systemtoday):
     for market, sym, month, year, work_start in work_items:
         contract = "%s/%s%s%d" % (market,sym,month,year)
         try:
             logging.debug(contract)
-            df = downloader(contract,work_start,str_end)
+            df = downloader(contract,work_start,today().strftime('%Y-%m-%d'))
             # sometimes oi is in Prev Days Open Interest sometimes just Open Interest
             # use whichever is there
             oicol = [x for x in df.columns if 'Open Interest' in x][0]
@@ -111,7 +111,7 @@ def download_and_save(work_items, downloader, str_end, futures):
                            "oi": srow[1][oicol]
                 }
 
-                futures.save(new_row)
+                db.save(new_row)
 
         except Quandl.Quandl.DatasetNotFound:
             logging.error("No dataset")
@@ -164,7 +164,7 @@ def download_data(downloader=web_download,today=systemtoday,db="findb",years=(19
             logging.debug("last date contract %s" % last_con)
             if today() > last_con: work_items.append([market, sym, nonexp_month, nonexp_year, last_con.strftime('%Y-%m-%d')])
 
-    download_and_save(work_items, downloader, str_end, futures)
+    download_and_save(work_items, futures, downloader, today)
 
 def shift(lst,empty):
     res = lst[:]
@@ -278,6 +278,10 @@ if __name__ == "__main__":
     if len(sys.argv) == 3:
         if sys.argv[1] == "--get-load-contract":
             print sys.argv[2]
+            download_and_save(work_items=[('CME','CL','G',1984,'1980-01-01')],
+                              str_end='2016-01-01',
+                              futures=db.futures)
+            
     elif len(sys.argv) == 2:
         if sys.argv[1] == "--latest":
             print 'latest'
