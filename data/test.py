@@ -1,7 +1,11 @@
 import os, futures, pandas as pd, datetime
 from pymongo import MongoClient
+import numpy as np, sys, Quandl
+sys.path.append('../alg')
+import util
+import pandas as pd
 import numpy as np
-import Quandl
+import matplotlib.pyplot as plt
 
 testdb = "fakedb"
 
@@ -22,6 +26,9 @@ def fake_download_2(contract,start,end):
 
 def fake_download_3(contract,start,end):
     return load_data(contract, "data_3",start,end)
+
+def fake_download_crude(contract,start,end):
+    return load_data(contract, "data_crude",start,end)
 
 def fake_today_1():
     return datetime.datetime(2016, 5, 1) 
@@ -95,11 +102,37 @@ def test_one_load():
     
     res = futures.get_contract(market="CME", sym="CL", month="G", year=1984, db=testdb)
     assert (len(res) == 22)
+
+def test_rollover():
+    db = init()
+    futures.download_data(downloader=fake_download_crude,today=fake_today_1,
+                          db=testdb, years=(2007,2013))    
+    ctd = futures.get_contracts("CME","CL",2006,2014,db=testdb)
+    print len(ctd)
+    roll = "Z"; rolloff = 50; expday = 25; expmon = "prev"
+    res2 = futures.which_contract("CL", ctd, roll, rolloff, expday, expmon)
+    carryoff = -1
+    res3 = futures.create_carry(res2[pd.isnull(res2.effcont)==False],carryoff,ctd)
+    raw_carry = res3.carryprice-res3.effprice
+    vol = util.robust_vol_calc(res3.effprice.diff())
+    def carry(daily_ann_roll, vol, diff_in_years, smooth_days=90):
+        ann_stdev = vol * util.ROOT_BDAYS_INYEAR
+        raw_carry = daily_ann_roll / ann_stdev
+        smooth_carry = pd.ewma(raw_carry, smooth_days) / diff_in_years
+        return smooth_carry.fillna(method='ffill')
+    resc =  carry(raw_carry, vol,  carryoff*1/util.CALENDAR_DAYS_IN_YEAR)
+    assert (util.sharpe(res3.effprice, resc) - 0.4) < 0.0001
+    dfs = futures.stitch_contracts(res2, ctd, 's')
+
     
 if __name__ == "__main__":    
-    test_simple()
-    test_incremental()
-    test_stitch()
-    test_missing_contract()
-    test_one_load()
+   test_simple()
+   test_incremental()
+   test_stitch()
+   test_missing_contract()
+   test_one_load()
+   if len(sys.argv) > 1 and sys.argv[1] == '--extra':
+        # this is a slow one
+        test_rollover()
+        
     

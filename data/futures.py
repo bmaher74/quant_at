@@ -62,7 +62,7 @@ def existing_nonexpired_contracts(sym, market, today, db="findb"):
     for x in db.futures.find(q): res[(x['_id']['year'],x['_id']['month'])]=1
     return res.keys()
 
-def get_contracts(market, sym, from_year, to_year):
+def get_contracts(market, sym, from_year, to_year, db="findb"):
     """
     Get all contracts, from jan to dec, between given years, for all possible
     year / month combination.
@@ -73,7 +73,7 @@ def get_contracts(market, sym, from_year, to_year):
     res = collections.OrderedDict()
     for year in range(from_year,to_year):
         for month in contract_month_codes:
-            c = get_contract(market=market, sym=sym, month=month, year=year)
+            c = get_contract(market=market, sym=sym, month=month, year=year, db=db)
             key = "%d%02d" % (year,contract_month_dict[month])
             if 'DataFrame' in str(type(c)): res[key] = c
     return res	    
@@ -278,16 +278,17 @@ def create_carry(df, offset, contract_list):
     Returns:
     Same dataframe df with carry contract, effective price, carry price colunns
     appended.
-    """    
-    df['effcont'] = df.effcont.astype(str)
+    """
+    df2 = df.copy()
+    df2['effcont'] = df2.effcont.astype(str)
     def offset_contract(con):
     	s = pd.to_datetime(con + "15", format='%Y%m%d')
     	ss = s + datetime.timedelta(days=30*offset)
     	return "%d%02d" % (int(ss.year), int(ss.month)) 
-    df['carrycont'] = df.effcont.map(offset_contract)
-    df['effprice'] = df.apply(lambda x: contract_list.get(x.effcont).s.get(x.name) if x.effcont in contract_list else np.nan,axis=1)
-    df['carryprice'] = df.apply(lambda x: contract_list.get(x.carrycont).s.get(x.name) if x.carrycont in contract_list else np.nan,axis=1)
-    return df
+    df2['carrycont'] = df2.effcont.map(offset_contract)
+    df2['effprice'] = df2.apply(lambda x: contract_list.get(x.effcont).s.get(x.name) if x.effcont in contract_list else np.nan,axis=1)
+    df2['carryprice'] = df2.apply(lambda x: contract_list.get(x.carrycont).s.get(x.name) if x.carrycont in contract_list else np.nan,axis=1)
+    return df2
 
 if __name__ == "__main__":
 
