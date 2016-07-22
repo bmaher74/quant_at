@@ -13,16 +13,8 @@ carryoff = int(insts['carryoffset'][ins])
 ```
 
 ```python
-#ctd = futures.get_contracts("CME",ins,2007,2013)
-print ctd.keys()
-#x = futures.get_contract("CME", "CL", "X", 2004, db="findb")
-#print len(x)
+ctd = futures.get_contracts("CME",ins,2007,2013)
 ```
-
-```text
-['200701', '200702', '200703', '200704', '200705', '200706', '200707', '200708', '200709', '200710', '200711', '200712', '200801', '200802', '200803', '200804', '200805', '200806', '200807', '200808', '200809', '200810', '200811', '200812', '200901', '200902', '200903', '200904', '200905', '200906', '200907', '200908', '200909', '200910', '200911', '200912', '201001', '201002', '201003', '201004', '201005', '201006', '201007', '201008', '201009', '201010', '201011', '201012', '201101', '201102', '201103', '201104', '201105', '201106', '201107', '201108', '201109', '201110', '201111', '201112', '201201', '201202', '201203', '201204', '201205', '201206', '201207', '201208', '201209', '201210', '201211', '201212']
-```
-
 
 ```python
 res2 = futures.which_contract(ins, ctd, roll, rolloff, expday, expmon)
@@ -30,57 +22,9 @@ res2.to_csv("out2.csv")
 ```
 
 ```python
-dfs = futures.stitch_contracts(res2, ctd, 's')
-dfs.plot()
-plt.savefig('carry_01.png')
-```
-
-![](carry_01.png)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-```python
 res3 = futures.create_carry(res2[pd.isnull(res2.effcont)==False],carryoff,ctd)
 res3.to_csv("out3.csv")
 ```
-
 
 ```python
 import util
@@ -101,6 +45,32 @@ print util.sharpe(res3.effprice, resc)
 ```text
 0.40103374339
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```python
+dfs = futures.stitch_contracts(res2, ctd, 's')
+dfs.plot()
+plt.savefig('carry_01.png')
+```
+
+![](carry_01.png)
 
 
 
