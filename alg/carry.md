@@ -5,7 +5,6 @@ import sys; sys.path.append('../data')
 import futures    
 insts = pd.read_csv('instruments.csv',index_col=0,comment='#').to_dict()
 ins = "CL"
-#ins = "FV"
 roll = insts['rollcycle'][ins]
 rolloff = insts['rolloffset'][ins]
 expday = insts['expday'][ins]
@@ -15,12 +14,13 @@ carryoff = int(insts['carryoffset'][ins])
 
 ```python
 #ctd = futures.get_contracts("CME",ins,2007,2013)
-x = futures.get_contract("CME", "CL", "X", 2004, db="findb")
-print len(x)
+print ctd.keys()
+#x = futures.get_contract("CME", "CL", "X", 2004, db="findb")
+#print len(x)
 ```
 
 ```text
-603
+['200701', '200702', '200703', '200704', '200705', '200706', '200707', '200708', '200709', '200710', '200711', '200712', '200801', '200802', '200803', '200804', '200805', '200806', '200807', '200808', '200809', '200810', '200811', '200812', '200901', '200902', '200903', '200904', '200905', '200906', '200907', '200908', '200909', '200910', '200911', '200912', '201001', '201002', '201003', '201004', '201005', '201006', '201007', '201008', '201009', '201010', '201011', '201012', '201101', '201102', '201103', '201104', '201105', '201106', '201107', '201108', '201109', '201110', '201111', '201112', '201201', '201202', '201203', '201204', '201205', '201206', '201207', '201208', '201209', '201210', '201211', '201212']
 ```
 
 
@@ -30,54 +30,12 @@ res2.to_csv("out2.csv")
 ```
 
 ```python
-res3 = futures.create_carry(res2[pd.isnull(res2.effcont)==False],carryoff,ctd)
-print res3.head()
-res3.to_csv("out3.csv")
-```
-
-```text
-           effcont carrycont  effprice  carryprice
-2004-08-23  200412    200411       NaN         NaN
-2004-08-24  200412    200411       NaN         NaN
-2004-08-25  200412    200411       NaN         NaN
-2004-08-26  200412    200411       NaN         NaN
-2004-08-27  200412    200411       NaN         NaN
-```
-
-```python
-import util
-raw_carry = res3.carryprice-res3.effprice
-vol = util.robust_vol_calc(res3.effprice.diff())
-
-def carry(daily_ann_roll, vol, diff_in_years, smooth_days=90):
-    ann_stdev = vol * util.ROOT_BDAYS_INYEAR
-    raw_carry = daily_ann_roll / ann_stdev
-    smooth_carry = pd.ewma(raw_carry, smooth_days) / diff_in_years
-    return smooth_carry.fillna(method='ffill')
-
-resc =  carry(raw_carry, vol,  carryoff*1/util.CALENDAR_DAYS_IN_YEAR)
-print resc.tail()
-resc.to_csv("out5.csv")
-print util.sharpe(res3.effprice, resc)
-```
-
-```text
-2012-09-21    3.774181
-2012-09-24    3.792665
-2012-09-25    3.816581
-2012-09-26    3.844538
-2012-09-27    3.869225
-dtype: float64
-0.40103374339
-```
-
-```python
 tmp = res2.effcont.dropna().astype(int).diff().dropna()
 rolldates = tmp[tmp > 0].index
 rollconts = np.unique(res2.effcont.dropna())
 print rolldates
 print rollconts
-#df_stitched = futures.stitch_prices([ctd[x] for x in rollconts], 's', rolldates)
+#dfs = futures.stitch_prices([ctd[x] for x in rollconts], 's', rolldates)
 print ctd.keys()
 ```
 
@@ -118,6 +76,32 @@ DatetimeIndex(['2004-10-07', '2005-10-07', '2006-10-06', '2007-10-08',
 
 
 
+
+```python
+res3 = futures.create_carry(res2[pd.isnull(res2.effcont)==False],carryoff,ctd)
+res3.to_csv("out3.csv")
+```
+
+
+```python
+import util
+raw_carry = res3.carryprice-res3.effprice
+vol = util.robust_vol_calc(res3.effprice.diff())
+
+def carry(daily_ann_roll, vol, diff_in_years, smooth_days=90):
+    ann_stdev = vol * util.ROOT_BDAYS_INYEAR
+    raw_carry = daily_ann_roll / ann_stdev
+    smooth_carry = pd.ewma(raw_carry, smooth_days) / diff_in_years
+    return smooth_carry.fillna(method='ffill')
+
+resc =  carry(raw_carry, vol,  carryoff*1/util.CALENDAR_DAYS_IN_YEAR)
+resc.to_csv("out5.csv")
+print util.sharpe(res3.effprice, resc)
+```
+
+```text
+0.40103374339
+```
 
 
 
