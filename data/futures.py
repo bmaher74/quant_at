@@ -198,7 +198,7 @@ def stitch_prices(dfs, price_col, dates):
     
     for i,v in enumerate(dates):
         tmp = dfs[i][(dfs[i].index > dates[i]) & (dfs[i].index <= dates_end[i])]
-        res.append(tmp.Settle)
+        res.append(tmp[price_col])
     return pd.concat(res)
 
 def which_contract(instrument, contract_list, cycle, offset, expday, expmon):
