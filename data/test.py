@@ -71,7 +71,6 @@ def test_incremental():
                           db=testdb, years=(1984,1985))
     print futures.last_date_in_contract("CL","CME","F", 1984, db)
     assert (futures.last_date_in_contract("CL","CME","F", 1984, db) == 19830726)
-
     futures.download_data(downloader=fake_download_3,today=fake_today_727,
                           db=testdb, years=(1984,1985))
     assert (futures.last_date_in_contract("CL","CME","F", 1984, db) == 19830727)
@@ -106,7 +105,7 @@ def test_one_load():
 def test_rollover():
     db = init()
     futures.download_data(downloader=fake_download_crude,today=fake_today_1,
-                          db=testdb, years=(2007,2013))    
+                          db=testdb, years=(2007,2013))
     ctd = futures.get_contracts("CME","CL",2006,2014,db=testdb)
     print len(ctd)
     roll = "Z"; rolloff = 50; expday = 25; expmon = "prev"
@@ -126,13 +125,12 @@ def test_rollover():
 
     
 if __name__ == "__main__":    
-   test_simple()
-   test_incremental()
-   test_stitch()
-   test_missing_contract()
-   test_one_load()
-   if len(sys.argv) > 1 and sys.argv[1] == '--extra':
+    test_simple()
+    test_incremental()
+    test_stitch()
+    test_missing_contract()
+    test_one_load()
+    if len(sys.argv) > 1 and sys.argv[1] == '--extra':
         # this is a slow one
         test_rollover()
         
-    
