@@ -1,6 +1,7 @@
 from scipy.optimize import minimize
 import numpy as np, random
 import pandas as pd
+import scipy.stats
 CALENDAR_DAYS_IN_YEAR = 365.25
 BUSINESS_DAYS_IN_YEAR = 256.0
 ROOT_BDAYS_INYEAR = BUSINESS_DAYS_IN_YEAR**.5
@@ -13,6 +14,23 @@ FLAG_BAD_RETURN=-99999.0
 
 DEFAULT_CAPITAL = 1.0
 DEFAULT_ANN_RISK_TARGET = 0.16
+
+def skew(price, forecast): 
+    base_capital = DEFAULT_CAPITAL
+    daily_risk_capital = DEFAULT_CAPITAL * DEFAULT_ANN_RISK_TARGET / ROOT_BDAYS_INYEAR
+    use_fx = pd.Series([1.0] * len(price.index),index=price.index)
+    get_daily_returns_volatility = robust_vol_calc(price.diff())
+    multiplier = daily_risk_capital * 1.0 * 1.0 / 10.0
+    denominator = get_daily_returns_volatility* use_fx
+    numerator = forecast *  multiplier
+    positions = numerator.ffill() /  denominator.ffill()
+    cum_trades = positions.shift(1).ffill()
+    trades_to_use=cum_trades.diff()        
+    price_returns = price.diff()
+    instr_ccy_returns = cum_trades.shift(1)* price_returns 
+    instr_ccy_returns=instr_ccy_returns.cumsum().ffill().reindex(price.index).diff()
+    pct = 100.0 * instr_ccy_returns / base_capital
+    return scipy.stats.skew(pct[pd.isnull(pct) == False])
 
 def sharpe(price, forecast):
     base_capital = DEFAULT_CAPITAL
