@@ -39,4 +39,3 @@ print util.skew(df.price, df.forecast)
 
 
 
-

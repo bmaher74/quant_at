@@ -15,24 +15,7 @@ FLAG_BAD_RETURN=-99999.0
 DEFAULT_CAPITAL = 1.0
 DEFAULT_ANN_RISK_TARGET = 0.16
 
-def skew(price, forecast): 
-    base_capital = DEFAULT_CAPITAL
-    daily_risk_capital = DEFAULT_CAPITAL * DEFAULT_ANN_RISK_TARGET / ROOT_BDAYS_INYEAR
-    use_fx = pd.Series([1.0] * len(price.index),index=price.index)
-    get_daily_returns_volatility = robust_vol_calc(price.diff())
-    multiplier = daily_risk_capital * 1.0 * 1.0 / 10.0
-    denominator = get_daily_returns_volatility* use_fx
-    numerator = forecast *  multiplier
-    positions = numerator.ffill() /  denominator.ffill()
-    cum_trades = positions.shift(1).ffill()
-    trades_to_use=cum_trades.diff()        
-    price_returns = price.diff()
-    instr_ccy_returns = cum_trades.shift(1)* price_returns 
-    instr_ccy_returns=instr_ccy_returns.cumsum().ffill().reindex(price.index).diff()
-    pct = 100.0 * instr_ccy_returns / base_capital
-    return scipy.stats.skew(pct[pd.isnull(pct) == False])
-
-def sharpe(price, forecast):
+def ccy_returns(price, forecast):
     base_capital = DEFAULT_CAPITAL
     daily_risk_capital = DEFAULT_CAPITAL * DEFAULT_ANN_RISK_TARGET / ROOT_BDAYS_INYEAR        
     ts_capital=pd.Series([DEFAULT_CAPITAL]*len(price), index=price.index)        
@@ -45,7 +28,14 @@ def sharpe(price, forecast):
     price_returns = price.diff()
     instr_ccy_returns = cum_trades.shift(1)*price_returns 
     instr_ccy_returns=instr_ccy_returns.cumsum().ffill().reindex(price.index).diff()
-    mean_return = instr_ccy_returns.mean() * BUSINESS_DAYS_IN_YEAR
+    returns instr_ccy_returns
+    
+def skew(price, forecast): 
+    pct = 100.0 * ccy_returns(price, forceast) / base_capital
+    return scipy.stats.skew(pct[pd.isnull(pct) == False])
+
+def sharpe(price, forecast):
+    mean_return = ccy_returns(price, foredcast).mean() * BUSINESS_DAYS_IN_YEAR
     vol = instr_ccy_returns.std() * ROOT_BDAYS_INYEAR
     return mean_return / vol
 
