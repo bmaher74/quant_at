@@ -41,6 +41,13 @@ def sharpe(price, forecast):
     vol = instr_ccy_returns.std() * ROOT_BDAYS_INYEAR
     return mean_return / vol
 
+def ewma(price, slow, fast):
+   fast_ewma = pd.ewma(price, span=slow)
+   slow_ewma = pd.ewma(price, span=fast)
+   raw_ewmac = fast_ewma - slow_ewma
+   vol = robust_vol_calc(price.diff())
+   return raw_ewmac /  vol 
+
 def carry(daily_ann_roll, vol, diff_in_years, smooth_days=90):
     ann_stdev = vol * ROOT_BDAYS_INYEAR
     raw_carry = daily_ann_roll / ann_stdev
