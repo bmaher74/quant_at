@@ -3,7 +3,6 @@
 ```python
 import util, zipfile, pandas as pd
 
-res = []
 slow=32;fast=128
 ewmacs = [(2,8),(4,16),(8,32),(16,64),(32,128),(64,256)]
 
@@ -18,17 +17,16 @@ for (slow,fast) in ewmacs:
 
     tmp = pd.DataFrame(pd.concat(res))
     tmp.columns = ['forecast']
-    print slow,fast,float(util.estimate_forecast_scalar(tmp).tail(1))
-    
+    print 'ewma', slow,fast,'=', float(util.estimate_forecast_scalar(tmp))
 ```
 
 ```text
-2 8 12.8587606411
-4 16 8.91499507015
-8 32 6.09843054736
-16 64 4.17115322451
-32 128 2.84127283125
-64 256 1.92365849221
+ewma 2 8 = 12.8587606411
+ewma 4 16 = 8.91499507015
+ewma 8 32 = 6.09843054736
+ewma 16 64 = 4.17115322451
+ewma 32 128 = 2.84127283125
+ewma 64 256 = 1.92365849221
 ```
 
 book
