@@ -28,14 +28,16 @@ def ccy_returns(price, forecast):
     price_returns = price.diff()
     instr_ccy_returns = cum_trades.shift(1)*price_returns 
     instr_ccy_returns=instr_ccy_returns.cumsum().ffill().reindex(price.index).diff()
-    returns instr_ccy_returns
+    return instr_ccy_returns
     
 def skew(price, forecast): 
-    pct = 100.0 * ccy_returns(price, forceast) / base_capital
+    base_capital = DEFAULT_CAPITAL
+    pct = 100.0 * ccy_returns(price, forecast) / base_capital
     return scipy.stats.skew(pct[pd.isnull(pct) == False])
 
 def sharpe(price, forecast):
-    mean_return = ccy_returns(price, foredcast).mean() * BUSINESS_DAYS_IN_YEAR
+    instr_ccy_returns = ccy_returns(price, forecast)
+    mean_return = instr_ccy_returns.mean() * BUSINESS_DAYS_IN_YEAR
     vol = instr_ccy_returns.std() * ROOT_BDAYS_INYEAR
     return mean_return / vol
 

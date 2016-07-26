@@ -123,6 +123,18 @@ def test_rollover():
     assert (util.sharpe(res3.effprice, resc) - 0.4) < 0.01
     dfs = futures.stitch_contracts(res2, ctd, 's')
 
+def test_returns_sharpe_skew():
+    import util, zipfile, pandas as pd
+    with zipfile.ZipFile('../alg/legacycsv.zip', 'r') as z:
+         df = pd.read_csv(z.open('EDOLLAR_price.csv'), index_col=0,parse_dates=True )
+
+    fast_ewma = pd.ewma(df.PRICE, span=32)
+    slow_ewma = pd.ewma(df.PRICE, span=128)
+    raw_ewmac = fast_ewma - slow_ewma
+    vol = util.robust_vol_calc(df.PRICE.diff())
+    forecast = raw_ewmac /  vol
+    assert util.sharpe(df.PRICE, forecast)-0.50 < 0.01
+    assert util.skew(df.PRICE, forecast)-(-0.57) < 0.01
     
 if __name__ == "__main__":    
     test_simple()
@@ -130,6 +142,7 @@ if __name__ == "__main__":
     test_stitch()
     test_missing_contract()
     test_one_load()
+    test_returns_sharpe_skew()
     if len(sys.argv) > 1 and sys.argv[1] == '--extra':
         # this is a slow one
         test_rollover()
