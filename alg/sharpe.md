@@ -19,20 +19,6 @@ print util.sharpe(df.PRICE, forecast)
 ```
 
 ```python
-import util
-def forecast_scalar_imp(xcross, window=250000, min_periods=500, backfill=True):
-    backfill=util.str2Bool(backfill) ## in yaml will come in as text
-    target_abs_forecast = 10.
-    if xcross.shape[1]==1:
-        x=xcross.abs().iloc[:,0]
-    else:
-        x=xcross.ffill().abs().median(axis=1)
-    avg_abs_value=pd.rolling_mean(x, window=window, min_periods=min_periods)
-    scaling_factor=target_abs_forecast/avg_abs_value
-    if backfill:
-        scaling_factor=scaling_factor.fillna(method="bfill")
-    return scaling_factor        
-
 import util, zipfile, pandas as pd
 
 def ewma(price, slow, fast):
@@ -55,7 +41,7 @@ tmp = pd.DataFrame(pd.concat(res))
 tmp.columns = ['forecast']
 #tmp.loc[tmp.forecast<-20,'forecast']=-20
 #tmp.loc[tmp.forecast>20,'forecast']=20
-print forecast_scalar_imp(tmp).tail()
+print util.estimate_forecast_scalar(tmp).tail()
 ```
 
 ```text

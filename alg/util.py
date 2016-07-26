@@ -73,6 +73,19 @@ def bollinger(df,col,lev):
     ret = df.ret.dropna() * lev
     return ret
 
+def estimate_forecast_scalar(xcross, window=250000, min_periods=500, backfill=True):
+    backfill=str2Bool(backfill) 
+    target_abs_forecast = 10.
+    if xcross.shape[1]==1:
+        x=xcross.abs().iloc[:,0]
+    else:
+        x=xcross.ffill().abs().median(axis=1)
+    avg_abs_value=pd.rolling_mean(x, window=window, min_periods=min_periods)
+    scaling_factor=target_abs_forecast/avg_abs_value
+    if backfill:
+        scaling_factor=scaling_factor.fillna(method="bfill")
+    return scaling_factor        
+
 def vol_equaliser(mean_list, stdev_list):
     if np.all(np.isnan(stdev_list)):
         return (([np.nan]*len(mean_list), [np.nan]*len(stdev_list)))
