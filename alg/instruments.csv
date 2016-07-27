@@ -1,10 +1,10 @@
 # expmon: the expiration month, sometimes contracts expire in the prev month
 # expday: which day of the expiring month
-quandl,description,currency,block_value,slippage,carryoffset,rollcycle,rolloffset,expmon,expday
-CL,Oil,USD,1000,0.0145328653,-1,Z,50,prev,25
-ED,Eurodollar,USD,2500,0.0025,-3,HMUZ,440,curr,15
-FV,US 5-Year Treasury,USD,1000,0.004,3,HMUZ,50,curr,30
-FESX,Eurostoxx,EUR,10,0.5,3,HMUZ,90,curr,11
-FVS,EURO STOXX 50 Volatility,EUR,100,0.0255,-1,FGHJKMNQUVXZ,60,curr,15
-MP,Mexican Peso USD Fx,USD,500000,0.000011567,3,HMUZ,90,curr,15
-CORN,Corn,USD,50,0.125,-3,Z,365,curr,14
+quandl,market,description,currency,block_value,slippage,carryoffset,rollcycle,rolloffset,expmon,expday
+CL,CME,Oil,USD,1000,0.0145328653,-1,Z,50,prev,25
+ED,CME,Eurodollar,USD,2500,0.0025,-3,HMUZ,440,curr,15
+FV,CME,US 5-Year Treasury,USD,1000,0.004,3,HMUZ,50,curr,30
+FESX,EUREX,Eurostoxx,EUR,10,0.5,3,HMUZ,90,curr,11
+FVS,EUREX,EURO STOXX 50 Volatility,EUR,100,0.0255,-1,FGHJKMNQUVXZ,60,curr,15
+MP,CME,Mexican Peso USD Fx,USD,500000,0.000011567,3,HMUZ,90,curr,15
+CORN,CME,Corn,USD,50,0.125,-3,Z,365,curr,14
