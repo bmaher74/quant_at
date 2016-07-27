@@ -29,18 +29,17 @@ FV CME HMUZ 50 30 curr 3
 
 ```python
 print cts_assigned.columns
-print ctd['198806'].s.head()
+print cts_assigned.ix['2008-11-10']
+print cts_assigned.ix['2008-11-11']
+print cts_assigned.ix['2008-11-12']
+#2008-11-11
+#print ctd['198806'].ix['2008-11-11']
 ```
 
 ```text
 Index([u'effcont'], dtype='object')
-Date
-1988-05-20    96.953125
-1988-05-23    96.796875
-1988-05-24    96.812500
-1988-05-25    96.890625
-1988-05-26    96.765625
-Name: s, dtype: float64
+effcont    200903
+Name: 2008-11-11 00:00:00, dtype: object
 ```
 
 
