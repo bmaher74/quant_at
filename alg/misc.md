@@ -2,7 +2,7 @@
 
 ```python
 import sys; sys.path.append('../data')
-import futures    
+import futures, datetime
 def sc(dfc, ctd, price_col):
     tmp = dfc.effcont.dropna().astype(int).diff().dropna()
     rolldates = tmp[tmp > 0].index
@@ -11,14 +11,19 @@ def sc(dfc, ctd, price_col):
     rolldates = [x for x in rolldates if \
                  int("%d%02d" % (x.year, x.month)) >= int(ctd.keys()[0]) and \
                  int("%d%02d" % (x.year, x.month)) <= int(ctd.keys()[-1])]
+	   
     tmp = [ctd[x] for x in rollconts]
     for i,x in enumerate(tmp):
     	print ctd.keys()[i]
     	print x.head(1).index
-	print x.tail(1).index
+    	print x.tail(1).index
     	print rolldates[i-1]
-	print '-----------'
-    #dfs = futures.stitch_prices([ctd[x] for x in rollconts], price_col, rolldates)
+    	print '-----------'
+    	if rolldates[i-1] not in x.index:
+	   for j in range(5):
+	       rolldates[i-1] = rolldates[i-1] - datetime.timedelta(days=j)
+	       if rolldates[i-1] in ctd.values()[i].index: break
+    #dfs = futures.stitch_prices(tmp, price_col, rolldates)
     #return dfs
 ```
 
@@ -26,7 +31,7 @@ def sc(dfc, ctd, price_col):
 ```python
 import pandas as pd
 import sys; sys.path.append('../data')
-import futures    
+import futures
 insts = pd.read_csv('instruments.csv',index_col=0,comment='#').to_dict()
 ```
 
@@ -596,7 +601,7 @@ DatetimeIndex(['2015-09-30'], dtype='datetime64[ns]', name=u'Date', freq=None)
 201509
 DatetimeIndex(['2014-09-30'], dtype='datetime64[ns]', name=u'Date', freq=None)
 DatetimeIndex(['2015-12-31'], dtype='datetime64[ns]', name=u'Date', freq=None)
-2015-08-12 00:00:00
+2015-08-02 00:00:00
 -----------
 ```
 
