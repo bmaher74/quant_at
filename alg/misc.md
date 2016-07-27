@@ -38,8 +38,12 @@ print cts_assigned.ix['2008-11-12']
 
 ```text
 Index([u'effcont'], dtype='object')
+effcont    200812
+Name: 2008-11-10 00:00:00, dtype: object
 effcont    200903
 Name: 2008-11-11 00:00:00, dtype: object
+effcont    200903
+Name: 2008-11-12 00:00:00, dtype: object
 ```
 
 
