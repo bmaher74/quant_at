@@ -219,7 +219,15 @@ def stitch_contracts(dfc, ctd, price_col):
     rolldates = [x for x in rolldates if \
                  int("%d%02d" % (x.year, x.month)) >= int(ctd.keys()[0]) and \
                  int("%d%02d" % (x.year, x.month)) <= int(ctd.keys()[-1])]
-    dfs = stitch_prices([ctd[x] for x in rollconts], price_col, rolldates)
+
+    tmp = [ctd[x] for x in rollconts]
+    for i,x in enumerate(tmp):
+    	if rolldates[i-1] not in x.index:
+	   for j in range(5):
+	       rolldates[i-1] = rolldates[i-1] - datetime.timedelta(days=j)
+	       if rolldates[i-1] in ctd.values()[i].index: break
+    dfs = stitch_prices(tmp, price_col, rolldates)    
+
     return dfs
 
 def which_contract(instrument, contract_list, cycle, offset, expday, expmon):

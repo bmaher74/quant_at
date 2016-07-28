@@ -14,11 +14,6 @@ def sc(dfc, ctd, price_col):
 	   
     tmp = [ctd[x] for x in rollconts]
     for i,x in enumerate(tmp):
-    	# print ctd.keys()[i]
-    	# print x.head(1).index
-    	# print x.tail(1).index
-    	# print rolldates[i-1]
-    	# print '-----------'
     	if rolldates[i-1] not in x.index:
 	   for j in range(5):
 	       rolldates[i-1] = rolldates[i-1] - datetime.timedelta(days=j)
