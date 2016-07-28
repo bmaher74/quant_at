@@ -232,6 +232,7 @@ def stitch_contracts(dfc, ctd, price_col):
 	   for j in range(5):
 	       rolldates[i-1] = rolldates[i-1] - datetime.timedelta(days=j)
 	       if rolldates[i-1] in ctd.values()[i].index: break
+    # done, do the stitch
     dfs = stitch_prices(tmp, price_col, rolldates)    
 
     return dfs
