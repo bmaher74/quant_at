@@ -64,6 +64,14 @@ dtype: object 7335
 df_stitched2 = futures.stitch_contracts(cts_assigned2, ctd2, 's')
 ```
 
+```python
+print len(ctd2['201612'])
+```
+
+```text
+65
+```
+
 
 
 ```text
