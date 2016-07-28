@@ -173,7 +173,7 @@ def shift(lst,empty):
     res[-1] = empty
     return res
     
-def stitch_prices(dfs, price_col, dates):
+def stitch_prices(dfs, price_col, dates, ctd):
     """Stitches together a list of contract prices. dfs should contain a
     list of dataframe objects, price_col is the column name to be
     combined, and dates is a list of stitch dates. The dataframes must
@@ -189,6 +189,10 @@ def stitch_prices(dfs, price_col, dates):
     dfsr_pair = shift(dfsr,pd.DataFrame())
         
     for i,v in enumerate(datesr):
+        print 'stitching'
+        print dfsr[i].head(1).index[0],dfsr[i].tail(1).index[0]
+        print dfsr_pair[i].head(1).index[0], dfsr_pair[i].tail(1).index[0]
+        print 'with', v
         tmp1=float(dfsr[i].ix[v,price_col])
         tmp2=float(dfsr_pair[i].ix[v,price_col])
         dfsr_pair[i].loc[:,price_col] = dfsr_pair[i][price_col] + tmp1-tmp2
@@ -232,6 +236,7 @@ def stitch_contracts(dfc, ctd, price_col):
 	   for j in range(5):
 	       rolldates[i-1] = rolldates[i-1] - datetime.timedelta(days=j)
 	       if rolldates[i-1] in ctd.values()[i].index: break
+               
     # done, do the stitch
     dfs = stitch_prices(tmp, price_col, rolldates)    
 
