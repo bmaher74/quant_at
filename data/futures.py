@@ -220,6 +220,12 @@ def stitch_contracts(dfc, ctd, price_col):
                  int("%d%02d" % (x.year, x.month)) >= int(ctd.keys()[0]) and \
                  int("%d%02d" % (x.year, x.month)) <= int(ctd.keys()[-1])]
 
+    # it is possible the rolldate might not be present in a targeted
+    # contract, because this date is arithmetically calculated, it
+    # could have fallan on a weekend day etc. So underneath I move
+    # back 0,1,2,.. days to the past to find a day that exists in the
+    # contract. 0 ago means obviously no change, if that does not
+    # work, 1,2,..  are tried.
     tmp = [ctd[x] for x in rollconts]
     for i,x in enumerate(tmp):
     	if rolldates[i-1] not in x.index:
