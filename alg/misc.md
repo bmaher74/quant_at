@@ -8,7 +8,7 @@ insts = pd.read_csv('instruments.csv',index_col=0,comment='#').to_dict()
 ```
 
 ```python
-inst = "CL"
+inst = "FV"
 market = insts['market'][inst]
 rollcycle = insts['rollcycle'][inst]
 rolloffset = insts['rolloffset'][inst]
@@ -22,7 +22,7 @@ df_carry = futures.create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==Fa
 ```
 
 ```text
-CL CME Z 50 25 prev -1
+FV CME HMUZ 50 30 curr 3
 ```
 
 ```python
@@ -39,13 +39,14 @@ print cts_assigned.dtypes, len(cts_assigned)
 
 ```text
 effcont    object
-dtype: object 7165
+dtype: object 6986
 ```
 
 ```python
 import util, zipfile, pandas as pd
 with zipfile.ZipFile('legacycsv.zip', 'r') as z:
-     dftmp = pd.read_csv(z.open('CRUDE_W_price.csv'), index_col=0,parse_dates=True )
+     #dftmp = pd.read_csv(z.open('CRUDE_W_price.csv'), index_col=0,parse_dates=True )
+     dftmp = pd.read_csv(z.open('US5_price.csv'), index_col=0,parse_dates=True )
 dftmp.PRICE.plot()
 plt.savefig('misc_02.png')
 ```
@@ -65,7 +66,7 @@ print cts_assigned2.dtypes, len(cts_assigned2)
 
 ```text
 effcont    object
-dtype: object 7165
+dtype: object 6986
 ```
 
 ```python
