@@ -189,10 +189,10 @@ def stitch_prices(dfs, price_col, dates, ctd):
     dfsr_pair = shift(dfsr,pd.DataFrame())
         
     for i,v in enumerate(datesr):
-        print 'stitching'
-        print dfsr[i].head(1).index[0],dfsr[i].tail(1).index[0]
-        print dfsr_pair[i].head(1).index[0], dfsr_pair[i].tail(1).index[0]
-        print 'with', v
+        #print 'stitching'
+        #print dfsr[i].head(1).index[0],dfsr[i].tail(1).index[0]
+        #print dfsr_pair[i].head(1).index[0], dfsr_pair[i].tail(1).index[0]
+        #print 'with', v
         tmp1=float(dfsr[i].ix[v,price_col])
         tmp2=float(dfsr_pair[i].ix[v,price_col])
         dfsr_pair[i].loc[:,price_col] = dfsr_pair[i][price_col] + tmp1-tmp2
@@ -224,21 +224,38 @@ def stitch_contracts(dfc, ctd, price_col):
                  int("%d%02d" % (x.year, x.month)) >= int(ctd.keys()[0]) and \
                  int("%d%02d" % (x.year, x.month)) <= int(ctd.keys()[-1])]
 
+
+    tmp = [ctd[x] for x in rollconts]
+    tmp_keys = [x for x in rollconts]
+    print len(tmp_keys), len(rolldates)
+
+    # debugging - before date seeks
+    for i,x in enumerate(rolldates):
+        logging.debug("%s %s %s %s %s" % ("rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]))
+    
     # it is possible the rolldate might not be present in a targeted
     # contract, because this date is arithmetically calculated, it
-    # could have fallan on a weekend day etc. So underneath I move
-    # back 0,1,2,.. days to the past to find a day that exists in the
-    # contract. 0 ago means obviously no change, if that does not
-    # work, 1,2,..  are tried.
-    tmp = [ctd[x] for x in rollconts]
+    # could have fallan on a weekend day etc. So underneath I move and
+    # forth to find a day that exists in both the contracts. 
     for i,x in enumerate(tmp):
     	if rolldates[i-1] not in x.index:
 	   for j in range(5):
 	       rolldates[i-1] = rolldates[i-1] - datetime.timedelta(days=j)
 	       if rolldates[i-1] in ctd.values()[i].index: break
+
+    for i,x in enumerate(rolldates):
+        for j in range(150):
+            #print "adjusting rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]
+            rolldates[i] += np.power(-1,j)*datetime.timedelta(days=j)
+            if rolldates[i] in tmp[i].index and rolldates[i] in tmp[i+1].index:
+                break
+
+    # debugging - after date seeks
+    for i,x in enumerate(rolldates):
+        logging.debug("%s %s %s %s %s" %("rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]))    
                
     # done, do the stitch
-    dfs = stitch_prices(tmp, price_col, rolldates)    
+    dfs = stitch_prices(tmp, price_col, rolldates, ctd) 
 
     return dfs
 

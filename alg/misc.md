@@ -64,6 +64,10 @@ dtype: object 7335
 df_stitched2 = futures.stitch_contracts(cts_assigned2, ctd2, 's')
 ```
 
+```text
+112 111
+```
+
 ```python
 print len(ctd2['201612'])
 ```
@@ -88,11 +92,22 @@ print ctd.keys()
 
 
 ```python
-df_stitched.plot()
+df_stitched2.plot()
 plt.savefig('misc_01.png')
 ```
 
 ![](misc_01.png)
+
+
+```python
+import util, zipfile, pandas as pd
+with zipfile.ZipFile('legacycsv.zip', 'r') as z:
+     dfus5 = pd.read_csv(z.open('US5_price.csv'), index_col=0,parse_dates=True )
+dfus5.PRICE.plot()
+plt.savefig('misc_02.png')
+```
+
+![](misc_02.png)
 
 
 ```python

@@ -25,16 +25,16 @@ def sc(dfc, ctd, price_col):
         print "rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]
     
     for i,x in enumerate(rolldates):
-        for j in range(5):
+        for j in range(150):
             print "adjusting rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]
-            rolldates[i] = rolldates[i] - datetime.timedelta(days=1)
+            rolldates[i] += np.power(-1,j)*datetime.timedelta(days=j)
             if rolldates[i] in tmp[i].index and rolldates[i] in tmp[i+1].index:
-                break  
-        if rolldates[i] not in tmp[i].index or rolldates[i] not in tmp[i+1].index:
-            print "Error"            
-            print tmp[i].head(1).index[0], tmp[i].tail(1).index[0]
-            print tmp[i+1].head(1).index[0], tmp[i+1].tail(1).index[0]
-            exit()
+                break
+            
+#        if rolldates[i] not in tmp[i].index or rolldates[i] not in tmp[i+1].index:
+#            print tmp[i].head(1).index[0], tmp[i].tail(1).index[0]
+#            print tmp[i+1].head(1).index[0], tmp[i+1].tail(1).index[0]
+#            assert (False)
             
     print '----------------------------------'
     for i,x in enumerate(rolldates):
@@ -42,4 +42,4 @@ def sc(dfc, ctd, price_col):
 
     dfs = futures.stitch_prices(tmp, price_col, rolldates, ctd)
 
-df_stitched2 = sc(cts_assigned2, ctd2, 's')
+df_stitched2 = futures.stitch_contracts(cts_assigned2, ctd2, 's')
