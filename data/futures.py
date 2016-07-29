@@ -205,6 +205,19 @@ def stitch_prices(dfs, price_col, dates, ctd):
         res.append(tmp[price_col])
     return pd.concat(res)
 
+def rolldates(cts_assigned):
+    """
+    Converts the date-contract assignment dataframe, coming from which_contract
+    into a list of (rolldate,from_contract,to_contract) tuple.    
+    """
+    tmp = cts_assigned.effcont.dropna().astype(int).diff().dropna()
+    rolls = tmp[tmp > 0].index
+    cts_assigned_s =cts_assigned.shift(1)
+    res = []
+    for x in list(rolls):
+    	 res.append((x, cts_assigned_s.ix[x].effcont, cts_assigned.ix[x].effcont))
+    return res
+    
 def stitch_contracts(dfc, ctd, price_col):
     """
     Using a contract mapped series and a dictionary of contracts,
