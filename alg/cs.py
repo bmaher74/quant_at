@@ -13,7 +13,8 @@ insts = pd.read_csv('instruments.csv',index_col=0,comment='#').to_dict()
 #df_stitched2.plot()
 #plt.savefig('misc_01.png' % inst)
 
-inst = "FV"
+#inst = "FV"
+inst = "CL"
 market = insts['market'][inst]
 rollcycle = insts['rollcycle'][inst]
 rolloffset = insts['rolloffset'][inst]
