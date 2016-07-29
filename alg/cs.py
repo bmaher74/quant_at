@@ -6,13 +6,6 @@ import matplotlib.pyplot as plt
 
 insts = pd.read_csv('instruments.csv',index_col=0,comment='#').to_dict()
 
-#df_carry2 = pd.read_csv("out1.csv",index_col=0,parse_dates=True)
-#cts_assigned2 = pickle.load( open( "cts_assigned.pkl", "rb" ) )
-#ctd2 = pickle.load( open( "ctd.pkl", "rb" ) )
-#df_stitched2 = futures.stitch_contracts(cts_assigned2, ctd2, 's')
-#df_stitched2.plot()
-#plt.savefig('misc_01.png' % inst)
-
 #inst = "FV"
 inst = "CL"
 market = insts['market'][inst]
