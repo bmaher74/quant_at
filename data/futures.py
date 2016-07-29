@@ -244,16 +244,29 @@ def stitch_contracts(dfc, ctd, price_col):
 	       if rolldates[i-1] in ctd.values()[i].index: break
 
     for i,x in enumerate(rolldates):
+        # seek a date that is in both contracts, starting from the
+        # calculated rollover date. The algorithm is go back 1, go forward 2,
+        # back 3, so an expanding window of possible date centered around
+        # the first suggestion are all tried. The first try is 0 of course,
+        # which is the suggestion itself. If that works at first try, the
+        # loop will exit immediately and no other tries need to be made.
         for j in range(150):
             print "adjusting rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]
             rolldates[i] += np.power(-1,j)*datetime.timedelta(days=j)
             if rolldates[i] in tmp[i].index and rolldates[i] in tmp[i+1].index:
                 break
-
+            
+        # check - this should not happen
+        if rolldates[i] not in tmp[i].index or rolldates[i] not in tmp[i+1].index:
+            print tmp[i].head(1).index[0], tmp[i].tail(1).index[0]
+            print tmp[i+1].head(1).index[0], tmp[i+1].tail(1).index[0]
+            assert (False)
+            
     # debugging - after date seeks
     for i,x in enumerate(rolldates):
         print("%s %s %s %s %s" %("rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]))    
-               
+
+        
     # done, do the stitch
     dfs = stitch_prices(tmp, price_col, rolldates, ctd) 
 

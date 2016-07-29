@@ -4,9 +4,6 @@ import pickle, pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-f = '%(asctime)-15s: %(message)s'
-logging.basicConfig(filename='%s/futures.log' % os.environ['TEMP'],level=logging.DEBUG, format=f)
-
 df_carry2 = pd.read_csv("out1.csv",index_col=0,parse_dates=True)
 cts_assigned2 = pickle.load( open( "cts_assigned.pkl", "rb" ) )
 ctd2 = pickle.load( open( "ctd.pkl", "rb" ) )
