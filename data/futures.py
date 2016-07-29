@@ -189,10 +189,10 @@ def stitch_prices(dfs, price_col, dates, ctd):
     dfsr_pair = shift(dfsr,pd.DataFrame())
         
     for i,v in enumerate(datesr):
-        print 'stitching'
-        print dfsr[i].head(1).index[0],dfsr[i].tail(1).index[0]
-        print dfsr_pair[i].head(1).index[0], dfsr_pair[i].tail(1).index[0]
-        print 'with', v
+        #print 'stitching'
+        #print dfsr[i].head(1).index[0],dfsr[i].tail(1).index[0]
+        #print dfsr_pair[i].head(1).index[0], dfsr_pair[i].tail(1).index[0]
+        #print 'with', v
         tmp1=float(dfsr[i].ix[v,price_col])
         tmp2=float(dfsr_pair[i].ix[v,price_col])
         dfsr_pair[i].loc[:,price_col] = dfsr_pair[i][price_col] + tmp1-tmp2
@@ -218,7 +218,7 @@ def rolldates(cts_assigned):
     	 res.append((x, cts_assigned_s.ix[x].effcont, cts_assigned.ix[x].effcont))
     return res
     
-def stitch_contracts(dfc, ctd, price_col):
+def stitch_contracts(cts_assigned, ctd, price_col):
     """
     Using a contract mapped series and a dictionary of contracts,
     creates a continuous time series. 
@@ -229,56 +229,35 @@ def stitch_contracts(dfc, ctd, price_col):
 
     Returns
     """
-    tmp = dfc.effcont.dropna().astype(int).diff().dropna()
-    rolldates = tmp[tmp > 0].index
 
-    rollconts = np.unique(dfc.effcont.dropna())
-    rollconts = [x for x in rollconts if x in ctd]
-    rolldates = [x for x in rolldates if \
-                 int("%d%02d" % (x.year, x.month)) >= int(ctd.keys()[0]) and \
-                 int("%d%02d" % (x.year, x.month)) <= int(ctd.keys()[-1])]
+    rolls = rolldates(cts_assigned)
+    rolldates2 = []
+    for (rolldate, from_con, to_con) in rolls:
+    	if str(from_con) in ctd.keys() and str(to_con) in ctd.keys():
+	   rolldates2.append((rolldate, from_con, to_con))	   
 
-#    for x in rolldates: print x
-
-    tmp = [ctd[x] for x in rollconts]
-    tmp_keys = [x for x in rollconts]
-    print len(tmp_keys), len(rolldates)
-
-    # debugging - before date seeks
-    print 'before date seek'
-    for i,x in enumerate(rolldates):
-        print("%s %s %s %s %s" % ("rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]))
-    
-    for i,x in enumerate(rolldates):
-        # seek a date that is in both contracts, starting from the
-        # calculated rollover date. The algorithm is go back 1, go forward 2,
-        # back 3, so an expanding window of possible date centered around
-        # the first suggestion are all tried. The first try is 0 of course,
-        # which is the suggestion itself. If that works at first try, the
-        # loop will exit immediately and no other tries need to be made.
+    rolldates3 = []
+    for i,(rolldate, from_con, to_con) in enumerate(rolldates2):
+        #print rolldate, from_con, to_con
         for j in range(200):
-            print "adjusting rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]
-            rolldates[i] += np.power(-1,j)*datetime.timedelta(days=j)
-            if rolldates[i] in tmp[i].index and rolldates[i] in tmp[i+1].index:
+            #print "adjusting rolldate", rolldate, "contract", from_con, to_con
+            rolldate += np.power(-1,j)*datetime.timedelta(days=j)
+            if rolldate in ctd[str(from_con)].index and rolldate in ctd[str(to_con)].index:
                 break
-            
-        # check - this should not happen
-        if rolldates[i] not in tmp[i].index or rolldates[i] not in tmp[i+1].index:
-            print tmp[i].head(1).index[0], tmp[i].tail(1).index[0]
-            print tmp[i+1].head(1).index[0], tmp[i+1].tail(1).index[0]
-            assert (False)
-            
-    # debugging - after date seeks
-    print 'after date seek'
-    for i,x in enumerate(rolldates):
-        print("%s %s %s %s %s" %("rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]))    
+        rolldates3.append((rolldate, from_con, to_con))
 
-        
-    # done, do the stitch
-    dfs = stitch_prices(tmp, price_col, rolldates, ctd) 
+    rolldates4 = []
+    contracts = []
+    for d,f,t in rolldates3:
+    	contracts.append(f)
+	contracts.append(t)
+	rolldates4.append(d)
 
-    return dfs
-
+#    print len(rolldates4)
+#    print len(np.unique(contracts))
+    contracts = [ctd[x] for x in list(np.unique(contracts))]
+    df_stitched = stitch_prices(contracts, 's', rolldates4, ctd2)
+    return df_stitched
 
 def which_contract(instrument, contract_list, cycle, offset, expday, expmon):
     """
