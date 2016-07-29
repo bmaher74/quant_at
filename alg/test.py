@@ -2,44 +2,30 @@ import sys; sys.path.append('../data')
 import futures, datetime
 import pickle, pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
-df_carry2 = pd.read_csv("out1.csv",index_col=0,parse_dates=True)
-cts_assigned2 = pickle.load( open( "cts_assigned.pkl", "rb" ) )
-ctd2 = pickle.load( open( "ctd.pkl", "rb" ) )
 
-def sc(dfc, ctd, price_col):
-    tmp = dfc.effcont.dropna().astype(int).diff().dropna()
-    rolldates = tmp[tmp > 0].index
-    rollconts = np.unique(dfc.effcont.dropna())
-    rollconts = [x for x in rollconts if x in ctd]
-    rolldates = [x for x in rolldates if \
-                 int("%d%02d" % (x.year, x.month)) >= int(ctd.keys()[0]) and \
-                 int("%d%02d" % (x.year, x.month)) <= int(ctd.keys()[-1])]
 
-    tmp = [ctd[x] for x in rollconts]
-    tmp_keys = [x for x in rollconts]
-    print len(tmp_keys), len(rolldates)
+#df_carry2 = pd.read_csv("out1.csv",index_col=0,parse_dates=True)
+#cts_assigned2 = pickle.load( open( "cts_assigned.pkl", "rb" ) )
+#ctd2 = pickle.load( open( "ctd.pkl", "rb" ) )
 
-    print '----------------------------------'
-    for i,x in enumerate(rolldates):
-        print "rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]
-    
-    for i,x in enumerate(rolldates):
-        for j in range(150):
-            print "adjusting rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]
-            rolldates[i] += np.power(-1,j)*datetime.timedelta(days=j)
-            if rolldates[i] in tmp[i].index and rolldates[i] in tmp[i+1].index:
-                break
-            
-#        if rolldates[i] not in tmp[i].index or rolldates[i] not in tmp[i+1].index:
-#            print tmp[i].head(1).index[0], tmp[i].tail(1).index[0]
-#            print tmp[i+1].head(1).index[0], tmp[i+1].tail(1).index[0]
-#            assert (False)
-            
-    print '----------------------------------'
-    for i,x in enumerate(rolldates):
-        print "rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]
+insts = pd.read_csv('instruments.csv',index_col=0,comment='#').to_dict()
 
-    dfs = futures.stitch_prices(tmp, price_col, rolldates, ctd)
+for inst in insts['rolloffset']:
+    market = insts['market'][inst]
+    rollcycle = insts['rollcycle'][inst]
+    rolloffset = insts['rolloffset'][inst]
+    expday = insts['expday'][inst]
+    expmon = insts['expmon'][inst]
+    carryoffset = insts['carryoffset'][inst]
+    print inst, market, rollcycle, rolloffset, expday, expmon, carryoffset
+    ctd = futures.get_contracts(market,inst,1980,futures.systemtoday().year)
+    cts_assigned = futures.which_contract(inst, ctd, rollcycle, rolloffset, expday, expmon)
+    df_carry = futures.create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
+    df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
+    df_stitched.plot()
+    plt.savefig('misc_%s_01.png' % inst)
+    break
 
-df_stitched2 = futures.stitch_contracts(cts_assigned2, ctd2, 's')
+
