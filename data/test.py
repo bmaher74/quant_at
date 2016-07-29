@@ -77,11 +77,12 @@ def test_incremental():
 
 def test_stitch():
     stitch_points = ['2015-03-13','2015-04-15']
-    dfs = []
+    dfs = []; ctd = {}
     base = 'test/data_stitch/vix%s.csv'
     for f in ['may','june','july']:
-        dfs.append(pd.read_csv(base % f,index_col=0,parse_dates=True))
-    res = futures.stitch_prices(dfs,'Settle',stitch_points)
+        tmp = pd.read_csv(base % f,index_col=0,parse_dates=True)
+        dfs.append(tmp); ctd[f] = tmp
+    res = futures.stitch_prices(dfs,'Settle',stitch_points, ctd)
     exp = pd.read_csv('test/data_stitch/stitch_expected.csv',index_col=0,parse_dates=True)
     exp['res'] = res
     assert (np.sum(exp.res-exp.Settle) < 1)
