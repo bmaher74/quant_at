@@ -218,18 +218,21 @@ def stitch_contracts(dfc, ctd, price_col):
     """
     tmp = dfc.effcont.dropna().astype(int).diff().dropna()
     rolldates = tmp[tmp > 0].index
+
     rollconts = np.unique(dfc.effcont.dropna())
     rollconts = [x for x in rollconts if x in ctd]
     rolldates = [x for x in rolldates if \
                  int("%d%02d" % (x.year, x.month)) >= int(ctd.keys()[0]) and \
                  int("%d%02d" % (x.year, x.month)) <= int(ctd.keys()[-1])]
 
+#    for x in rolldates: print x
 
     tmp = [ctd[x] for x in rollconts]
     tmp_keys = [x for x in rollconts]
     print len(tmp_keys), len(rolldates)
 
     # debugging - before date seeks
+    print 'before date seek'
     for i,x in enumerate(rolldates):
         print("%s %s %s %s %s" % ("rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]))
     
@@ -240,7 +243,7 @@ def stitch_contracts(dfc, ctd, price_col):
         # the first suggestion are all tried. The first try is 0 of course,
         # which is the suggestion itself. If that works at first try, the
         # loop will exit immediately and no other tries need to be made.
-        for j in range(150):
+        for j in range(200):
             print "adjusting rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]
             rolldates[i] += np.power(-1,j)*datetime.timedelta(days=j)
             if rolldates[i] in tmp[i].index and rolldates[i] in tmp[i+1].index:
@@ -253,6 +256,7 @@ def stitch_contracts(dfc, ctd, price_col):
             assert (False)
             
     # debugging - after date seeks
+    print 'after date seek'
     for i,x in enumerate(rolldates):
         print("%s %s %s %s %s" %("rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]))    
 
@@ -261,6 +265,7 @@ def stitch_contracts(dfc, ctd, price_col):
     dfs = stitch_prices(tmp, price_col, rolldates, ctd) 
 
     return dfs
+
 
 def which_contract(instrument, contract_list, cycle, offset, expday, expmon):
     """
@@ -296,6 +301,7 @@ def which_contract(instrument, contract_list, cycle, offset, expday, expmon):
             # this happens for crude oil for example
             if expmon=="prev": exp_d = exp_d - datetime.timedelta(days=30)
 	    df.loc[closest_biz(exp_d),'effcont'] = v
+            
     df = df.fillna(method='bfill')
     # get the contract offset days in the future - the little arithmetic
     # below was necessary to turn offset days into offset business days.

@@ -70,6 +70,42 @@ dtype: object 6986
 ```
 
 ```python
+print ctd2['201512'].tail(1)
+print ctd2['201603'].tail(1)
+# 2016-02-10'????
+# 2015-11-11
+```
+
+```text
+                     h       l           o     oi          s     v
+Date                                                              
+2015-12-31  118.890625  118.75  118.757812  36363  118.84375  3052
+                     h           l           o     oi          s     v
+Date                                                                  
+2016-03-31  121.390625  121.179688  121.257812  34709  121.34375  2376
+```
+
+```python
+print cts_assigned2.tail(4)
+```
+
+```text
+           effcont
+2016-06-27     NaN
+2016-06-28     NaN
+2016-06-29     NaN
+2016-06-30     NaN
+```
+
+
+
+
+
+
+
+
+
+```python
 df_stitched2 = futures.stitch_contracts(cts_assigned2, ctd2, 's')
 ```
 
