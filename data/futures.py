@@ -231,7 +231,7 @@ def stitch_contracts(dfc, ctd, price_col):
 
     # debugging - before date seeks
     for i,x in enumerate(rolldates):
-        logging.debug("%s %s %s %s %s" % ("rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]))
+        print("%s %s %s %s %s" % ("rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]))
     
     # it is possible the rolldate might not be present in a targeted
     # contract, because this date is arithmetically calculated, it
@@ -245,14 +245,14 @@ def stitch_contracts(dfc, ctd, price_col):
 
     for i,x in enumerate(rolldates):
         for j in range(150):
-            #print "adjusting rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]
+            print "adjusting rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]
             rolldates[i] += np.power(-1,j)*datetime.timedelta(days=j)
             if rolldates[i] in tmp[i].index and rolldates[i] in tmp[i+1].index:
                 break
 
     # debugging - after date seeks
     for i,x in enumerate(rolldates):
-        logging.debug("%s %s %s %s %s" %("rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]))    
+        print("%s %s %s %s %s" %("rolldate", rolldates[i], "contract", tmp_keys[i], tmp_keys[i+1]))    
                
     # done, do the stitch
     dfs = stitch_prices(tmp, price_col, rolldates, ctd) 
