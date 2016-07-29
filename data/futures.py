@@ -256,7 +256,7 @@ def stitch_contracts(cts_assigned, ctd, price_col):
 #    print len(rolldates4)
 #    print len(np.unique(contracts))
     contracts = [ctd[x] for x in list(np.unique(contracts))]
-    df_stitched = stitch_prices(contracts, 's', rolldates4, ctd2)
+    df_stitched = stitch_prices(contracts, 's', rolldates4, ctd)
     return df_stitched
 
 def which_contract(instrument, contract_list, cycle, offset, expday, expmon):
