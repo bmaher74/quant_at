@@ -189,10 +189,6 @@ def stitch_prices(dfs, price_col, dates, ctd):
     dfsr_pair = shift(dfsr,pd.DataFrame())
         
     for i,v in enumerate(datesr):
-        #print 'stitching'
-        #print dfsr[i].head(1).index[0],dfsr[i].tail(1).index[0]
-        #print dfsr_pair[i].head(1).index[0], dfsr_pair[i].tail(1).index[0]
-        #print 'with', v
         tmp1=float(dfsr[i].ix[v,price_col])
         tmp2=float(dfsr_pair[i].ix[v,price_col])
         dfsr_pair[i].loc[:,price_col] = dfsr_pair[i][price_col] + tmp1-tmp2
@@ -219,15 +215,16 @@ def rolldates(cts_assigned):
     return res
     
 def stitch_contracts(cts_assigned, ctd, price_col):
-    """
-    Using a contract mapped series and a dictionary of contracts,
+    """    
+    Using a date indexed contracts series and a dictionary of contracts,
     creates a continuous time series. 
+
+    Input
+    cts_assigned: Date indexed series with each date mapped to a contract in YYYYMM format
+    ctd: Dictionary of contracts, key is a string 'YYYYMM'. This is the universe of contracts for that instrument.
     
-    Inputs
-
-    dfc: Date indexed series with each date mapped to a contract in YYYYMM format
-
     Returns
+    Pandas Series
     """
 
     rolls = rolldates(cts_assigned)
@@ -238,14 +235,17 @@ def stitch_contracts(cts_assigned, ctd, price_col):
 
     rolldates3 = []
     for i,(rolldate, from_con, to_con) in enumerate(rolldates2):
+        # it is possible the rollover date is not present in both
+        # contracts. This rolldate is calculated arithmetically,
+        # remember, so it could fall on a weekend, etc. So we need to
         # seek a date that is in both contracts, starting from the
-        # calculated rollover date. The algorithm is go back 1, go forward 2,
-        # back 3, so an expanding window of possible date centered around
-        # the first suggestion are all tried. The first try is 0 of course,
-        # which is the suggestion itself. If that works at first try, the
-        # loop will exit immediately and no other tries need to be made.
+        # calculated rollover date. The algorithm is go back 0, go
+        # forward 1, back 2, so an expanding window of possible dates
+        # centered around the first suggestion are all tried. Since
+        # the first try is 0, that represents no change i.e. is the
+        # first suggestion itself. Whichever date works, the loop will
+        # exit immediately and no other tries need to be made.
         for j in range(200):
-            #print "adjusting rolldate", rolldate, "contract", from_con, to_con
             rolldate += np.power(-1,j)*datetime.timedelta(days=j)
             if rolldate in ctd[str(from_con)].index and rolldate in ctd[str(to_con)].index:
                 break
