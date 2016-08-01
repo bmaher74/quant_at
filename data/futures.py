@@ -330,7 +330,7 @@ def create_carry(df, offset, contract_list):
     df2['carryprice'] = df2.apply(lambda x: contract_list.get(x.carrycont).s.get(x.name) if x.carrycont in contract_list else np.nan,axis=1)
     return df2
 
-def save_sticon(sym, market, instref, df, db="findb"):
+def combine_contract_info_save(sym, market, insts, db="findb"):
     """
     Entry method that calls all contract combining, carry, stitch determination
     methods, and writes the results to the database as a single record,
@@ -349,7 +349,7 @@ def save_sticon(sym, market, instref, df, db="findb"):
     expday = insts['expday'][sym,market]
     expmon = insts['expmon'][sym,market]
     carryoffset = insts['carryoffset'][sym,market]
-    ctd = get_contracts(market,sym,1990,futures.systemtoday().year)
+    ctd = get_contracts(market,sym,1990,systemtoday().year)
     cts_assigned = which_contract(sym, ctd, rollcycle, rolloffset, expday, expmon)
     df_carry = create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
     df_stitched = stitch_contracts(cts_assigned, ctd, 's')
