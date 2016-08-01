@@ -113,11 +113,10 @@ def test_returns_sharpe_skew():
     assert util.sharpe(df.PRICE, forecast)-0.50 < 0.01
     assert util.skew(df.PRICE, forecast)-(-0.57) < 0.01
 
-def test_contract_stitch():
+def test_carry_stitch():
     ctd = collections.OrderedDict()
-    for y in [1990,1992,1994,1996,1998]:
-        print y-2,y
-        start_date = datetime.datetime(y-2, 1, 1)
+    for y in range(1990,1998):
+        start_date = datetime.datetime(y-3, 12, 1)
         end_date = datetime.datetime(y, 12, 31)
         delta = end_date - start_date
         dates = []
@@ -128,7 +127,7 @@ def test_contract_stitch():
         df = pd.DataFrame(index=dates)
         df['s'] = y-1900
         print df.tail(2)
-        ctd[int("%d12" % y)] = df
+        ctd["%d12" % y] = df
     
     rollcycle = "Z"
     rolloffset = 30
@@ -137,6 +136,8 @@ def test_contract_stitch():
     carryoffset = -1
     cts_assigned = futures.which_contract("dummy", ctd, rollcycle, rolloffset, expday, expmon)
     df_carry = futures.create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
+    cts_assigned.to_csv("out1.csv")
+    df_carry.to_csv("out2.csv")
 
     df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
     #df_carry['sprice'] = df_stitched
@@ -148,4 +149,4 @@ if __name__ == "__main__":
     # test_missing_contract()
     # test_one_load()
     # test_returns_sharpe_skew()
-    test_contract_stitch()
+    test_carry_stitch()

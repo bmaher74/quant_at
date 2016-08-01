@@ -207,10 +207,6 @@ def stitch_prices(dfs, price_col, dates, ctd):
     datesr = list(reversed(dates))
     dfsr = list(reversed(dfs))    
     dfsr_pair = shift(dfsr,pd.DataFrame())
-
-    print ("datesr=" + str(datesr))
-    for i,v in enumerate(datesr):
-        print '1990-09-26' in dfsr[i].index, dfsr[i].tail(1).index[0]
         
     for i,v in enumerate(datesr):
         tmp1=float(dfsr[i].ix[v,price_col]) # 1990-09-26
