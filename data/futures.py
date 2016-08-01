@@ -291,6 +291,7 @@ def which_contract(instrument, contract_list, cycle, offset, expday, expmon):
     Returns: A date-indexed Dataframe and an effcont column which points to the
     effective contract for that date.
     """
+    assert len(contract_list) > 0
     start_date = contract_list[contract_list.keys()[0]].head(1).index[0] # first dt of first contract
     end_date = contract_list[contract_list.keys()[-1]].tail(1).index[0] # last date of last contract
     delta = end_date - start_date
