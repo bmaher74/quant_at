@@ -8,5 +8,5 @@ insts = pd.read_csv('instruments.csv',index_col=[0,1],comment='#').to_dict('inde
 
 for (sym,market) in insts.keys(): 
     print sym, market
-    futures.combine_contract_info_save(inst, market, insts, db="findb")
+    futures.combine_contract_info_save(sym, market, insts, db="findb")
     
