@@ -2,9 +2,8 @@ import os, futures, pandas as pd, datetime
 from pymongo import MongoClient
 import numpy as np, sys, Quandl
 sys.path.append('../alg')
-import util
-import pandas as pd
-import numpy as np
+import util, collections
+import pandas as pd, numpy as np
 import matplotlib.pyplot as plt
 
 testdb = "fakedb"
@@ -113,11 +112,40 @@ def test_returns_sharpe_skew():
     forecast = raw_ewmac /  vol
     assert util.sharpe(df.PRICE, forecast)-0.50 < 0.01
     assert util.skew(df.PRICE, forecast)-(-0.57) < 0.01
+
+def test_contract_stitch():
+    ctd = collections.OrderedDict()
+    for y in [1990,1992,1994,1996,1998]:
+        print y-2,y
+        start_date = datetime.datetime(y-2, 1, 1)
+        end_date = datetime.datetime(y, 12, 31)
+        delta = end_date - start_date
+        dates = []
+        # get bizdays between start and end
+        for i in range(delta.days + 1):
+            day = start_date + datetime.timedelta(days=i)
+            if day.weekday() < 5: dates.append(day)
+        df = pd.DataFrame(index=dates)
+        df['s'] = y-1900
+        print df.tail(2)
+        ctd[int("%d12" % y)] = df
+    
+    rollcycle = "Z"
+    rolloffset = 30
+    expday = 31
+    expmon = "curr"
+    carryoffset = -1
+    cts_assigned = futures.which_contract("dummy", ctd, rollcycle, rolloffset, expday, expmon)
+    df_carry = futures.create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
+
+    df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
+    #df_carry['sprice'] = df_stitched
     
 if __name__ == "__main__":    
-    test_simple()
-    test_incremental()
-    test_stitch()
-    test_missing_contract()
-    test_one_load()
-    test_returns_sharpe_skew()
+    # test_simple()
+    # test_incremental()
+    # test_stitch()
+    # test_missing_contract()
+    # test_one_load()
+    # test_returns_sharpe_skew()
+    test_contract_stitch()
