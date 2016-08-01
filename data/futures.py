@@ -364,11 +364,11 @@ def combine_contract_info_save(sym, market, insts, db="findb"):
     connection = MongoClient()
     sticon = connection[db].sticon
 
-    rollcycle = insts['rollcycle'][sym,market]
-    rolloffset = insts['rolloffset'][sym,market]
-    expday = insts['expday'][sym,market]
-    expmon = insts['expmon'][sym,market]
-    carryoffset = insts['carryoffset'][sym,market]
+    rollcycle = insts[(sym,market)]['rollcycle']
+    rolloffset = insts[(sym,market)]['rolloffset']
+    expday = insts[(sym,market)]['expday']
+    expmon = insts[(sym,market)]['expmon']
+    carryoffset = insts[(sym,market)]['carryoffset']
     ctd = get_contracts(market,sym,1990,systemtoday().year)
     cts_assigned = which_contract(sym, ctd, rollcycle, rolloffset, expday, expmon)
     df_carry = create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
