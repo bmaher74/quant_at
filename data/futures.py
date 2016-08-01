@@ -330,6 +330,43 @@ def create_carry(df, offset, contract_list):
     df2['carryprice'] = df2.apply(lambda x: contract_list.get(x.carrycont).s.get(x.name) if x.carrycont in contract_list else np.nan,axis=1)
     return df2
 
+def save_sticon(sym, market, instref, df, db="findb"):
+    """
+    Entry method that calls all contract combination, carry, stitch methods,
+    and writes the results to the database.
+
+    Inputs
+    sym, market: symbol market
+    instref: dictionary of all instrument related data for this futures
+    """
+
+    connection = MongoClient()
+    sticon = connection[db].sticon
+
+    rollcycle = insts['rollcycle'][inst,market]
+    rolloffset = insts['rolloffset'][inst,market]
+    expday = insts['expday'][inst,market]
+    expmon = insts['expmon'][inst,market]
+    carryoffset = insts['carryoffset'][inst,market]
+    print inst, market, rollcycle, rolloffset, expday, expmon, carryoffset
+    ctd = futures.get_contracts(market,inst,1990,futures.systemtoday().year)
+    cts_assigned = futures.which_contract(inst, ctd, rollcycle, rolloffset, expday, expmon)
+    df_carry = futures.create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
+    df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
+
+    for srow in df_carry.tail(10).iterrows():
+        dt = int(srow[0].strftime('%Y%m%d'))
+        new_row = {"_id": {"sym": inst, "market": market, "dt": dt },
+                   "effcont": srow[1].effcont,
+                   "carrycont": srow[1].carrycont,
+                   "effprice": srow[1].effprice,
+                   "carryprice": srow[1].carryprice,
+                   "sprice": srow[1].sprice
+        }
+        #print new_row
+        sticon.save(new_row)
+    
+
 if __name__ == "__main__":
 
     simple.check_mongo()    
