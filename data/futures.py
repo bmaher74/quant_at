@@ -265,10 +265,10 @@ def stitch_contracts(cts_assigned, ctd, price_col):
         # the first try is 0, that represents no change i.e. is the
         # first suggestion itself. Whichever date works, the loop will
         # exit immediately and no other tries need to be made.
-        for j in range(200):
+        for j in range(300):
             rolldate += np.power(-1,j)*datetime.timedelta(days=j)
             if rolldate in ctd[str(from_con)].index and rolldate in ctd[str(to_con)].index:
-                break
+                break        
         rolldates3.append((rolldate, from_con, to_con))
 
     rolldates4 = []; contracts = []
