@@ -78,6 +78,26 @@ def get_contracts(market, sym, from_year, to_year, db="findb"):
             if 'DataFrame' in str(type(c)): res[key] = c
     return res	    
 
+def get_stitched(symbol, market):
+    """
+    Returns all data for symbol in a pandas dataframe
+    """
+    connection = MongoClient()
+    db = connection.findb
+    
+    q = {"$query" :{"_id.sym": symbol, "_id.market": market},"$orderby":{"_id.dt" : 1}}
+    res = list(db.sticon.find( q ))
+    if len(res) == 0: return pd.DataFrame()
+    tmp = []
+    for x in res: tmp.append( { 'carrycont': x['carrycont'], 'effcont': x['effcont'],
+                                'effprice': x['effprice'],'carryprice': x['carryprice'],
+                                'sprice': x['sprice'],'Date':x['_id']['dt'] } )
+    df = pd.DataFrame.from_records(tmp)
+    df['Date'] = pd.to_datetime(df.Date,format='%Y%m%d')
+    df = df.set_index('Date')
+    return df
+
+
 def last_date_in_contract(sym, market, month, year, db="findb"):
     q = { "$query" : {"_id.sym": sym, "_id.market": market,
                       "_id.month": month, "_id.year": year},
@@ -353,10 +373,11 @@ def combine_contract_info_save(sym, market, insts, db="findb"):
     cts_assigned = which_contract(sym, ctd, rollcycle, rolloffset, expday, expmon)
     df_carry = create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
     df_stitched = stitch_contracts(cts_assigned, ctd, 's')
+    df_carry['sprice'] = df_stitched
 
-    for srow in df_carry.tail(10).iterrows():
+    for srow in df_carry.iterrows():
         dt = int(srow[0].strftime('%Y%m%d'))
-        new_row = {"_id": {"sym": inst, "market": market, "dt": dt },
+        new_row = {"_id": {"sym": sym, "market": market, "dt": dt },
                    "effcont": srow[1].effcont,
                    "carrycont": srow[1].carrycont,
                    "effprice": srow[1].effprice,
