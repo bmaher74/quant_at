@@ -6,4 +6,4 @@ FV,CME,Finance,US 5-Year Treasuries
 FESX,EUREX,Finance,Eurostoxx
 FVS,EUREX,Finance,EURO STOXX 50 Volatility
 MP,CME,Finance,Mexican Peso USD Fx
-CH,CME,Food,Corn
+C,CME,Food,Corn
