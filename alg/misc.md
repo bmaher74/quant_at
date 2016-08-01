@@ -16,95 +16,46 @@ carryoffset = insts[(inst,market)]['carryoffset']
 #ctd = futures.get_contracts(market,inst,1990,futures.systemtoday().year)
 #cts_assigned = futures.which_contract(inst, ctd, rollcycle, rolloffset, expday, expmon)
 #df_carry = futures.create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
-df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
+cts_assigned.to_csv("out.csv")
+print ctd.keys()
+#df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
 #df_carry['sprice'] = df_stitched
 ```
 
-```text
----------------------------------------------------------------------------
-KeyError                                  Traceback (most recent call last)
-<ipython-input-1-8fa80ab42f1f> in <module>()
-     10 #cts_assigned = futures.which_contract(inst, ctd, rollcycle, rolloffset, expday, expmon)
-     11 #df_carry = futures.create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
----> 12 df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
-     13 #df_carry['sprice'] = df_stitched
+```text ['199003', '199005', '199007', '199009', '199012', '199103',
+'199105', '199107', '199109', '199112', '199203', '199205', '199207',
+'199209', '199212', '199303', '199305', '199307', '199309', '199312',
+'199403', '199405', '199407', '199409', '199412', '199503', '199505',
+'199507', '199509', '199512', '199603', '199605', '199607', '199609',
+'199612', '199703', '199705', '199707', '199709', '199712', '199803',
+'199805', '199807', '199809', '199812', '199903', '199905', '199907',
+'199909', '199912', '200001', '200003', '200005', '200007', '200009',
+'200011', '200012', '200101', '200103', '200105', '200107', '200109',
+'200111', '200112', '200201', '200203', '200205', '200207', '200209',
+'200212', '200303', '200305', '200307', '200309', '200312', '200403',
+'200405', '200407', '200409', '200412', '200503', '200505', '200507',
+'200509', '200512', '200603', '200605', '200607', '200609', '200612',
+'200703', '200705', '200707', '200709', '200712', '200803', '200805',
+'200807', '200809', '200812', '200903', '200905', '200907', '200909',
+'200912', '201003', '201005', '201007', '201009', '201012', '201103',
+'201105', '201107', '201109', '201112', '201203', '201205', '201207',
+'201209', '201212', '201303', '201305', '201307', '201309', '201312',
+'201403', '201405', '201407', '201409', '201412', '201503', '201505',
+'201507', '201509', '201512', '201603', '201605', '201607', '201609',
+'201612'] ```
 
-c:\Users\burak\Documents\quant_at\data\futures.pyc in stitch_contracts(cts_assigned, ctd, price_col)
-    279 
-    280     contracts = [ctd[x] for x in list(np.unique(contracts))]
---> 281     df_stitched = stitch_prices(contracts, 's', rolldates4, ctd)
-    282     return df_stitched
-    283 
-
-c:\Users\burak\Documents\quant_at\data\futures.pyc in stitch_prices(dfs, price_col, dates, ctd)
-    210         
-    211     for i,v in enumerate(datesr):
---> 212         tmp1=float(dfsr[i].ix[v,price_col])
-    213         tmp2=float(dfsr_pair[i].ix[v,price_col])
-    214         dfsr_pair[i].loc[:,price_col] = dfsr_pair[i][price_col] + tmp1-tmp2
-
-c:\Users\burak\Anaconda2\lib\site-packages\pandas\core\indexing.pyc in __getitem__(self, key)
-     66                 pass
-     67 
----> 68             return self._getitem_tuple(key)
-     69         else:
-     70             return self._getitem_axis(key, axis=0)
-
-c:\Users\burak\Anaconda2\lib\site-packages\pandas\core\indexing.pyc in _getitem_tuple(self, tup)
-    736     def _getitem_tuple(self, tup):
-    737         try:
---> 738             return self._getitem_lowerdim(tup)
-    739         except IndexingError:
-    740             pass
-
-c:\Users\burak\Anaconda2\lib\site-packages\pandas\core\indexing.pyc in _getitem_lowerdim(self, tup)
-    861         for i, key in enumerate(tup):
-    862             if is_label_like(key) or isinstance(key, tuple):
---> 863                 section = self._getitem_axis(key, axis=i)
-    864 
-    865                 # we have yielded a scalar ?
-
-c:\Users\burak\Anaconda2\lib\site-packages\pandas\core\indexing.pyc in _getitem_axis(self, key, axis)
-    965                     return self._get_loc(key, axis=axis)
-    966 
---> 967             return self._get_label(key, axis=axis)
-    968 
-    969     def _getitem_iterable(self, key, axis=0):
-
-c:\Users\burak\Anaconda2\lib\site-packages\pandas\core\indexing.pyc in _get_label(self, label, axis)
-     84             raise IndexingError('no slices here, handle elsewhere')
-     85 
----> 86         return self.obj._xs(label, axis=axis)
-     87 
-     88     def _get_loc(self, key, axis=0):
-
-c:\Users\burak\Anaconda2\lib\site-packages\pandas\core\generic.pyc in xs(self, key, axis, level, copy, drop_level)
-   1484                                                       drop_level=drop_level)
-   1485         else:
--> 1486             loc = self.index.get_loc(key)
-   1487 
-   1488             if isinstance(loc, np.ndarray):
-
-c:\Users\burak\Anaconda2\lib\site-packages\pandas\tseries\index.pyc in get_loc(self, key, method, tolerance)
-   1347             # needed to localize naive datetimes
-   1348             key = Timestamp(key, tz=self.tz)
--> 1349             return Index.get_loc(self, key, method, tolerance)
-   1350 
-   1351         if isinstance(key, time):
-
-c:\Users\burak\Anaconda2\lib\site-packages\pandas\core\index.pyc in get_loc(self, key, method, tolerance)
-   1757                                  'backfill or nearest lookups')
-   1758             key = _values_from_object(key)
--> 1759             return self._engine.get_loc(key)
-   1760 
-   1761         indexer = self.get_indexer([key], method=method,
-
-pandas\index.pyx in pandas.index.DatetimeEngine.get_loc (pandas\index.c:11072)()
-
-pandas\index.pyx in pandas.index.DatetimeEngine.get_loc (pandas\index.c:10832)()
-
-KeyError: Timestamp('1990-09-26 00:00:00')
+```python
+df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
 ```
+
+
+
+
+
+
+
+
+
 ```python
 import pandas as pd
 import sys; sys.path.append('../data')
