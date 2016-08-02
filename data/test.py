@@ -134,7 +134,7 @@ def test_carry_stitch():
     expday = 31
     expmon = "curr"
     carryoffset = -1
-    cts_assigned = futures.which_contract("dummy", ctd, rollcycle, rolloffset, expday, expmon)
+    cts_assigned = futures.which_contract(ctd, rollcycle, rolloffset, expday, expmon)
     df_carry = futures.create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
     cts_assigned.to_csv("out1.csv")
     df_carry.to_csv("out2.csv")

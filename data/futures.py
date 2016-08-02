@@ -281,7 +281,7 @@ def stitch_contracts(cts_assigned, ctd, price_col):
     df_stitched = stitch_prices(contracts, 's', rolldates4, ctd)
     return df_stitched
 
-def which_contract(instrument, contract_list, cycle, offset, expday, expmon):
+def which_contract(contract_list, cycle, offset, expday, expmon):
     """
     For a list of contracts it creates a continuous date index, and
     calculates which contract would be effective on that date for a
@@ -371,7 +371,7 @@ def combine_contract_info_save(sym, market, insts, db="findb"):
     expmon = insts[(sym,market)]['expmon']
     carryoffset = insts[(sym,market)]['carryoffset']
     ctd = get_contracts(market,sym,1990,systemtoday().year)
-    cts_assigned = which_contract(sym, ctd, rollcycle, rolloffset, expday, expmon)
+    cts_assigned = which_contract(ctd, rollcycle, rolloffset, expday, expmon)
     df_carry = create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
     df_stitched = stitch_contracts(cts_assigned, ctd, 's')
     df_carry['sprice'] = df_stitched
