@@ -353,9 +353,9 @@ def create_carry(df, offset, contract_list):
 
 def combine_contract_info_save(sym, market, insts, db="findb"):
     """
-    Entry method that calls all contract combining, carry, stitch determination
-    methods, and writes the results to the database as a single record,
-    with carry and stitched prices in the same place.
+    Gets all contracts for an instrument, creates carry, stitches them into
+    one single time series, and writes all of those to the database as a single record,
+    with carry, stitched prices in the same place.
 
     Inputs
     sym, market: symbol market
@@ -408,8 +408,9 @@ if __name__ == "__main__":
             
     elif len(sys.argv) == 3 and sys.argv[1] == "--load-cont":
         """
-        futures.py --load-cont filename.csv
-        where filename.csv is a config filen which carries all instruments
+        futures.py --load-cont filename.csv - for each instrument in 
+        filename.csv, call the carry, stitching method which will write
+        the result in db.
         """
         print sys.argv[2]
         insts = pd.read_csv(sys.argv[2],index_col=[0,1],comment='#').to_dict('index')
