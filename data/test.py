@@ -126,7 +126,6 @@ def test_carry_stitch():
             if day.weekday() < 5: dates.append(day)
         df = pd.DataFrame(index=dates)
         df['s'] = y-1900
-        print df.tail(2)
         ctd["%d12" % y] = df
     
     rollcycle = "Z"
