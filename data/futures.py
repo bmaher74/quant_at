@@ -322,7 +322,7 @@ def which_contract(contract_list, cycle, offset, expday, expmon):
     # below was necessary to turn offset days into offset business days.
     df['effcont'] = df.effcont.shift(-int(offset*2/3 + 3))
 
-    return df
+    return df.fillna(method='ffill')
 
 def create_carry(df, offset, contract_list):
     """
@@ -394,6 +394,7 @@ if __name__ == "__main__":
     simple.check_mongo()    
     f = '%(asctime)-15s: %(message)s'
     logging.basicConfig(filename='%s/futures.log' % os.environ['TEMP'],level=logging.DEBUG, format=f)
+
     if len(sys.argv) == 4 and sys.argv[1] == "--load-save-cnt":
         """
         Download from web and load a single contract, example usage is
@@ -414,16 +415,14 @@ if __name__ == "__main__":
         insts = pd.read_csv(sys.argv[2],index_col=[0,1],comment='#').to_dict('index')
         for (sym,market) in insts.keys(): 
             print sym, market
-            futures.combine_contract_info_save(sym, market, insts, db="findb")
-    
-            
-    elif len(sys.argv) == 2:
+            combine_contract_info_save(sym, market, insts, db="findb")
+                
+    elif len(sys.argv) == 2 and sys.argv[1] == "--latest":
         """
         Simply get the latest
         """
-        if sys.argv[1] == "--latest":
-            print 'latest'
-            download_data()
+        print 'Downloading the latest...'
+        download_data()
 
 
 #

@@ -128,24 +128,22 @@ def test_carry_stitch():
         df['s'] = y-1900
         ctd["%d12" % y] = df
     
-    rollcycle = "Z"
-    rolloffset = 30
-    expday = 31
-    expmon = "curr"
-    carryoffset = -1
+    rollcycle = "Z"; rolloffset = 30; expday = 31
+    expmon = "curr"; carryoffset = -1
+    
     cts_assigned = futures.which_contract(ctd, rollcycle, rolloffset, expday, expmon)
     df_carry = futures.create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
+    df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
+    df_carry['sprice'] = df_stitched
+
     cts_assigned.to_csv("out1.csv")
     df_carry.to_csv("out2.csv")
-
-    df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
-    #df_carry['sprice'] = df_stitched
     
 if __name__ == "__main__":    
-    test_simple()
-    test_incremental()
-    test_stitch()
-    test_missing_contract()
-    test_one_load()
-    test_returns_sharpe_skew()
+    # test_simple()
+    # test_incremental()
+    # test_stitch()
+    # test_missing_contract()
+    # test_one_load()
+    # test_returns_sharpe_skew()
     test_carry_stitch()
