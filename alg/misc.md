@@ -1,26 +1,25 @@
 
 ```python
-import pandas as pd
+import pandas as pd, util
 import sys; sys.path.append('../data')
 import futures
 ```
 
 ```python
-d = futures.get_stitched("C", "CME")
-d.sprice.plot()
-#d[d.index > '2013-01-01'].sprice.plot()
+df = futures.get_stitched("ED", "CME")
+df.sprice.plot()
 plt.savefig('misc_01.png')
-print d.head()
+print df.head()
 ```
 
 ```text
            carrycont  carryprice effcont  effprice  sprice
 Date                                                      
-1988-09-26    198909         NaN  198912       NaN     NaN
-1988-09-27    198909         NaN  198912       NaN     NaN
-1988-09-28    198909         NaN  198912       NaN     NaN
-1988-09-29    198909         NaN  198912       NaN     NaN
-1988-09-30    198909         NaN  198912       NaN     NaN
+1987-06-18    198806         NaN  198809       NaN   71.76
+1987-06-19    198806         NaN  198809       NaN   71.77
+1987-06-22    198806         NaN  198809       NaN   71.84
+1987-06-23    198806         NaN  198809       NaN   71.84
+1987-06-24    198806         NaN  198809       NaN   71.76
 ```
 
 
@@ -33,6 +32,28 @@ plt.savefig('misc_02.png')
 ```
 
 ![](misc_02.png)
+
+
+```python
+raw_carry = df.carryprice-df.effprice
+vol = util.robust_vol_calc(df.effprice.diff())
+carryoffset = -3
+forecast =  util.carry(raw_carry, vol,  carryoffset*1/util.CALENDAR_DAYS_IN_YEAR)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
