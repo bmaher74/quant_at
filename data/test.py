@@ -116,6 +116,8 @@ def test_returns_sharpe_skew():
 def test_carry_stitch():
     ctd = collections.OrderedDict()
     for y in range(1990,1998):
+        # the main rollover contract on the 12th of each year
+        # btw years seen above
         start_date = datetime.datetime(y-3, 12, 1)
         end_date = datetime.datetime(y, 12, 31)
         delta = end_date - start_date
@@ -125,20 +127,40 @@ def test_carry_stitch():
             day = start_date + datetime.timedelta(days=i)
             if day.weekday() < 5: dates.append(day)
         df = pd.DataFrame(index=dates)
-        df['s'] = y-1900
+        df['s'] = y + 0.80 # superfluous value, like 1990.80
         ctd["%d12" % y] = df
+        # the carry contract
+        start_date = datetime.datetime(y-3, 12, 1)
+        end_date = datetime.datetime(y, 11, 30)
+        delta = end_date - start_date
+        dates = []
+        for i in range(delta.days + 1):
+            day = start_date + datetime.timedelta(days=i)
+            if day.weekday() < 5: dates.append(day)
+        df = pd.DataFrame(index=dates)
+        df['s'] = y + 0.30  # superfluous value, like 1990.30
+        ctd["%d11" % y] = df
     
     rollcycle = "Z"; rolloffset = 30; expday = 31
     expmon = "curr"; carryoffset = -1
     
     cts_assigned = futures.which_contract(ctd, rollcycle, rolloffset, expday, expmon)
     df_carry = futures.create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
+
+    def carry(daily_ann_roll, vol, diff_in_years, smooth_days=90):
+        ann_stdev = vol * util.ROOT_BDAYS_INYEAR
+        rc = daily_ann_roll / ann_stdev
+        smooth_carry = pd.ewma(rc, smooth_days) / diff_in_years
+        return smooth_carry.fillna(method='ffill')
+    
+    raw_carry = df_carry.carryprice-df_carry.effprice
+    vol = util.robust_vol_calc(df_carry.effprice.diff())
+    forecast =  carry(raw_carry, vol,  carryoffset*1/util.CALENDAR_DAYS_IN_YEAR)
+    assert util.sharpe(df_carry.effprice, forecast)-0.35 < 0.01
+
     df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
     df_carry['sprice'] = df_stitched
 
-    cts_assigned.to_csv("out1.csv")
-    df_carry.to_csv("out2.csv")
-    
 if __name__ == "__main__":    
     # test_simple()
     # test_incremental()
