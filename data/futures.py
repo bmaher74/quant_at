@@ -394,17 +394,28 @@ if __name__ == "__main__":
     simple.check_mongo()    
     f = '%(asctime)-15s: %(message)s'
     logging.basicConfig(filename='%s/futures.log' % os.environ['TEMP'],level=logging.DEBUG, format=f)
-    if len(sys.argv) == 4:
-        if sys.argv[1] == "--load-save-cnt":
-            """
-            Download from web and load a single contract, example usage is
-            futures.py --load-save-cnt CME CLX2004
-            """
-            x1,x1,market, cnt = sys.argv
-            year=cnt[-4:]; mon=cnt[-5]; code=cnt[:-5]
-            connection = MongoClient()
-            findb = connection["findb"].futures
-            download_and_save(work_items=[(market,code,mon,int(year),'1900-01-01')],db=findb)
+    if len(sys.argv) == 4 and sys.argv[1] == "--load-save-cnt":
+        """
+        Download from web and load a single contract, example usage is
+        futures.py --load-save-cnt CME CLX2004
+        """
+        x1,x1,market, cnt = sys.argv
+        year=cnt[-4:]; mon=cnt[-5]; code=cnt[:-5]
+        connection = MongoClient()
+        findb = connection["findb"].futures
+        download_and_save(work_items=[(market,code,mon,int(year),'1900-01-01')],db=findb)
+            
+    elif len(sys.argv) == 3 and sys.argv[1] == "--load-cont":
+        """
+        futures.py --load-cont filename.csv
+        where filename.csv is a config filen which carries all instruments
+        """
+        print sys.argv[2]
+        insts = pd.read_csv(sys.argv[2],index_col=[0,1],comment='#').to_dict('index')
+        for (sym,market) in insts.keys(): 
+            print sym, market
+            futures.combine_contract_info_save(sym, market, insts, db="findb")
+    
             
     elif len(sys.argv) == 2:
         """
