@@ -11,4 +11,3 @@ df = pd.read_csv("out.csv",index_col=0,parse_dates=True)
 print 'read'
 weights=boot.optimise_over_periods(df,rollyears=20, monte_carlo=20,monte_length=250)
 weights.to_csv("out1.csv")
-print np.array(weights.tail(100))

@@ -12,6 +12,9 @@ ewmacs = [(16,64),(32,128),(64,256)]
 forecasts = {}
 for x in ewmacs: forecasts[x] = []
 forecasts['carry'] = []
+prices = {}
+for x in ewmacs: prices[x] = []
+prices['carry'] = []
 
 insts = ['CORN', 'EDOLLAR', 'EUROSTX', 'MXP', 'US10', 'V2X']
 with zipfile.ZipFile('legacycsv.zip', 'r') as z:
@@ -21,21 +24,33 @@ with zipfile.ZipFile('legacycsv.zip', 'r') as z:
         for (fast,slow) in ewmacs:
              vol = util.robust_vol_calc(df1.PRICE.diff())
              forecasts[(fast,slow)].append(util.ewma(df1.PRICE, slow, fast))
+             prices[(fast,slow)].append(df1.PRICE)
 
         raw_carry = df2.CARRY_CONTRACT-df2.PRICE_CONTRACT
         carryoffset = df2.PRICE_CONTRACT - df2.CARRY_CONTRACT
         forecast =  util.carry(raw_carry, vol,  carryoffset*1/util.CALENDAR_DAYS_IN_YEAR)
         forecasts['carry'].append(forecast)
+        prices['carry'].append(df1.PRICE)
     
 for x in forecasts:
     forecasts[x] = pd.concat(forecasts[x])
+for x in prices:
+    prices[x] = pd.concat(prices[x])
     
-df = pd.DataFrame()
-for x in forecasts: df[x] = forecasts[x]
-rng = pd.date_range('1/1/1900', periods=len(df), freq='D')
-df = df.set_index(rng)
-for col in df.columns: df[col] = df[col].pct_change()
-dfp.to_csv("out.csv")
+df1 = pd.DataFrame()
+for x in forecasts: df1[x] = forecasts[x]
+df2 = pd.DataFrame()
+for x in prices: df2[x] = prices[x]
+df2 = df2.shift(1)
+
+rng = pd.date_range('1/1/1900', periods=len(df1), freq='D')
+
+df1 = df1.set_index(rng)
+df2 = df2.set_index(rng)
+for col in df1.columns: df1[col] = df1[col].pct_change()
+
+df1 = df1 * df2
+df1.to_csv("out.csv")
 ```
 
 
