@@ -41,9 +41,9 @@ def sharpe(price, forecast):
     vol = instr_ccy_returns.std() * ROOT_BDAYS_INYEAR
     return mean_return / vol
 
-def ewma(price, slow, fast):
-   fast_ewma = pd.ewma(price, span=slow)
-   slow_ewma = pd.ewma(price, span=fast)
+def ewma(price, fast, slow):
+   fast_ewma = pd.ewma(price, span=fast)
+   slow_ewma = pd.ewma(price, span=slow)
    raw_ewmac = fast_ewma - slow_ewma
    vol = robust_vol_calc(price.diff())
    return raw_ewmac /  vol 

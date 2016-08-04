@@ -1,18 +1,14 @@
 
 ```python
-import pandas as pd, util
-import sys; sys.path.append('../data')
-import futures
-```
-
-```python
 import util, zipfile, pandas as pd
+import sys; sys.path.append('../data')
+import futures, collections
 ewmacs = [(16,64),(32,128),(64,256)]
 
-forecasts = {}
+forecasts = collections.OrderedDict()
 for x in ewmacs: forecasts[x] = []
 forecasts['carry'] = []
-prices = {}
+prices = collections.OrderedDict()
 for x in ewmacs: prices[x] = []
 prices['carry'] = []
 
@@ -23,7 +19,7 @@ with zipfile.ZipFile('legacycsv.zip', 'r') as z:
         df2 = pd.read_csv(z.open('%s_carrydata.csv' % inst), index_col=0,parse_dates=True )     
         for (fast,slow) in ewmacs:
              vol = util.robust_vol_calc(df1.PRICE.diff())
-             forecasts[(fast,slow)].append(util.ewma(df1.PRICE, slow, fast))
+             forecasts[(fast,slow)].append(util.ewma(df1.PRICE, fast, slow))
              prices[(fast,slow)].append(df1.PRICE)
 
         raw_carry = df2.CARRY_CONTRACT-df2.PRICE_CONTRACT
@@ -47,10 +43,8 @@ rng = pd.date_range('1/1/1900', periods=len(df1), freq='D')
 
 df1 = df1.set_index(rng)
 df2 = df2.set_index(rng)
-for col in df1.columns: df1[col] = df1[col].pct_change()
-
-df1 = df1 * df2
-df1.to_csv("out.csv")
+df1.to_csv("outfore.csv")
+df2.to_csv("outpri.csv")
 ```
 
 
