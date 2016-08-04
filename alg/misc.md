@@ -6,6 +6,47 @@ import futures
 ```
 
 ```python
+import util, zipfile, pandas as pd
+with zipfile.ZipFile('legacycsv.zip', 'r') as z:
+     df1 = pd.read_csv(z.open('CORN_price.csv'), index_col=0,parse_dates=True )     
+     vol = util.robust_vol_calc(df1.PRICE.diff())
+     forecast = util.ewma(df.PRICE, slow, fast)
+
+     df2 = pd.read_csv(z.open('CORN_carrydata.csv'), index_col=0,parse_dates=True )     
+     raw_carry = df2.CARRY_CONTRACT-df2.PRICE_CONTRACT
+     carryoffset = df2.PRICE_CONTRACT - df2.CARRY_CONTRACT
+     forecast2 =  util.carry(raw_carry, vol,  carryoffset*1/util.CALENDAR_DAYS_IN_YEAR)
+     
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```python
 df = futures.get_stitched("ED", "CME")
 df.sprice.plot()
 plt.savefig('misc_01.png')
@@ -40,39 +81,6 @@ vol = util.robust_vol_calc(df.effprice.diff())
 carryoffset = -3
 forecast =  util.carry(raw_carry, vol,  carryoffset*1/util.CALENDAR_DAYS_IN_YEAR)
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
