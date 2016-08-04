@@ -7,24 +7,36 @@ import futures
 
 ```python
 import util, zipfile, pandas as pd
+ewmacs = [(16,64),(32,128),(64,256)]
+
+forecasts = {}
+for x in ewmacs: forecasts[x] = []
+forecasts['carry'] = []
+
+insts = ['CORN', 'EDOLLAR', 'EUROSTX', 'MXP', 'US10', 'V2X']
 with zipfile.ZipFile('legacycsv.zip', 'r') as z:
-     df1 = pd.read_csv(z.open('CORN_price.csv'), index_col=0,parse_dates=True )     
-     vol = util.robust_vol_calc(df1.PRICE.diff())
-     forecast = util.ewma(df.PRICE, slow, fast)
+    for inst in insts: 
+        df1 = pd.read_csv(z.open('%s_price.csv' % inst), index_col=0,parse_dates=True )     
+        df2 = pd.read_csv(z.open('%s_carrydata.csv' % inst), index_col=0,parse_dates=True )     
+        for (fast,slow) in ewmacs:
+             vol = util.robust_vol_calc(df1.PRICE.diff())
+             forecasts[(fast,slow)].append(util.ewma(df1.PRICE, slow, fast))
 
-     df2 = pd.read_csv(z.open('CORN_carrydata.csv'), index_col=0,parse_dates=True )     
-     raw_carry = df2.CARRY_CONTRACT-df2.PRICE_CONTRACT
-     carryoffset = df2.PRICE_CONTRACT - df2.CARRY_CONTRACT
-     forecast2 =  util.carry(raw_carry, vol,  carryoffset*1/util.CALENDAR_DAYS_IN_YEAR)
-     
+        raw_carry = df2.CARRY_CONTRACT-df2.PRICE_CONTRACT
+        carryoffset = df2.PRICE_CONTRACT - df2.CARRY_CONTRACT
+        forecast =  util.carry(raw_carry, vol,  carryoffset*1/util.CALENDAR_DAYS_IN_YEAR)
+        forecasts['carry'].append(forecast)
+    
+for x in forecasts:
+    forecasts[x] = pd.concat(forecasts[x])
+    
+df = pd.DataFrame()
+for x in forecasts: df[x] = forecasts[x]
+rng = pd.date_range('1/1/1900', periods=len(df), freq='D')
+df = df.set_index(rng)
+for col in df.columns: df[col] = df[col].pct_change()
+dfp.to_csv("out.csv")
 ```
-
-
-
-
-
-
-
 
 
 
