@@ -1,5 +1,23 @@
 
 
+```python
+import priv.strat
+priv.strat.f()
+```
+
+```text
+ASdfasf
+```
+
+
+
+
+
+
+
+
+
+
 
 df = futures.get_stitched("ED", "CME")
 df.sprice.plot()
