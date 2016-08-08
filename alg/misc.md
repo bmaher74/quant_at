@@ -1,4 +1,6 @@
 
+
+
 df = futures.get_stitched("ED", "CME")
 df.sprice.plot()
 plt.savefig('misc_01.png')
