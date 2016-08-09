@@ -1,4 +1,4 @@
-import os, futures, pandas as pd, datetime
+import os, futures, pandas as pd, datetime, simple
 from pymongo import MongoClient
 import numpy as np, sys, Quandl
 sys.path.append('../alg')
@@ -162,6 +162,7 @@ def test_carry_stitch():
     df_carry['sprice'] = df_stitched
 
 if __name__ == "__main__":    
+    simple.check_mongo()    
     test_simple()
     test_incremental()
     test_stitch()
