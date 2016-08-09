@@ -136,7 +136,7 @@ def download_and_save(work_items, db, downloader=web_download, today=systemtoday
             logging.error("No dataset")
     
     
-def download_data(downloader=web_download,today=systemtoday,db="findb",years=(1984,2022)):
+def download_data(downloader=web_download,today=systemtoday,db="findb",years=(1984,2022),fin="futures.csv"):
 
     """
     Futures Contracts downloader - symbols are in futures.csv, each
@@ -148,8 +148,8 @@ def download_data(downloader=web_download,today=systemtoday,db="findb",years=(19
     # a tuple of contract years, defining the beginning
     # of time and end of time
     start_year,end_year=years
-    futcsv = pd.read_csv('futures.csv')
-    instruments = zip(futcsv.Symbol,futcsv.Market)
+    futcsv = pd.read_csv(fin)
+    instruments = zip(futcsv.symbol,futcsv.market)
 
     str_start = datetime.datetime(start_year-2, 1, 1).strftime('%Y-%m-%d')
     str_end = today().strftime('%Y-%m-%d')

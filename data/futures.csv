@@ -1,4 +1,4 @@
-Symbol,Market,Type,Name
+symbol,market,type,description
 CL,CME,Energy,Oil
 KC,CME,Food,Coffee
 ED,CME,Finance,Eurodollar
