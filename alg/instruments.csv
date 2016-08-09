@@ -1,4 +1,0 @@
-# expmon: the expiration month, sometimes contracts expire in the prev month
-# expday: which day of the expiring month
-quandl,market,description,currency,block_value,slippage,carryoffset,rollcycle,rolloffset,expmon,expday
-CL,CME,Oil,USD,1000,0.0145328653,-1,Z,50,prev,25

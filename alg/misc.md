@@ -5,17 +5,6 @@ import priv.strat
 priv.strat.f()
 ```
 
-```text
-ASdfasf
-```
-
-
-
-
-
-
-
-
 
 
 
