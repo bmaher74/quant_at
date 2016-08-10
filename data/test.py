@@ -47,8 +47,11 @@ def init():
 
 def test_simple():
     db = init()
-    futures.download_data(downloader=fake_download_1,today=fake_today_1,
-                          db=testdb, years=(1984,1985))
+    futures.download_data(downloader=fake_download_1,
+                          today=fake_today_1,
+                          db=testdb,
+                          years=(1984,1985),
+                          fin="futures.csv")
     res = futures.get(market="CME", sym="CL", month="F", year=1984, dt=19831205, db=testdb)
     assert (res[0]['oi'] == 5027.0)
     res = futures.get(market="CME", sym="CL", month="G", year=1984, dt=19830624, db=testdb)
