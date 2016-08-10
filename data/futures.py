@@ -148,7 +148,7 @@ def download_data(downloader=web_download,today=systemtoday,db="findb",years=(19
     # a tuple of contract years, defining the beginning
     # of time and end of time
     start_year,end_year=years
-    futcsv = pd.read_csv(fin)
+    futcsv = pd.read_csv(fin,comment='#')
     instruments = zip(futcsv.symbol,futcsv.market)
 
     str_start = datetime.datetime(start_year-2, 1, 1).strftime('%Y-%m-%d')
@@ -418,12 +418,12 @@ if __name__ == "__main__":
             print sym, market
             combine_contract_info_save(sym, market, insts, db="findb")
                 
-    elif len(sys.argv) == 2 and sys.argv[1] == "--latest":
+    elif len(sys.argv) == 3 and sys.argv[1] == "--latest":
         """
-        Simply get the latest
+        Simply get the latest for all items in a csv
         """
-        print 'Downloading the latest...'
-        download_data()
+        print 'Downloading the latest for %s...' % sys.argv[2]
+        download_data(fin=sys.argv[2])
 
 
 #
