@@ -15,7 +15,7 @@ def web_download(contract,start,end):
 
 def systemtoday():
     #return datetime.datetime.today()
-    return datetime.datetime(2016, 6, 30) 
+    return datetime.datetime(2016, 8, 10) 
 
 def get(market, sym, month, year, dt, db="findb"):
     """
