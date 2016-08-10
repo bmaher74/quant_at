@@ -15,6 +15,9 @@ FLAG_BAD_RETURN=-99999.0
 DEFAULT_CAPITAL = 1.0
 DEFAULT_ANN_RISK_TARGET = 0.16
 
+MAX_FORECAST = 20.0
+LONG_RUN_FCAST = 10.0
+
 def ccy_returns(price, forecast):
     base_capital = DEFAULT_CAPITAL
     daily_risk_capital = DEFAULT_CAPITAL * DEFAULT_ANN_RISK_TARGET / ROOT_BDAYS_INYEAR        
