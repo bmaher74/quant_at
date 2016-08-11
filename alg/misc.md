@@ -37,5 +37,13 @@ forecast =  util.carry(raw_carry, vol,  carryoffset*1/util.CALENDAR_DAYS_IN_YEAR
 ```
 
 
-
+```text
+0     1
+1     2
+2     3
+3     4
+4    10
+5    10
+dtype: int64
+```
 
