@@ -158,11 +158,12 @@ def test_carry_stitch():
     
     raw_carry = df_carry.carryprice-df_carry.effprice
     vol = util.robust_vol_calc(df_carry.effprice.diff())
-    forecast =  carry(raw_carry, vol,  carryoffset*1/util.CALENDAR_DAYS_IN_YEAR)
+    forecast =  carry(raw_carry, vol,  np.abs(carryoffset)/12.)
     assert util.sharpe(df_carry.effprice, forecast)-0.35 < 0.01
 
     df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
     df_carry['sprice'] = df_stitched
+    return df_carry
 
 if __name__ == "__main__":    
     simple.check_mongo()    
