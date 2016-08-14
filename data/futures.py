@@ -268,7 +268,8 @@ def stitch_contracts(cts_assigned, ctd, price_col):
         for j in range(300):
             rolldate += np.power(-1,j)*datetime.timedelta(days=j)
             if rolldate in ctd[str(from_con)].index and rolldate in ctd[str(to_con)].index:
-                break        
+                break
+        assert (j != 299)        
         rolldates3.append((rolldate, from_con, to_con))
 
     rolldates4 = []; contracts = []
@@ -276,9 +277,13 @@ def stitch_contracts(cts_assigned, ctd, price_col):
     	contracts.append(f)
 	contracts.append(t)
 	rolldates4.append(d)
-
+        
+    print rolldates4
     contracts = [ctd[x] for x in list(np.unique(contracts))]
+    print type(ctd)
+    for i,x in enumerate(ctd): ctd[x].to_csv('out-%d.csv' % i)
     df_stitched = stitch_prices(contracts, 's', rolldates4, ctd)
+    df_stitched.to_csv("out.csv")
     return df_stitched
 
 def which_contract(contract_list, cycle, offset, expday, expmon):

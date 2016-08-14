@@ -118,7 +118,7 @@ def test_returns_sharpe_skew():
 
 def test_carry_stitch():
     ctd = collections.OrderedDict()
-    for y in range(1990,1998):
+    for j,y in enumerate(range(1990,1998)):
         # the main rollover contract on the 12th of each year
         # btw years seen above
         start_date = datetime.datetime(y-3, 12, 1)
@@ -130,8 +130,9 @@ def test_carry_stitch():
             day = start_date + datetime.timedelta(days=i)
             if day.weekday() < 5: dates.append(day)
         df = pd.DataFrame(index=dates)
-        df['s'] = y + 0.80 # superfluous value, like 1990.80
+        df['s'] = y + 0.1 # superfluous value, like 1990.1
         ctd["%d12" % y] = df
+        
         # the carry contract
         start_date = datetime.datetime(y-3, 12, 1)
         end_date = datetime.datetime(y, 11, 30)
@@ -141,7 +142,7 @@ def test_carry_stitch():
             day = start_date + datetime.timedelta(days=i)
             if day.weekday() < 5: dates.append(day)
         df = pd.DataFrame(index=dates)
-        df['s'] = y + 0.30  # superfluous value, like 1990.30
+        df['s'] = y + 0.2  # superfluous value, like 1990.2
         ctd["%d11" % y] = df
     
     rollcycle = "Z"; rolloffset = 30; expday = 31
@@ -160,7 +161,6 @@ def test_carry_stitch():
     vol = util.robust_vol_calc(df_carry.effprice.diff())
     forecast =  carry(raw_carry, vol,  np.abs(carryoffset)/12.)
     assert util.sharpe(df_carry.effprice, forecast)-0.35 < 0.01
-
     df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
     df_carry['sprice'] = df_stitched
     return df_carry
