@@ -149,18 +149,12 @@ def test_carry_stitch():
     expmon = "curr"; carryoffset = -1
     
     cts_assigned = futures.which_contract(ctd, rollcycle, rolloffset, expday, expmon)
-    df_carry = futures.create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)
-
-    def carry(daily_ann_roll, vol, diff_in_years, smooth_days=90):
-        ann_stdev = vol * util.ROOT_BDAYS_INYEAR
-        rc = daily_ann_roll / ann_stdev
-        smooth_carry = pd.ewma(rc, smooth_days) / diff_in_years
-        return smooth_carry.fillna(method='ffill')
-    
+    df_carry = futures.create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)    
     raw_carry = df_carry.carryprice-df_carry.effprice
     vol = util.robust_vol_calc(df_carry.effprice.diff())
-    forecast =  carry(raw_carry, vol,  np.abs(carryoffset)/12.)
+    forecast =  util.carry(raw_carry, vol,  np.abs(carryoffset)/12.)
     assert util.sharpe(df_carry.effprice, forecast)-0.35 < 0.01
+    
     df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
     df_carry['sprice'] = df_stitched
     return df_carry
