@@ -284,7 +284,7 @@ def stitch_contracts(cts_assigned, ctd, price_col):
     print rolldates4
     print len(rolldates4)
     print len(contracts)
-    for ii, c in enumerate(contracts): c.to_csv("tmp/out-%d.csv" % ii)
+    #for ii, c in enumerate(contracts): c.to_csv("tmp/out-%d.csv" % ii)
     df_stitched = stitch_prices(contracts, 's', rolldates4, ctd)
     return df_stitched
 
