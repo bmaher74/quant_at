@@ -274,16 +274,18 @@ def stitch_contracts(cts_assigned, ctd, price_col):
 
     rolldates4 = []; contracts = []
     for d,f,t in rolldates3:
+        print d,f,t
     	contracts.append(f)
 	contracts.append(t)
 	rolldates4.append(d)
-        
-    print rolldates4
+
+    print list(np.unique(contracts))
     contracts = [ctd[x] for x in list(np.unique(contracts))]
-    print type(ctd)
-    for i,x in enumerate(ctd): ctd[x].to_csv('out-%d.csv' % i)
+    print rolldates4
+    print len(rolldates4)
+    print len(contracts)
+    for ii, c in enumerate(contracts): c.to_csv("tmp/out-%d.csv" % ii)
     df_stitched = stitch_prices(contracts, 's', rolldates4, ctd)
-    df_stitched.to_csv("out.csv")
     return df_stitched
 
 def which_contract(contract_list, cycle, offset, expday, expmon):
