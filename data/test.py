@@ -164,11 +164,11 @@ def test_carry_stitch():
     return df_carry
 
 if __name__ == "__main__":    
-    # simple.check_mongo()    
-    # test_simple()
-    # test_incremental()
-    # test_stitch()
-    # test_missing_contract()
-    # test_one_load()
-    # test_returns_sharpe_skew()
+    simple.check_mongo()    
+    test_simple()
+    test_incremental()
+    test_stitch()
+    test_missing_contract()
+    test_one_load()
+    test_returns_sharpe_skew()
     test_carry_stitch()
