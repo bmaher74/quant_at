@@ -53,7 +53,6 @@ def ewma(price, fast, slow):
 
 def carry(daily_ann_roll, vol, diff_in_years, smooth_days=90):
     ann_stdev = vol * ROOT_BDAYS_INYEAR
-    ann_stdev.to_csv("outannstd.csv")
     raw_carry = daily_ann_roll / ann_stdev
     smooth_carry = pd.ewma(raw_carry, smooth_days) / diff_in_years
     return smooth_carry.fillna(method='ffill')

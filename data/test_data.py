@@ -116,7 +116,7 @@ def test_returns_sharpe_skew():
     assert util.sharpe(df.PRICE, forecast)-0.50 < 0.01
     assert util.skew(df.PRICE, forecast)-(-0.57) < 0.01
 
-def create_carry_data(vol = False):
+def create_carry_data(vol = False, reverse=False):
     ctd = collections.OrderedDict()
     for j,y in enumerate(range(1990,1998)):
         # the main rollover contract on the 12th of each year
@@ -132,6 +132,7 @@ def create_carry_data(vol = False):
         df = pd.DataFrame(index=dates)
         df['s'] = np.array(range(len(df))) # superfluous value, like 1,2,3
         if vol: df['s'] = df['s'] + 10*np.random.randn(len(df))
+        if reverse: df['s'] = 10000 - df['s']
         ctd["%d12" % y] = df
         
         # the carry contract
@@ -144,6 +145,7 @@ def create_carry_data(vol = False):
             if day.weekday() < 5: dates.append(day)
         df = pd.DataFrame(index=dates)
         df['s'] = 100. +  np.array(range(len(df))) # superfluous value
+        if reverse: df['s'] = 10000 - df['s']
         ctd["%d11" % y] = df
 
     rollcycle = "Z"; rolloffset = 30; expday = 31
