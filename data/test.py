@@ -117,6 +117,7 @@ def test_returns_sharpe_skew():
     assert util.skew(df.PRICE, forecast)-(-0.57) < 0.01
 
 def test_carry_stitch():
+
     ctd = collections.OrderedDict()
     for j,y in enumerate(range(1990,1998)):
         # the main rollover contract on the 12th of each year
@@ -130,33 +131,35 @@ def test_carry_stitch():
             day = start_date + datetime.timedelta(days=i)
             if day.weekday() < 5: dates.append(day)
         df = pd.DataFrame(index=dates)
-        df['s'] = y + 0.1 # superfluous value, like 1990.1
+        df['s'] = float(j)+np.array(range(len(df))) # superfluous value, like 1,2,3
         ctd["%d12" % y] = df
-        
-        # the carry contract
-        start_date = datetime.datetime(y-3, 12, 1)
-        end_date = datetime.datetime(y, 11, 30)
-        delta = end_date - start_date
-        dates = []
-        for i in range(delta.days + 1):
-            day = start_date + datetime.timedelta(days=i)
-            if day.weekday() < 5: dates.append(day)
-        df = pd.DataFrame(index=dates)
-        df['s'] = y + 0.2  # superfluous value, like 1990.2
-        ctd["%d11" % y] = df
-    
+
+    # the carry contract
+    start_date = datetime.datetime(y-3, 12, 1)
+    end_date = datetime.datetime(y, 11, 30)
+    delta = end_date - start_date
+    dates = []
+    for i in range(delta.days + 1):
+        day = start_date + datetime.timedelta(days=i)
+        if day.weekday() < 5: dates.append(day)
+    df = pd.DataFrame(index=dates)
+    df['s'] = 10+float(j)+np.array(range(len(df))) # superfluous value
+    ctd["%d11" % y] = df
+
     rollcycle = "Z"; rolloffset = 30; expday = 31
     expmon = "curr"; carryoffset = -1
+
+    df_assigned = futures.which_contract(ctd, rollcycle, rolloffset, expday, expmon)
+    df_carry = futures.create_carry(df_assigned[pd.isnull(df_assigned.effcont)==False],int(carryoffset),ctd) 
+    df_stitched = futures.stitch_contracts(df_assigned, ctd, 's')
+    df_carry['sprice'] = df_stitched
     
-    cts_assigned = futures.which_contract(ctd, rollcycle, rolloffset, expday, expmon)
-    df_carry = futures.create_carry(cts_assigned[pd.isnull(cts_assigned.effcont)==False],int(carryoffset),ctd)    
     raw_carry = df_carry.carryprice-df_carry.effprice
     vol = util.robust_vol_calc(df_carry.effprice.diff())
     forecast =  util.carry(raw_carry, vol,  np.abs(carryoffset)/12.)
-    assert util.sharpe(df_carry.effprice, forecast)-0.35 < 0.01
+    sr = util.sharpe(df_carry.effprice, forecast)
+    assert sr > 6.0
     
-    df_stitched = futures.stitch_contracts(cts_assigned, ctd, 's')
-    df_carry['sprice'] = df_stitched
     return df_carry
 
 if __name__ == "__main__":    

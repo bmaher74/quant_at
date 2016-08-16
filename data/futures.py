@@ -275,20 +275,11 @@ def stitch_contracts(cts_assigned, ctd, price_col):
 
     rolldates4 = []; contract_ids = []
     for d,f,t in rolldates3:
-        print d,f,t
     	contract_ids.append(f)
 	contract_ids.append(t)
 	rolldates4.append(d)
 
-    print list(np.unique(contract_ids))
     contracts = [ctd[x].copy() for x in list(np.unique(contract_ids))]
-    print rolldates4
-    print len(rolldates4)
-    print len(contracts)
-    for ii, c in enumerate(contracts):
-        print c.head(1).index[0], c.tail(1).index[0], c.head(1).s[0]
-        c.to_csv("tmp/out-%02d.csv" % ii)
-
     df_stitched = stitch_prices(contracts, 's', rolldates4, ctd)
     return df_stitched
 
