@@ -193,7 +193,7 @@ def shift(lst,empty):
     res[-1] = empty
     return res
     
-def stitch_prices(dfs, price_col, dates, ctd):
+def stitch_prices(dfs, price_col, dates_arg, ctd):
     """Stitches together a list of contract prices. dfs should contain a
     list of dataframe objects, price_col is the column name to be
     combined, and dates is a list of stitch dates. The dataframes must
@@ -202,7 +202,8 @@ def stitch_prices(dfs, price_col, dates, ctd):
     more details can be found at
     http://qoppac.blogspot.de/2015/05/systems-building-futures-rolling.html
     """
-
+    dates = dates_arg[:]
+    
     res = []
     datesr = list(reversed(dates))
     dfsr = list(reversed(dfs))    
@@ -284,7 +285,10 @@ def stitch_contracts(cts_assigned, ctd, price_col):
     print rolldates4
     print len(rolldates4)
     print len(contracts)
-    #for ii, c in enumerate(contracts): c.to_csv("tmp/out-%d.csv" % ii)
+    for ii, c in enumerate(contracts):
+        print c.head(1).index[0], c.tail(1).index[0], c.head(1).s[0]
+        c.to_csv("tmp/out-%02d.csv" % ii)
+
     df_stitched = stitch_prices(contracts, 's', rolldates4, ctd)
     return df_stitched
 
