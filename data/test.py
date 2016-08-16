@@ -131,7 +131,7 @@ def test_carry_stitch():
             day = start_date + datetime.timedelta(days=i)
             if day.weekday() < 5: dates.append(day)
         df = pd.DataFrame(index=dates)
-        df['s'] = float(j)+np.array(range(len(df))) # superfluous value, like 1,2,3
+        df['s'] = np.array(range(len(df))) # superfluous value, like 1,2,3
         ctd["%d12" % y] = df
         
         # the carry contract
@@ -143,7 +143,7 @@ def test_carry_stitch():
             day = start_date + datetime.timedelta(days=i)
             if day.weekday() < 5: dates.append(day)
         df = pd.DataFrame(index=dates)
-        df['s'] = -2*float(j)+np.array(range(len(df))) # superfluous value
+        df['s'] = 1. + np.array(range(len(df))) # superfluous value
         ctd["%d11" % y] = df
 
     rollcycle = "Z"; rolloffset = 30; expday = 31
@@ -153,14 +153,7 @@ def test_carry_stitch():
     df_carry = futures.create_carry(df_assigned[pd.isnull(df_assigned.effcont)==False],int(carryoffset),ctd) 
     df_stitched = futures.stitch_contracts(df_assigned, ctd, 's')
     df_carry['sprice'] = df_stitched
-    
-    raw_carry = df_carry.carryprice-df_carry.effprice
-    vol = util.robust_vol_calc(df_carry.effprice.diff())
-    forecast =  util.carry(raw_carry, vol,  np.abs(carryoffset)/12.)
-    sr = util.sharpe(df_carry.effprice, forecast)
-    print 'sharpe', sr
-    assert sr > 0.6
-    
+    assert df_carry.sprice.diff().mean() > 0.9
     return df_carry
 
 if __name__ == "__main__":    
