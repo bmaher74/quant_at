@@ -272,15 +272,15 @@ def stitch_contracts(cts_assigned, ctd, price_col):
         assert (j != 299)        
         rolldates3.append((rolldate, from_con, to_con))
 
-    rolldates4 = []; contracts = []
+    rolldates4 = []; contract_ids = []
     for d,f,t in rolldates3:
         print d,f,t
-    	contracts.append(f)
-	contracts.append(t)
+    	contract_ids.append(f)
+	contract_ids.append(t)
 	rolldates4.append(d)
 
-    print list(np.unique(contracts))
-    contracts = [ctd[x] for x in list(np.unique(contracts))]
+    print list(np.unique(contract_ids))
+    contracts = [ctd[x].copy() for x in list(np.unique(contract_ids))]
     print rolldates4
     print len(rolldates4)
     print len(contracts)
