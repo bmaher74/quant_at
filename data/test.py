@@ -154,6 +154,7 @@ def test_carry_stitch():
     df_stitched = futures.stitch_contracts(df_assigned, ctd, 's')
     df_carry['sprice'] = df_stitched
     assert df_carry.sprice.diff().mean() > 0.9
+    assert (df_carry.carryprice - df_carry.effprice).mean() > 0.9
     return df_carry
 
 if __name__ == "__main__":    
