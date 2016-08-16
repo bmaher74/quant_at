@@ -157,10 +157,9 @@ def create_carry_data(vol = False):
     
 def test_carry_stitch():
     df_carry = create_carry_data(True)    
-    df_carry = create_carry_data()
+    df_carry = create_carry_data(False)
     assert df_carry.sprice.diff().mean() > 0.9
     assert (df_carry.carryprice - df_carry.effprice).mean() > 0.9
-    return df_carry
 
 if __name__ == "__main__":    
     simple.check_mongo()    
