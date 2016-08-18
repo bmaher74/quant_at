@@ -68,21 +68,6 @@ def crossover(df,col,lev):
     ret = df.ret.dropna()  * lev
     return ret
 
-def bollinger(df,col,lev):
-    signals = pd.DataFrame(index=df.index) 
-    signals['signal'] = np.nan
-    middle = pd.rolling_mean(df[col], 40, min_periods=1) 
-    std = pd.rolling_std(df[col], 40, min_periods=1)
-    df['middle'] = middle
-    df['top'] = middle+2*std
-    df['bottom'] = middle-2*std
-    signals['signal'] = np.where(df[col] > middle+2*std, -1, np.nan) 
-    signals['signal'] = np.where(df[col] < middle-2*std, 1, np.nan)
-    signals['signal'] = signals['signal'].fillna(method='ffill')
-    df['ret'] = df[col].pct_change() * signals['signal'].shift(1)
-    ret = df.ret.dropna() * lev
-    return ret
-
 def estimate_forecast_scalar(x, window=250000, min_periods=500):
     target_abs_forecast = 10.
     x=x.abs().iloc[:,0]
@@ -238,66 +223,22 @@ def bootstrap_portfolio(subset_data, monte_runs=100, bootstrap_length=50):
 
     print ("bootstrap_portfolio=" + str(bootstrap_portfolio))
     all_results=[bs_one_time(subset_data, bootstrap_length) for unused_index in range(monte_runs)]
-        
-    ### We can take an average here; only because our weights always add
-    ### up to 1. If that isn't true then you will need to some kind
-    ### of renormalisation
-
     weightlist=np.array([x[0] for x in all_results], ndmin=2)
-    diaglist=[x[1] for x in all_results]
-         
-    theweights_mean=list(np.mean(weightlist, axis=0))
-    
-    diag=dict(bootstraps=diaglist)
-    
+    diaglist=[x[1] for x in all_results]         
+    theweights_mean=list(np.mean(weightlist, axis=0))    
+    diag=dict(bootstraps=diaglist)    
     return (theweights_mean, diag)
 
 def bs_one_time(subset_data, bootstrap_length):
-
-    ## choose the data    
-    bs_idx=[int(random.uniform(0,1)*len(subset_data)) for notUsed in range(bootstrap_length)]
-    
-    returns=subset_data.iloc[bs_idx,:] 
-    
+    bs_idx=[int(random.uniform(0,1)*len(subset_data)) for notUsed in range(bootstrap_length)]    
+    returns=subset_data.iloc[bs_idx,:]     
     (weights, diag)=markosolver(returns)
-
     return (weights, diag)
-
 
 
 def robust_vol_calc(x, days=35, min_periods=10, vol_abs_min=0.0000000001, vol_floor=True,
                     floor_min_quant=0.05, floor_min_periods=100,
                     floor_days=500):
-    """
-    Robust exponential volatility calculation, assuming daily series of prices
-    We apply an absolute minimum level of vol (absmin);
-    and a volfloor based on lowest vol over recent history
-
-    :param x: data
-    :type x: Tx1 pd.Series
-
-    :param days: Number of days in lookback (*default* 35)
-    :type days: int
-
-    :param min_periods: The minimum number of observations (*default* 10)
-    :type min_periods: int
-
-    :param vol_abs_min: The size of absolute minimum (*default* =0.0000000001) 0.0= not used
-    :type absmin: float or None
-
-    :param vol_floor Apply a floor to volatility (*default* True)
-    :type vol_floor: bool
-    :param floor_min_quant: The quantile to use for volatility floor (eg 0.05 means we use 5% vol) (*default 0.05)
-    :type floor_min_quant: float
-    :param floor_days: The lookback for calculating volatility floor, in days (*default* 500)
-    :type floor_days: int
-    :param floor_min_periods: Minimum observations for floor - until reached floor is zero (*default* 100)
-    :type floor_min_periods: int
-
-    :returns: pd.DataFrame -- volatility measure
-
-
-    """
 
     # Standard deviation will be nan for first 10 non nan values
     vol = pd.ewmstd(x, span=days, min_periods=min_periods)
@@ -336,16 +277,6 @@ class fit_dates_object(object):
             return "Fit from %s to %s, use in %s to %s" % (self.fit_start, self.fit_end, self.period_start, self.period_end)
 
 def generate_fitting_dates(data, date_method, rollyears=20):
-    """
-    generate a list 4 tuples, one element for each year in the data
-    each tuple contains [fit_start, fit_end, period_start, period_end] datetime objects
-    the last period will be a 'stub' if we haven't got an exact number of years
-    
-    date_method can be one of 'in_sample', 'expanding', 'rolling'
-    
-    if 'rolling' then use rollyears variable  
-    """
-
     print ("data=" + str(data.tail(4)))
     print ("date_method=" + str(date_method))
     if date_method not in ["in_sample","rolling", "expanding"]:

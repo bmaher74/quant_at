@@ -139,10 +139,10 @@ def download_and_save(work_items, db, downloader=web_download, today=systemtoday
 def download_data(downloader=web_download,today=systemtoday,db="findb",years=(1984,2022),fin="futures.csv"):
 
     """
-    Futures Contracts downloader - symbols are in futures.csv, each
-    symbol in this file is retrieved from Quandl and inserted into a
-    Mongo database. At each new invocation, only new data for
-    non-expired contracts are downloaded. 
+    Futures Contracts downloader - symbols are in argument fin (a csv
+    file location), each symbol in this file is retrieved from Quandl
+    and inserted into a Mongo database. At each new invocation, only
+    new data for non-expired contracts are downloaded.
     """
     
     # a tuple of contract years, defining the beginning
