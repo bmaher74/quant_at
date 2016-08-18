@@ -56,17 +56,6 @@ def carry(daily_ann_roll, vol, diff_in_years, smooth_days=90):
     smooth_carry = pd.ewma(raw_carry, smooth_days) / diff_in_years
     return smooth_carry.fillna(method='ffill')
 
-def crossover(df,col,lev):
-    signals = pd.DataFrame(index=df.index) 
-    signals['signal'] = 0 
-    short_ma = pd.rolling_mean(df[col], 40, min_periods=1) 
-    long_ma = pd.rolling_mean(df[col], 100, min_periods=1) 
-    signals['signal'] = np.where(short_ma > long_ma, 1, 0) 
-    df['signal'] = signals['signal'].shift(1) 
-    df['ret'] = df[col].pct_change() * df['signal']
-    ret = df.ret.dropna()  * lev
-    return ret
-
 def estimate_forecast_scalar(x, window=250000, min_periods=500):
     target_abs_forecast = 10.
     x=x.abs().iloc[:,0]
