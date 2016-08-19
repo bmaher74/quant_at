@@ -6,6 +6,7 @@ import os, sys
 
 # must have acccount no under $HOME/.ib
 __account__ = open("%s/.ib" % os.environ['HOME']).read()
+print __account__
 
 # DEFINE a basic function to capture error messages
 def error_handler(msg):

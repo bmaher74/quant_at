@@ -50,10 +50,10 @@ def ewma(price, fast, slow):
    vol = robust_vol_calc(price.diff())
    return raw_ewmac /  vol 
 
-def carry(daily_ann_roll, vol, diff_in_years, smooth_days=90):
+def carry(daily_ann_roll, vol, smooth_days=90):
     ann_stdev = vol * ROOT_BDAYS_INYEAR
     raw_carry = daily_ann_roll / ann_stdev
-    smooth_carry = pd.ewma(raw_carry, smooth_days) / diff_in_years
+    smooth_carry = pd.ewma(raw_carry, smooth_days)
     return smooth_carry.fillna(method='ffill')
 
 def estimate_forecast_scalar(x, window=250000, min_periods=500):
