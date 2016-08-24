@@ -42,7 +42,7 @@ def sharpe(price, forecast):
     tval,pval = scipy.stats.ttest_1samp(instr_ccy_returns.dropna(), 0)
     mean_return = instr_ccy_returns.mean() * BUSINESS_DAYS_IN_YEAR
     vol = instr_ccy_returns.std() * ROOT_BDAYS_INYEAR
-    return mean_return / vol, tval, pval
+    return mean_return / vol, tval, pval    
 
 def ewma(price, fast, slow):
    fast_ewma = pd.ewma(price, span=fast)

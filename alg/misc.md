@@ -1,4 +1,61 @@
 
+```python
+import pandas as pd
+f = pd.read_csv("c:/Users/burak/Documents/out-CORN.csv",index_col=0,parse_dates=True)
+df = pd.DataFrame(index=f.index)
+insts = ['EDOLLAR','US10','EUROSTX','V2X','MXP','CORN']
+for c in insts:
+    f = pd.read_csv("c:/Users/burak/Documents/out-%s.csv"% c,names=['p'],index_col=0,parse_dates=True)
+    df[c] = f['p']
+print df.tail(2)
+```
+
+```text
+                EDOLLAR         US10     EUROSTX          V2X          MXP  \
+1981-09-25                                                                   
+2016-05-10  -421.468042    -2.958396  460.390369  3368.122983  1647.713180   
+2016-05-11  1466.787947  1806.634279 -344.158728 -1397.092227   196.285474   
+
+                   CORN  
+1981-09-25               
+2016-05-10 -9530.735708  
+2016-05-11  2696.234840  
+```
+
+```python
+w = [0.117,0.117,0.20,0.098,0.233,0.233]
+res = (df * w).sum(axis=1) * 1.89 
+print res.tail(10)
+```
+
+```text
+1981-09-25
+2016-04-28   -1814.681428
+2016-04-29   -1020.466563
+2016-05-02   -1928.636754
+2016-05-03    3324.714277
+2016-05-04     597.012896
+2016-05-05    2189.921633
+2016-05-06    -971.850633
+2016-05-09    4157.028995
+2016-05-10   -2767.428751
+2016-05-11    1608.769606
+dtype: float64
+```
+
+```python
+import scipy.stats
+
+mean_return = res.mean() * 256
+vol = res.std() * 16
+tval,pval = scipy.stats.ttest_1samp(res.dropna(), 0)
+print mean_return / vol, tval, pval
+```
+
+```text
+0.492760437735
+```
+
 
 ```python
 df = futures.get_stitched("ED", "CME")
