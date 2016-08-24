@@ -113,8 +113,10 @@ def test_returns_sharpe_skew():
     raw_ewmac = fast_ewma - slow_ewma
     vol = util.robust_vol_calc(df.PRICE.diff())
     forecast = raw_ewmac /  vol
-    assert util.sharpe(df.PRICE, forecast)-0.50 < 0.01
-    assert util.skew(df.PRICE, forecast)-(-0.57) < 0.01
+    sr,tval,pval = util.sharpe(df.PRICE, forecast)
+    assert sr-0.50 < 0.01
+    s = util.skew(df.PRICE, forecast)
+    assert s-(-0.57) < 0.01
 
 def create_carry_data(vol = False, reverse=False):
     ctd = collections.OrderedDict()
