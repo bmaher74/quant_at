@@ -12,7 +12,7 @@ ROOT_MONTHS_IN_YEAR = MONTHS_IN_YEAR**.5
 ARBITRARY_START=pd.datetime(1900,1,1)
 FLAG_BAD_RETURN=-99999.0
 
-DEFAULT_CAPITAL = 1.0
+DEFAULT_CAPITAL = 1000000.0
 DEFAULT_ANN_RISK_TARGET = 0.20
 MAX_FORECAST = 20.0
 LONG_RUN_FCAST = 10.0
@@ -31,7 +31,7 @@ def ccy_returns(price, forecast):
     instr_ccy_returns = cum_trades.shift(1)*price_returns 
     instr_ccy_returns=instr_ccy_returns.cumsum().ffill().reindex(price.index).diff()
     return instr_ccy_returns
-    
+
 def skew(price, forecast): 
     base_capital = DEFAULT_CAPITAL
     pct = 100.0 * ccy_returns(price, forecast) / base_capital
